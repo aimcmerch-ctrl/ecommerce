@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIMCMERCH | Modern Minimal</title>
+    
+    <!-- Fonts: Syne (Bold/Wide/Modern) & Inter (Clean UI) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --bg: #050505;
+            --surface: #111111;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --border: #222222;
+            --accent: #ffffff;
+            
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* FIX: Added strict max-width and hidden overflow to prevent wobbling */
+        html, body {
+            background-color: var(--bg); color: var(--text);
+            font-family: var(--font-body); -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        h1, h2, h3, .heading { font-family: var(--font-head); font-weight: 800; text-transform: uppercase; }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; font-family: var(--font-body); }
+        ul { list-style: none; }
+
+        /* --- SCROLL ANIMATIONS (Intersection Observer) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            position: fixed; top: 0; width: 100%; padding: 1.5rem 3rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; transition: all 0.4s ease;
+        }
+        header.scrolled {
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(12px);
+            padding: 1rem 3rem; border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.8rem; letter-spacing: -1px; }
+
+        .header-controls { display: flex; align-items: center; gap: 2rem; }
+        
+        .search-box {
+            display: flex; align-items: center; background: var(--surface);
+            border-radius: 30px; padding: 0.5rem 1rem; border: 1px solid var(--border);
+        }
+        .search-box input {
+            background: none; border: none; color: var(--text); outline: none;
+            padding-left: 0.5rem; font-family: var(--font-body); font-size: 0.9rem;
+        }
+        
+        .cart-btn {
+            background: none; border: none; color: var(--text); font-size: 1.3rem; position: relative;
+        }
+        .cart-badge {
+            position: absolute; top: -5px; right: -8px; background: var(--text); color: var(--bg);
+            font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-weight: bold;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; position: relative; display: flex; align-items: center; padding: 0 3rem;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; inset: 0; z-index: -1;
+            background: url('https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=2000') center/cover no-repeat;
+            animation: bgZoom 20s infinite alternate linear;
+            filter: brightness(0.4) grayscale(50%);
+        }
+        @keyframes bgZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+        .hero-content { max-width: 1000px; }
+        .hero-title {
+            font-size: clamp(4rem, 10vw, 10rem); line-height: 0.85; margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .hero-title span {
+            display: block; transform: translateY(100%);
+            animation: slideUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .hero-title span:nth-child(2) { animation-delay: 0.2s; color: var(--text-dim); }
+        
+        .hero-subtitle {
+            font-size: 1.2rem; font-weight: 300; letter-spacing: 2px;
+            opacity: 0; animation: fadeIn 1s 0.8s forwards;
+        }
+
+        @keyframes slideUp { to { transform: translateY(0); } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* --- FILTER BAR --- */
+        .filter-section {
+            padding: 2rem 3rem; display: flex; gap: 1rem; flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+        .filter-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+            padding: 0.6rem 1.5rem; border-radius: 30px; font-size: 0.85rem; text-transform: uppercase;
+            transition: 0.3s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--text); color: var(--bg); border-color: var(--text);
+        }
+
+        /* --- HORIZONTAL PRODUCT SECTIONS --- */
+        .category-section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+        .category-header { padding: 0 3rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;}
+        .category-title { font-size: 3rem; letter-spacing: -1px; }
+
+        .horizontal-scroll {
+            display: flex; gap: 2rem; padding: 0 3rem; overflow-x: auto;
+            scroll-snap-type: x mandatory; scroll-behavior: smooth;
+        }
+        .horizontal-scroll::-webkit-scrollbar { display: none; } /* Hide scrollbar */
+
+        .product-card {
+            min-width: 350px; max-width: 350px; scroll-snap-align: start;
+            display: flex; flex-direction: column; group: card; cursor: pointer;
+        }
+        
+        .img-wrapper {
+            width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--surface);
+            position: relative; margin-bottom: 1.5rem;
+        }
+        .img-wrapper img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;
+        }
+        .product-card:hover .img-wrapper img { transform: scale(1.05); }
+
+        .add-overlay {
+            position: absolute; bottom: 0; width: 100%; padding: 1.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            transform: translateY(100%); transition: transform 0.4s ease;
+            display: flex; justify-content: center; align-items: flex-end; height: 50%;
+        }
+        .product-card:hover .add-overlay { transform: translateY(0); }
+        
+        .btn-add {
+            background: var(--text); color: var(--bg); width: 100%; padding: 1rem;
+            border: none; font-family: var(--font-head); text-transform: uppercase;
+            font-size: 1rem; letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-add:hover { background: #ccc; }
+
+        .product-info { display: flex; justify-content: space-between; align-items: flex-start; }
+        .product-name { font-family: var(--font-head); font-size: 1.2rem; margin-bottom: 0.2rem; }
+        .product-sub { font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; }
+        .product-price { font-size: 1.1rem; }
+
+        /* --- FOOTER --- */
+        footer { padding: 6rem 3rem 2rem; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4rem; margin-bottom: 4rem; }
+        .footer-col h4 { margin-bottom: 1.5rem; color: var(--text-dim); }
+        .footer-col ul li { margin-bottom: 1rem; font-size: 0.9rem; }
+        .footer-col ul li a:hover { color: var(--text-dim); }
+        .huge-footer-text { font-size: clamp(3rem, 15vw, 15rem); line-height: 0.8; text-align: center; color: var(--surface); }
+
+        /* --- CART & MODALS --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .overlay.active { opacity: 1; visibility: visible; backdrop-filter: blur(5px); }
+
+        /* FIX: Changed from right offsets to transform translate for perfect hiding/showing without peeking */
+        .cart-drawer {
+            position: fixed; top: 0; right: 0; width: 450px; max-width: 100vw; height: 100vh;
+            background: var(--bg); z-index: 1000; display: flex; flex-direction: column; border-left: 1px solid var(--border);
+            transform: translateX(100%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .cart-drawer.open { transform: translateX(0); }
+
+        .cart-header { padding: 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; color: var(--text); font-size: 1.5rem; }
+        
+        .cart-items { flex: 1; overflow-y: auto; padding: 2rem; }
+        .cart-item { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+        .cart-item img { width: 90px; height: 120px; object-fit: cover; }
+        .item-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .qty-controls { display: flex; gap: 1rem; border: 1px solid var(--border); width: fit-content; padding: 0.3rem 0.8rem; border-radius: 20px;}
+        .qty-btn { background: none; border: none; color: var(--text); }
+        .remove-btn { color: #ff3333; background: none; border: none; text-align: left; font-size: 0.8rem; text-decoration: underline; margin-top: 0.5rem;}
+
+        .cart-footer { padding: 2rem; border-top: 1px solid var(--border); }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: var(--font-head); }
+        .btn-checkout { background: var(--text); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-size: 1.1rem; text-transform: uppercase; }
+
+        /* Modals */
+        .modal { position: fixed; inset: 0; z-index: 1001; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--bg); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 3rem; position: relative; max-height: 90vh; overflow-y: auto;}
+        
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: var(--font-body); outline: none; }
+        .form-group input:focus { border-color: var(--text); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header { padding: 1rem; }
+            .hero-title { font-size: 3rem; }
+            .horizontal-scroll { padding: 0 1rem; }
+            .product-card { min-width: 280px; max-width: 280px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .cart-drawer { width: 100vw; border-left: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header id="header">
+        <a href="#" class="heading logo">AIMCMERCH</a>
+        <div class="header-controls">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search products..." onkeyup="handleSearch()">
+            </div>
+            <button class="cart-btn" onclick="toggleCart()">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-badge" id="cart-badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO (Animated) -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="heading hero-title">
+                <span>Define</span>
+                <span>The Void</span>
+            </h1>
+            <p class="hero-subtitle">FW24 // MINIMAL STREETWEAR ARCHIVE</p>
+        </div>
+    </section>
+
+    <!-- FILTER BAR -->
+    <section class="filter-section reveal">
+        <button class="filter-btn active" onclick="filterCategory('all')">All</button>
+        <button class="filter-btn" onclick="filterCategory('shirts')">Shirts</button>
+        <button class="filter-btn" onclick="filterCategory('bags')">Tote Bags</button>
+        <button class="filter-btn" onclick="filterCategory('caps')">Caps</button>
+        <button class="filter-btn" onclick="filterCategory('accessories')">Accessories</button>
+    </section>
+
+    <!-- MAIN PRODUCT INJECTION CONTAINER -->
+    <main id="main-content">
+        <!-- Categories injected here via JS -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="reveal">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4 class="heading">About</h4>
+                <p style="color: var(--text-dim); line-height: 1.6; font-size: 0.9rem;">
+                    AIMCMERCH creates modern, minimal streetwear focusing on bold typography, dark aesthetics, and functional design.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4 class="heading">Support</h4>
+                <ul>
+                    <li><a href="#" onclick="openModal('policy-modal')">Return & Exchange Policy</a></li>
+                    <li><a href="#">Shipping Info</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 class="heading">Socials</h4>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Twitter / X</a></li>
+                    <li><a href="#">TikTok</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="huge-footer-text heading">AIMC</div>
+    </footer>
+
+    <!-- CART DRAWER -->
+    <div class="overlay" id="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2 class="heading">Your Cart</h2>
+            <button class="close-btn" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Items injected here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="openModal('checkout-modal')">Checkout</button>
+        </div>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="overlay" id="modal-overlay" onclick="closeModals()"></div>
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <button class="close-btn" style="position: absolute; right: 2rem; top: 2rem;" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+            <div id="checkout-form-container">
+                <h2 class="heading" style="font-size: 2rem; margin-bottom: 2rem;">Checkout</h2>
+                <form onsubmit="processCheckout(event)">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" required placeholder="you@example.com">
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group"><label>First Name</label><input type="text" required></div>
+                        <div class="form-group"><label>Last Name</label><input type="text" required></div>
+                    </div>
+                    <div class="form-group"><label>Shipping Address</label><input type="text" required></div>
+                    <div class="form-group" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+                        <label>Card Number</label>
+                        <input type="text" required placeholder="0000 0000 0000 0000">
+                    </div>
+                    <button type="submit" class="btn-checkout" id="pay-btn" style="margin-top: 1rem;">Pay Now</button>
+                </form>
+            </div>
+            <!-- Success Screen -->
+            <div id="success-screen" style="display: none; text-align: center; padding: 2rem 0;">
+                <i class="fa-solid fa-check" style="font-size: 4rem; margin-bottom: 1rem; color: #fff;"></i>
+                <h2 class="heading" style="font-size: 2rem; margin-bottom: 1rem;">Order Placed</h2>
+                <p style="color: var(--text-dim);">Your dark minimal gear is on the way.</p>
+                <button class="btn-checkout" onclick="closeModals()" style="margin-top: 2rem;">Back to Store</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RETURN POLICY MODAL -->
+    <div class="modal" id="policy-modal">
+        <div class="modal-content">
+            <button class="close-btn" style="position: absolute; right: 2rem; top: 2rem;" onclick="closeModals()"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="heading" style="font-size: 2rem; margin-bottom: 2rem;">Return Policy</h2>
+            <div style="color: var(--text-dim); line-height: 1.8; font-size: 0.95rem;">
+                <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">14-Day Returns:</strong> You have 14 days from delivery to return unwashed, unworn items with tags attached.</p>
+                <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">Exchanges:</strong> We offer free exchanges for different sizes in Shirts and Caps (subject to stock). Tote bags and Accessories are final sale unless defective.</p>
+                <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">Process:</strong> Contact our support team with your order number. Refunds are processed to the original payment method within 5-7 business days after inspection.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- PRODUCT DATABASE ---
+        const products = [
+            // SHIRTS
+            { id: 1, title: "Oversized Drop Tee", sub: "Drop Shoulder", category: "shirts", price: 45, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000" },
+            { id: 2, title: "Void Heavyweight Tee", sub: "Drop Shoulder", category: "shirts", price: 50, img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1000" },
+            { id: 3, title: "Classic Knit Polo", sub: "Polo", category: "shirts", price: 65, img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000" },
+            { id: 4, title: "Structure Zip Polo", sub: "Polo", category: "shirts", price: 70, img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ce3?q=80&w=1000" },
+            
+            // TOTE BAGS
+            { id: 5, title: "Canvas Utility Tote", sub: "Tote Bags", category: "bags", price: 35, img: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000" },
+            { id: 6, title: "Heavy Duty Black Tote", sub: "Tote Bags", category: "bags", price: 40, img: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000" },
+            
+            // CAPS
+            { id: 7, title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 28, img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
+            { id: 8, title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 30, img: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
+            
+            // ACCESSORIES (Keychains, Pencils)
+            { id: 9, title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 15, img: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
+            { id: 10, title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 20, img: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
+            { id: 11, title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 12, img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" },
+        ];
+
+        // --- RENDER ENGINE ---
+        const mainContent = document.getElementById('main-content');
+        const categories = [
+            { id: 'shirts', name: 'Shirts' },
+            { id: 'bags', name: 'Tote Bags' },
+            { id: 'caps', name: 'Caps' },
+            { id: 'accessories', name: 'Accessories' }
+        ];
+
+        function renderLayout(filteredProducts = products) {
+            mainContent.innerHTML = ''; // clear
+
+            categories.forEach(cat => {
+                const catProducts = filteredProducts.filter(p => p.category === cat.id);
+                if (catProducts.length === 0) return; // skip empty categories
+
+                const section = document.createElement('section');
+                section.className = 'category-section reveal active'; // 'active' if instantly rendered after load
+                section.id = `section-${cat.id}`;
+                
+                let cardsHTML = catProducts.map(p => `
+                    <div class="product-card">
+                        <div class="img-wrapper">
+                            <img src="${p.img}" alt="${p.title}">
+                            <div class="add-overlay">
+                                <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <div>
+                                <h3 class="product-name">${p.title}</h3>
+                                <p class="product-sub">${p.sub}</p>
+                            </div>
+                            <p class="product-price">$${p.price}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                section.innerHTML = `
+                    <div class="category-header">
+                        <h2 class="heading category-title">${cat.name}</h2>
+                    </div>
+                    <div class="horizontal-scroll">
+                        ${cardsHTML}
+                    </div>
+                `;
+                mainContent.appendChild(section);
+            });
+
+            // Re-initialize scroll animations for new elements
+            initScrollAnimations();
+        }
+
+        // --- SEARCH & FILTER LOGIC ---
+        function filterCategory(catId) {
+            // Update Active Button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter data
+            document.getElementById('searchInput').value = ''; // clear search
+            if (catId === 'all') {
+                renderLayout(products);
+            } else {
+                renderLayout(products.filter(p => p.category === catId));
+            }
+        }
+
+        function handleSearch() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active'); // reset to 'all' visually
+            
+            const searched = products.filter(p => 
+                p.title.toLowerCase().includes(term) || p.sub.toLowerCase().includes(term)
+            );
+            renderLayout(searched);
+        }
+
+        // --- CART LOGIC ---
+        let cart = [];
+
+        function addToCart(id) {
+            const product = products.find(p => p.id === id);
+            const exists = cart.find(item => item.id === id);
+            if (exists) exists.qty++;
+            else cart.push({ ...product, qty: 1 });
+            
+            updateCartUI();
+            toggleCart(true); // Open cart automatically
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+                updateCartUI();
+            }
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items');
+            document.getElementById('cart-badge').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-dim); text-align: center; margin-top: 2rem;">Cart is empty.</p>';
+                document.getElementById('cart-total').innerText = '$0.00';
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.img}">
+                    <div class="item-details">
+                        <div>
+                            <div class="heading" style="font-size: 1rem;">${item.title}</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem;">$${item.price}</div>
+                        </div>
+                        <div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                                <span>${item.qty}</span>
+                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                            </div>
+                            <button class="remove-btn" onclick="updateQty(${item.id}, -999)">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('pay-btn').innerText = `Pay $${total.toFixed(2)}`;
+        }
+
+        // --- UI TOGGLES ---
+        function toggleCart(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            if (forceOpen === true) {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                drawer.classList.toggle('open');
+                overlay.classList.toggle('active');
+            }
+        }
+
+        function openModal(id) {
+            if (id === 'checkout-modal' && cart.length === 0) {
+                alert("Cart is empty"); return;
+            }
+            if (id === 'checkout-modal') {
+                document.getElementById('cart-drawer').classList.remove('open'); // Close drawer completely
+                document.getElementById('cart-overlay').classList.remove('active');
+            }
+            
+            document.getElementById('modal-overlay').classList.add('active');
+            document.getElementById(id).classList.add('active');
+            
+            if(id === 'checkout-modal') {
+                document.getElementById('checkout-form-container').style.display = 'block';
+                document.getElementById('success-screen').style.display = 'none';
+            }
+        }
+
+        function closeModals() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        }
+
+        function processCheckout(e) {
+            e.preventDefault();
+            const btn = document.getElementById('pay-btn');
+            btn.innerText = "Processing...";
+            
+            setTimeout(() => {
+                cart = []; updateCartUI();
+                document.getElementById('checkout-form-container').style.display = 'none';
+                document.getElementById('success-screen').style.display = 'block';
+                btn.innerText = "Pay Now";
+                e.target.reset();
+            }, 1500);
+        }
+
+        // --- SCROLL EFFECTS ---
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+
+        function initScrollAnimations() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            reveals.forEach(reveal => observer.observe(reveal));
+        }
+
+        // --- INIT ---
+        renderLayout();
+        // Force the first batch of reveals to show up if they are already in viewport
+        setTimeout(() => { initScrollAnimations(); }, 100);
+
+    </script>
+</body>
+</html>
