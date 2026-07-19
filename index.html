@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIMCMERCH | IQBALIAN</title>
     
-    <!-- Fonts: Bebas Neue (Typography) & Inter (Clean UI) -->
+    <!-- Fonts: Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <!-- Phosphor Icons (Ultra-Thin Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -25,24 +25,27 @@
             --text-dim: #888888;
             --border: #222222;
             
-            --font-head: 'Bebas Neue', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-head: 'Montserrat', sans-serif;
+            --font-body: 'Montserrat', sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        /* FIX: Removed global scroll-behavior: smooth and double overflow rules to prevent scroll freezing */
         html {
-            overflow-x: hidden;
-            scroll-behavior: smooth;
+            width: 100%;
         }
 
         body {
             background-color: var(--bg); color: var(--text);
             font-family: var(--font-body); -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            width: 100%;
+            position: relative;
         }
 
-        h1, h2, h3, .heading { font-family: var(--font-head); font-weight: 400; text-transform: uppercase; letter-spacing: 1px;}
+        /* Set headings to Montserrat Bold */
+        h1, h2, h3, .heading { font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
         a { text-decoration: none; color: inherit; }
         button { cursor: pointer; font-family: var(--font-body); }
         ul { list-style: none; }
@@ -74,13 +77,11 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 101;
-        }
-        .logo img { 
-            height: 40px; 
-            width: auto;
-            display: block;
-            object-fit: contain;
-            filter: invert(1);
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--text);
         }
 
         .icon-btn {
@@ -112,7 +113,7 @@
             position: relative; 
             display: flex; 
             align-items: center; 
-            justify-content: center; /* Centered horizontally */
+            justify-content: center; 
             padding: 0 3rem;
             overflow: hidden;
         }
@@ -121,7 +122,7 @@
             background: url('https://aimcmerch.store/Image.PNG') center/cover no-repeat;
             animation: bgZoom 20s infinite alternate linear;
             filter: brightness(0.5) grayscale(20%);
-            will-change: transform;
+            /* FIX: Removed will-change: transform to prevent memory locking and initial scroll stuck/lag */
         }
         @keyframes bgZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
@@ -137,7 +138,7 @@
         
         .hero-main-logo {
             width: 100%;
-            max-width: 220px; /* Reduced size as requested */
+            max-width: 220px; 
             height: auto;
             filter: invert(1);
             opacity: 0;
@@ -147,7 +148,7 @@
 
         .hero-subtitle {
             font-family: var(--font-head);
-            font-size: clamp(0.8rem, 2vw, 1.2rem); /* Reduced size as requested */
+            font-size: clamp(0.8rem, 2vw, 1.2rem); 
             letter-spacing: 4px;
             color: var(--text);
             margin-top: 1.5rem;
@@ -171,6 +172,8 @@
             background: transparent; border: 1px solid var(--border); color: var(--text-dim);
             padding: 0.6rem 1.5rem; border-radius: 30px; font-size: 0.85rem; text-transform: uppercase;
             transition: 0.3s;
+            font-family: var(--font-head);
+            font-weight: 700;
         }
         .filter-btn:hover, .filter-btn.active {
             background: var(--text); color: var(--bg); border-color: var(--text);
@@ -184,7 +187,7 @@
         .horizontal-scroll {
             display: flex; gap: 2rem; padding: 0 3rem; overflow-x: auto;
             scroll-snap-type: x mandatory; scroll-behavior: smooth;
-            padding-bottom: 2rem; /* Give shadow space to breathe */
+            padding-bottom: 2rem; 
         }
         .horizontal-scroll::-webkit-scrollbar { display: none; }
 
@@ -213,8 +216,8 @@
         
         .btn-add {
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); color: var(--bg); width: 100%; padding: 1.2rem;
-            border: none; font-family: var(--font-head); text-transform: uppercase;
-            font-size: 1.4rem; letter-spacing: 1px; transition: background 0.3s, color 0.3s;
+            border: none; font-family: var(--font-head); font-weight: 700; text-transform: uppercase;
+            font-size: 1.2rem; letter-spacing: 1px; transition: background 0.3s, color 0.3s;
         }
         .btn-add:hover { background: #ffffff; }
 
@@ -227,10 +230,10 @@
             display: flex; flex-direction: column;
         }
         .product-name { 
-            font-family: var(--font-head); font-size: 1.6rem; margin-bottom: 0.3rem; letter-spacing: 0.5px; 
+            font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.3rem; letter-spacing: 0.5px; 
         }
         .product-sub { 
-            font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; 
+            font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 500;
         }
         .product-price { 
             font-size: 1.2rem; font-weight: 500; font-family: var(--font-body); 
@@ -242,7 +245,7 @@
         .footer-col h4 { margin-bottom: 1.5rem; color: var(--text-dim); }
         .footer-col ul li { margin-bottom: 1rem; font-size: 0.9rem; }
         .footer-col ul li a:hover { color: var(--text-dim); }
-        .huge-footer-text { font-size: clamp(3rem, 15vw, 15rem); line-height: 0.8; text-align: center; color: var(--surface); }
+        .huge-footer-text { font-size: clamp(3rem, 15vw, 15rem); line-height: 0.8; text-align: center; color: var(--surface); letter-spacing: -2px;}
 
         /* --- DRAWERS & MODALS --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s; }
@@ -259,7 +262,7 @@
         .nav-drawer { left: 0; border-right: 1px solid var(--border); transform: translateX(-100%); padding: 3rem;}
         .nav-drawer.open { transform: translateX(0); }
         .nav-links li { margin-bottom: 2rem; }
-        .nav-links a { font-family: var(--font-head); font-size: 2.5rem; color: var(--text); transition: 0.3s;}
+        .nav-links a { font-family: var(--font-head); font-weight: 700; font-size: 2.5rem; color: var(--text); transition: 0.3s;}
         .nav-links a:hover { color: var(--text-dim); }
 
         .drawer-header { padding: 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
@@ -274,8 +277,8 @@
         .remove-btn { color: #ff3333; background: none; border: none; text-align: left; font-size: 0.8rem; text-decoration: underline; margin-top: 0.5rem;}
 
         .cart-footer { padding: 2rem; border-top: 1px solid var(--border); }
-        .cart-total { display: flex; justify-content: space-between; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: var(--font-head); }
-        .btn-checkout { background: var(--text); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-size: 1.4rem; text-transform: uppercase; }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: var(--font-head); font-weight: 700; }
+        .btn-checkout { background: var(--text); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; text-transform: uppercase; }
 
         /* Modals */
         .modal { position: fixed; inset: 0; z-index: 1001; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
@@ -283,7 +286,7 @@
         .modal-content { background: var(--bg); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 3rem; position: relative; max-height: 90vh; overflow-y: auto;}
         
         .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;}
         .form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: var(--font-body); outline: none; }
         .form-group input:focus { border-color: var(--text); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -291,10 +294,10 @@
         /* RESPONSIVE */
         @media (max-width: 768px) {
             header { padding: 1.5rem 1.5rem; }
-            .logo img { height: 28px; } 
+            .logo { font-size: 1.2rem; } 
             .search-input.active { width: 110px; }
             .hero { min-height: 115vh; }
-            .hero-main-logo { max-width: 180px; } /* Ensures small size on mobile too */
+            .hero-main-logo { max-width: 180px; } 
             .horizontal-scroll { padding: 0 1rem; }
             .product-card { min-width: 280px; max-width: 280px; }
             .footer-grid { grid-template-columns: 1fr; }
@@ -318,9 +321,7 @@
             </div>
         </div>
         
-        <a href="#" class="logo">
-            <img src="https://aimcmerch.store/logo.png" alt="AIMCMERCH Logo">
-        </a>
+        <a href="#" class="logo">AIMCMERCH</a>
         
         <div class="header-right">
             <button class="icon-btn" onclick="toggleCart()">
