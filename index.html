@@ -16,6 +16,10 @@
     <!-- Font Awesome (Fallback for checkmarks) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- GSAP for scroll animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
@@ -31,7 +35,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* FIX: Removed global scroll-behavior: smooth and double overflow rules to prevent scroll freezing */
         html {
             width: 100%;
         }
@@ -119,10 +122,9 @@
         }
         .hero-bg {
             position: absolute; inset: 0; z-index: -1;
-            background: url('https://aimcmerch.store/Image.PNG') center/cover no-repeat;
+            background: url('https://i.imgur.com/ksQ0oOw.jpeg') center/cover no-repeat;
             animation: bgZoom 20s infinite alternate linear;
             filter: brightness(0.5) grayscale(20%);
-            /* FIX: Removed will-change: transform to prevent memory locking and initial scroll stuck/lag */
         }
         @keyframes bgZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
@@ -157,7 +159,6 @@
             animation: smoothFadeUp 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.3s forwards;
         }
 
-        /* Smooth, soft entrance animation */
         @keyframes smoothFadeUp {
             0% { opacity: 0; transform: translateY(40px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -197,13 +198,26 @@
             display: flex; flex-direction: column; cursor: pointer;
         }
         
+        /* Modified Img Wrapper to support two images and prevent right click */
         .img-wrapper {
             width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--surface);
             position: relative; 
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         .img-wrapper img {
-            width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+            position: absolute; top: 0; left: 0;
+            pointer-events: none; /* Prevents direct click/download on the image */
         }
+        
+        .img-default { opacity: 1; z-index: 2; }
+        .img-hover { opacity: 0; z-index: 1; }
+        
+        .product-card:hover .img-default { opacity: 0; }
+        .product-card:hover .img-hover { opacity: 1; }
         .product-card:hover .img-wrapper img { transform: scale(1.05); }
 
         .add-overlay {
@@ -211,6 +225,7 @@
             background: transparent;
             transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex; justify-content: center; align-items: center; 
+            z-index: 10;
         }
         .product-card:hover .add-overlay { transform: translateY(0); }
         
@@ -221,7 +236,6 @@
         }
         .btn-add:hover { background: #ffffff; }
 
-        /* Improved Typography Hierarchy */
         .product-info { 
             display: flex; justify-content: space-between; align-items: flex-end; 
             margin-top: 1.2rem; 
@@ -307,7 +321,7 @@
 </head>
 <body>
 
-    <!-- HEADER (Fully Transparent Top Bar Menu) -->
+    <!-- HEADER -->
     <header id="header">
         <div class="header-left">
             <button class="icon-btn" onclick="toggleNav()">
@@ -344,11 +358,11 @@
         </ul>
     </div>
 
-    <!-- HERO (Animated, Elongated Height) -->
+    <!-- HERO -->
     <section class="hero">
         <div class="hero-bg"></div>
         <div class="hero-content">
-            <img src="https://aimcmerch.store/logo.png" alt="AIMCMERCH Logo" class="hero-main-logo">
+            <img src="https://aimcmerch.store/logo.png" alt="AIMCMERCH Logo" class="hero-main-logo" draggable="false" oncontextmenu="return false;">
             <p class="hero-subtitle">SUMMER COLLECTION coming soon</p>
         </div>
     </section>
@@ -466,17 +480,17 @@
     <script>
         // --- PRODUCT DATABASE ---
         const products = [
-            { id: 1, title: "Oversized Drop Tee", sub: "Drop Shoulder", category: "shirts", price: 45, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1000" },
-            { id: 2, title: "Void Heavyweight Tee", sub: "Drop Shoulder", category: "shirts", price: 50, img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1000" },
-            { id: 3, title: "Classic Knit Polo", sub: "Polo", category: "shirts", price: 65, img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1000" },
-            { id: 4, title: "Structure Zip Polo", sub: "Polo", category: "shirts", price: 70, img: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ce3?q=80&w=1000" },
-            { id: 5, title: "Canvas Utility Tote", sub: "Tote Bags", category: "bags", price: 35, img: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000" },
-            { id: 6, title: "Heavy Duty Black Tote", sub: "Tote Bags", category: "bags", price: 40, img: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000" },
-            { id: 7, title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 28, img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
-            { id: 8, title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 30, img: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
-            { id: 9, title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 15, img: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
-            { id: 10, title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 20, img: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
-            { id: 11, title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 12, img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
+            { id: 1, title: "AIMC Polo Shirt", sub: "Polo", category: "shirts", price: 45, imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg" },
+            { id: 2, title: "AIMC Postmark", sub: "T-Shirt", category: "shirts", price: 50, imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg" },
+            { id: 3, title: "The Starry Sky", sub: "T-Shirt", category: "shirts", price: 65, imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg" }, // Reversed: Default is Back, Hover is Front
+            { id: 4, title: "The Sporty", sub: "T-Shirt", category: "shirts", price: 70, imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png" },
+            { id: 5, title: "Canvas Utility Tote", sub: "Tote Bags", category: "bags", price: 35, imgDefault: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000" },
+            { id: 6, title: "Heavy Duty Black Tote", sub: "Tote Bags", category: "bags", price: 40, imgDefault: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000" },
+            { id: 7, title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 28, imgDefault: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
+            { id: 8, title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 30, imgDefault: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
+            { id: 9, title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 15, imgDefault: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
+            { id: 10, title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 20, imgDefault: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
+            { id: 11, title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 12, imgDefault: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
         ];
 
         // --- RENDER ENGINE ---
@@ -495,13 +509,14 @@
                 if (catProducts.length === 0) return;
 
                 const section = document.createElement('section');
-                section.className = 'category-section reveal active'; 
+                section.className = 'category-section active'; // Removed .reveal here to apply GSAP strictly to cards
                 section.id = `section-${cat.id}`;
                 
                 let cardsHTML = catProducts.map(p => `
                     <div class="product-card">
-                        <div class="img-wrapper">
-                            <img src="${p.img}" alt="${p.title}">
+                        <div class="img-wrapper" oncontextmenu="return false;">
+                            <img src="${p.imgDefault}" class="img-default" alt="${p.title}" draggable="false">
+                            <img src="${p.imgHover}" class="img-hover" alt="${p.title}" draggable="false">
                             <div class="add-overlay">
                                 <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
                             </div>
@@ -588,7 +603,7 @@
 
             container.innerHTML = cart.map(item => `
                 <div class="cart-item">
-                    <img src="${item.img}">
+                    <img src="${item.imgDefault}" draggable="false" oncontextmenu="return false;" style="pointer-events: none;">
                     <div class="item-details">
                         <div>
                             <div class="heading" style="font-size: 1.2rem;">${item.title}</div>
@@ -673,6 +688,12 @@
 
         // --- SCROLL EFFECTS ---
         function initScrollAnimations() {
+            // Kill existing ScrollTriggers properly to prevent duplicates when rendering anew
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.getAll().forEach(st => st.kill());
+            }
+
+            // Normal IntersectionObserver for UI blocks (.reveal)
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -683,6 +704,33 @@
             }, { threshold: 0.1 });
 
             reveals.forEach(reveal => observer.observe(reveal));
+
+            // GSAP ScrollTrigger for Product Cards (smooth raise up)
+            if (typeof gsap !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                const horizontalContainers = document.querySelectorAll('.horizontal-scroll');
+                horizontalContainers.forEach(container => {
+                    const cards = container.querySelectorAll('.product-card');
+                    if(cards.length > 0) {
+                        gsap.fromTo(cards, 
+                            { y: 80, opacity: 0 },
+                            { 
+                                y: 0, 
+                                opacity: 1, 
+                                duration: 1, 
+                                ease: "power3.out", 
+                                stagger: 0.15,
+                                scrollTrigger: {
+                                    trigger: container,
+                                    start: "top 85%",
+                                    toggleActions: "play none none none"
+                                }
+                            }
+                        );
+                    }
+                });
+            }
         }
 
         // --- INIT ---
