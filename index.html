@@ -13,7 +13,7 @@
     <!-- Phosphor Icons (Ultra-Thin Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    <!-- Font Awesome (Fallback for checkmarks) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- GSAP for scroll animations -->
@@ -35,9 +35,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            width: 100%;
-        }
+        html { width: 100%; }
 
         body {
             background-color: var(--bg); color: var(--text);
@@ -47,7 +45,6 @@
             position: relative;
         }
 
-        /* Set headings to Montserrat Bold */
         h1, h2, h3, .heading { font-family: var(--font-head); font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
         a { text-decoration: none; color: inherit; }
         button { cursor: pointer; font-family: var(--font-body); }
@@ -95,7 +92,7 @@
         }
         .icon-btn:hover { color: var(--text-dim); }
         
-        .cart-badge {
+        .wishlist-badge {
             position: absolute; top: -6px; right: -10px; background: var(--text); color: var(--bg);
             font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center; font-weight: bold; font-family: var(--font-body);
@@ -164,17 +161,27 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- FILTER BAR --- */
+        /* --- FILTER BAR (COMPACT SINGLE LINE FOR MOBILE) --- */
         .filter-section {
-            padding: 2rem 3rem; display: flex; gap: 1rem; flex-wrap: wrap;
+            padding: 1.2rem 3rem; 
+            display: flex; 
+            gap: 0.6rem; 
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
             border-bottom: 1px solid var(--border);
+            align-items: center;
         }
+        .filter-section::-webkit-scrollbar { display: none; }
+        
         .filter-btn {
             background: transparent; border: 1px solid var(--border); color: var(--text-dim);
-            padding: 0.6rem 1.5rem; border-radius: 30px; font-size: 0.85rem; text-transform: uppercase;
+            padding: 0.4rem 0.9rem; border-radius: 30px; font-size: 0.75rem; text-transform: uppercase;
             transition: 0.3s;
             font-family: var(--font-head);
             font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .filter-btn:hover, .filter-btn.active {
             background: var(--text); color: var(--bg); border-color: var(--text);
@@ -192,13 +199,11 @@
         }
         .horizontal-scroll::-webkit-scrollbar { display: none; }
 
-        /* Improved Card UX */
         .product-card {
             min-width: 350px; max-width: 350px; scroll-snap-align: start;
             display: flex; flex-direction: column; cursor: pointer;
         }
         
-        /* Modified Img Wrapper to support two images and prevent right click */
         .img-wrapper {
             width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--surface);
             position: relative; 
@@ -210,7 +215,7 @@
             width: 100%; height: 100%; object-fit: cover; 
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
             position: absolute; top: 0; left: 0;
-            pointer-events: none; /* Prevents direct click/download on the image */
+            pointer-events: none;
         }
         
         .img-default { opacity: 1; z-index: 2; }
@@ -232,7 +237,7 @@
         .btn-add {
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); color: var(--bg); width: 100%; padding: 1.2rem;
             border: none; font-family: var(--font-head); font-weight: 700; text-transform: uppercase;
-            font-size: 1.2rem; letter-spacing: 1px; transition: background 0.3s, color 0.3s;
+            font-size: 1rem; letter-spacing: 1px; transition: background 0.3s, color 0.3s;
         }
         .btn-add:hover { background: #ffffff; }
 
@@ -249,9 +254,112 @@
         .product-sub { 
             font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 500;
         }
-        .product-price { 
-            font-size: 1.2rem; font-weight: 500; font-family: var(--font-body); 
+
+        /* --- FULL SCREEN PRODUCT PAGE VIEW (PROPER PAGE VIEW) --- */
+        .product-page-view {
+            position: fixed; inset: 0; width: 100vw; height: 100vh;
+            background: var(--bg); z-index: 2000;
+            display: none; flex-direction: column;
+            overflow-y: auto; opacity: 0;
+            transition: opacity 0.4s ease;
         }
+        .product-page-view.active {
+            display: flex; opacity: 1;
+        }
+
+        .p-page-header {
+            position: sticky; top: 0; left: 0; width: 100%;
+            padding: 1.5rem 3rem; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); z-index: 10;
+        }
+
+        .btn-back-shop {
+            background: none; border: none; color: var(--text);
+            font-family: var(--font-head); font-weight: 700; font-size: 0.85rem;
+            text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 0.5rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-back-shop:hover { color: var(--text-dim); }
+
+        .p-page-body {
+            max-width: 1400px; width: 100%; margin: 0 auto;
+            padding: 4rem 3rem; display: grid; grid-template-columns: 1.2fr 1fr;
+            gap: 5rem; flex: 1;
+        }
+
+        .p-page-gallery {
+            display: flex; flex-direction: column; gap: 1.5rem;
+        }
+
+        .p-page-main-img {
+            width: 100%; aspect-ratio: 3/4; background: var(--surface); overflow: hidden;
+            position: relative;
+        }
+        .p-page-main-img img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .p-page-thumbs {
+            display: flex; gap: 1rem;
+        }
+
+        .p-page-thumb {
+            width: 90px; height: 120px; object-fit: cover; cursor: pointer;
+            border: 1px solid var(--border); opacity: 0.5; transition: 0.3s; background: var(--surface);
+        }
+        .p-page-thumb.active, .p-page-thumb:hover {
+            opacity: 1; border-color: var(--text);
+        }
+
+        .p-page-details {
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .p-page-title {
+            font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 0.5rem; line-height: 1.05;
+        }
+
+        .p-page-sub {
+            color: var(--text-dim); font-size: 0.9rem; text-transform: uppercase;
+            letter-spacing: 2px; margin-bottom: 3rem; font-weight: 500;
+        }
+
+        .size-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+        }
+        .size-header label {
+            font-size: 0.85rem; color: var(--text); text-transform: uppercase; font-weight: 700; letter-spacing: 1px;
+        }
+
+        .btn-size-chart-link {
+            background: none; border: none; color: var(--text-dim);
+            font-size: 0.8rem; text-transform: uppercase; text-decoration: underline;
+            letter-spacing: 1px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-size-chart-link:hover { color: var(--text); }
+
+        .size-selector {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 3rem;
+        }
+
+        .size-option {
+            background: var(--surface); border: 1px solid var(--border); color: var(--text);
+            padding: 1rem 0; text-align: center; font-family: var(--font-head);
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+        .size-option:hover, .size-option.active {
+            background: var(--text); color: var(--bg); border-color: var(--text);
+        }
+
+        .btn-wishlist-main {
+            background: var(--text); color: var(--bg); width: 100%; padding: 1.4rem;
+            border: none; font-family: var(--font-head); font-weight: 700; font-size: 1.1rem;
+            text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+            transition: 0.3s;
+        }
+        .btn-wishlist-main:hover { background: #e6e6e6; }
 
         /* --- FOOTER --- */
         footer { padding: 6rem 3rem 2rem; }
@@ -261,17 +369,30 @@
         .footer-col ul li a:hover { color: var(--text-dim); }
         .huge-footer-text { font-size: clamp(3rem, 15vw, 15rem); line-height: 0.8; text-align: center; color: var(--surface); letter-spacing: -2px;}
 
+        .developer-credits {
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-family: var(--font-head);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
         /* --- DRAWERS & MODALS --- */
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999; opacity: 0; visibility: hidden; transition: 0.3s; }
         .overlay.active { opacity: 1; visibility: visible; backdrop-filter: blur(5px); }
 
-        .cart-drawer, .nav-drawer {
+        .wishlist-drawer, .nav-drawer {
             position: fixed; top: 0; width: 450px; max-width: 100vw; height: 100vh;
-            background: var(--bg); z-index: 1000; display: flex; flex-direction: column;
+            background: var(--bg); z-index: 2500; display: flex; flex-direction: column;
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .cart-drawer { right: 0; border-left: 1px solid var(--border); transform: translateX(100%); }
-        .cart-drawer.open { transform: translateX(0); }
+        .wishlist-drawer { right: 0; border-left: 1px solid var(--border); transform: translateX(100%); }
+        .wishlist-drawer.open { transform: translateX(0); }
         
         .nav-drawer { left: 0; border-right: 1px solid var(--border); transform: translateX(-100%); padding: 3rem;}
         .nav-drawer.open { transform: translateX(0); }
@@ -280,30 +401,37 @@
         .nav-links a:hover { color: var(--text-dim); }
 
         .drawer-header { padding: 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .close-btn { background: none; border: none; color: var(--text); font-size: 1.5rem; display: flex;}
+        .close-btn { background: none; border: none; color: var(--text); font-size: 1.5rem; display: flex; cursor: pointer;}
         
-        .cart-items { flex: 1; overflow-y: auto; padding: 2rem; }
-        .cart-item { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
-        .cart-item img { width: 90px; height: 120px; object-fit: cover; }
+        .wishlist-items { flex: 1; overflow-y: auto; padding: 2rem; }
+        .wishlist-item { display: flex; gap: 1.5rem; margin-bottom: 2rem; }
+        .wishlist-item img { width: 90px; height: 120px; object-fit: cover; }
         .item-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .qty-controls { display: flex; gap: 1rem; border: 1px solid var(--border); width: fit-content; padding: 0.3rem 0.8rem; border-radius: 20px;}
-        .qty-btn { background: none; border: none; color: var(--text); }
-        .remove-btn { color: #ff3333; background: none; border: none; text-align: left; font-size: 0.8rem; text-decoration: underline; margin-top: 0.5rem;}
-
-        .cart-footer { padding: 2rem; border-top: 1px solid var(--border); }
-        .cart-total { display: flex; justify-content: space-between; font-size: 1.5rem; margin-bottom: 1.5rem; font-family: var(--font-head); font-weight: 700; }
-        .btn-checkout { background: var(--text); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; text-transform: uppercase; }
+        .remove-btn { color: #ff3333; background: none; border: none; text-align: left; font-size: 0.8rem; text-decoration: underline; cursor: pointer; margin-top: 0.5rem;}
 
         /* Modals */
-        .modal { position: fixed; inset: 0; z-index: 1001; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal { position: fixed; inset: 0; z-index: 3000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal.active { opacity: 1; visibility: visible; }
         .modal-content { background: var(--bg); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 3rem; position: relative; max-height: 90vh; overflow-y: auto;}
         
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;}
-        .form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 1rem; font-family: var(--font-body); outline: none; }
-        .form-group input:focus { border-color: var(--text); }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        /* SIZE CHART TABLE STYLES */
+        .size-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        .size-table th, .size-table td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        .size-table th {
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
@@ -312,10 +440,25 @@
             .search-input.active { width: 110px; }
             .hero { min-height: 115vh; }
             .hero-main-logo { max-width: 180px; } 
+            
+            .filter-section { 
+                padding: 1rem 1rem; 
+                gap: 0.4rem; 
+                justify-content: flex-start;
+            }
+            .filter-btn { 
+                padding: 0.35rem 0.65rem; 
+                font-size: 0.62rem; 
+            }
+
             .horizontal-scroll { padding: 0 1rem; }
             .product-card { min-width: 280px; max-width: 280px; }
             .footer-grid { grid-template-columns: 1fr; }
-            .cart-drawer, .nav-drawer { width: 100vw; border: none; }
+            .wishlist-drawer, .nav-drawer { width: 100vw; border: none; }
+
+            .p-page-header { padding: 1.2rem 1.5rem; }
+            .p-page-body { grid-template-columns: 1fr; padding: 2rem 1.5rem; gap: 2rem; }
+            .p-page-thumb { width: 70px; height: 95px; }
         }
     </style>
 </head>
@@ -338,9 +481,9 @@
         <a href="#" class="logo">AIMCMERCH</a>
         
         <div class="header-right">
-            <button class="icon-btn" onclick="toggleCart()">
-                <i class="ph-thin ph-shopping-bag"></i>
-                <span class="cart-badge" id="cart-badge">0</span>
+            <button class="icon-btn" onclick="toggleWishlistDrawer()">
+                <i class="ph-thin ph-heart"></i>
+                <span class="wishlist-badge" id="wishlist-badge">0</span>
             </button>
         </div>
     </header>
@@ -367,7 +510,7 @@
         </div>
     </section>
 
-    <!-- FILTER BAR -->
+    <!-- FILTER BAR (SINGLE LINE ON MOBILE VIEW) -->
     <section class="filter-section reveal">
         <button class="filter-btn active" onclick="filterCategory('all')">All</button>
         <button class="filter-btn" onclick="filterCategory('shirts')">Shirts</button>
@@ -381,13 +524,59 @@
         <!-- Categories injected here via JS -->
     </main>
 
+    <!-- FULL SCREEN PRODUCT PAGE VIEW (PROPER DEDICATED PAGE) -->
+    <div class="product-page-view" id="product-page-view">
+        <div class="p-page-header">
+            <button class="btn-back-shop" onclick="closeProductPage()">
+                <i class="ph-thin ph-arrow-left" style="font-size: 1.2rem;"></i> Back to Shop
+            </button>
+            <a href="#" class="logo" style="position: relative; left: auto; transform: none;">AIMCMERCH</a>
+            <button class="icon-btn" onclick="toggleWishlistDrawer()">
+                <i class="ph-thin ph-heart"></i>
+                <span class="wishlist-badge" id="p-page-wishlist-badge">0</span>
+            </button>
+        </div>
+
+        <div class="p-page-body">
+            <div class="p-page-gallery">
+                <div class="p-page-main-img" oncontextmenu="return false;">
+                    <img id="p-page-main-img" src="" alt="Product Detail" draggable="false">
+                </div>
+                <div class="p-page-thumbs" id="p-page-thumbs">
+                    <!-- Thumbnails injected via JS -->
+                </div>
+            </div>
+
+            <div class="p-page-details">
+                <h1 class="heading p-page-title" id="p-page-title">Product Title</h1>
+                <div class="p-page-sub" id="p-page-sub">Category</div>
+
+                <div class="size-header">
+                    <label>Select Size</label>
+                    <button class="btn-size-chart-link" onclick="openSizeChartModal()">Size Chart</button>
+                </div>
+
+                <div class="size-selector">
+                    <button class="size-option" onclick="selectSize('S')">S</button>
+                    <button class="size-option active" onclick="selectSize('M')">M</button>
+                    <button class="size-option" onclick="selectSize('L')">L</button>
+                    <button class="size-option" onclick="selectSize('XL')">XL</button>
+                </div>
+
+                <button class="btn-wishlist-main" onclick="addCurrentToWishlist()">
+                    <i class="ph-thin ph-heart" style="font-size: 1.3rem;"></i> Add to Wishlist
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="reveal">
         <div class="footer-grid">
             <div class="footer-col">
                 <h4 class="heading">About</h4>
                 <p style="color: var(--text-dim); line-height: 1.6; font-size: 0.9rem;">
-                    AIMCMERCH creates modern, minimal streetwear focusing on bold typography, dark aesthetics, and functional design.
+                    AIMCMERCH
                 </p>
             </div>
             <div class="footer-col">
@@ -408,58 +597,66 @@
             </div>
         </div>
         <div class="huge-footer-text heading">AIMC</div>
+        
+        <div class="developer-credits">
+            DEVELOPED BY MAHRUKH NADEEM , MUHAMMAD HASNAIN
+        </div>
     </footer>
 
-    <!-- CART DRAWER -->
+    <!-- WISHLIST DRAWER -->
     <div class="overlay" id="global-overlay" onclick="closeDrawers()"></div>
-    <div class="cart-drawer" id="cart-drawer">
+    <div class="wishlist-drawer" id="wishlist-drawer">
         <div class="drawer-header">
-            <h2 class="heading">Your Cart</h2>
+            <h2 class="heading">Your Wishlist</h2>
             <button class="close-btn" onclick="closeDrawers()"><i class="ph-thin ph-x"></i></button>
         </div>
-        <div class="cart-items" id="cart-items">
+        <div class="wishlist-items" id="wishlist-items">
             <!-- Items injected here -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total</span>
-                <span id="cart-total">$0.00</span>
-            </div>
-            <button class="btn-checkout" onclick="openModal('checkout-modal')">Checkout</button>
         </div>
     </div>
 
-    <!-- CHECKOUT MODAL -->
-    <div class="overlay" id="modal-overlay" onclick="closeModals()"></div>
-    <div class="modal" id="checkout-modal">
+    <!-- SIZE CHART MODAL -->
+    <div class="modal" id="size-chart-modal">
         <div class="modal-content">
             <button class="close-btn" style="position: absolute; right: 2rem; top: 2rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button>
-            <div id="checkout-form-container">
-                <h2 class="heading" style="font-size: 2.5rem; margin-bottom: 2rem;">Checkout</h2>
-                <form onsubmit="processCheckout(event)">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" required placeholder="you@example.com">
-                    </div>
-                    <div class="grid-2">
-                        <div class="form-group"><label>First Name</label><input type="text" required></div>
-                        <div class="form-group"><label>Last Name</label><input type="text" required></div>
-                    </div>
-                    <div class="form-group"><label>Shipping Address</label><input type="text" required></div>
-                    <div class="form-group" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 2rem;">
-                        <label>Card Number</label>
-                        <input type="text" required placeholder="0000 0000 0000 0000">
-                    </div>
-                    <button type="submit" class="btn-checkout" id="pay-btn" style="margin-top: 1rem;">Pay Now</button>
-                </form>
-            </div>
-            <!-- Success Screen -->
-            <div id="success-screen" style="display: none; text-align: center; padding: 2rem 0;">
-                <i class="fa-solid fa-check" style="font-size: 4rem; margin-bottom: 1rem; color: #fff;"></i>
-                <h2 class="heading" style="font-size: 2.5rem; margin-bottom: 1rem;">Order Placed</h2>
-                <p style="color: var(--text-dim);">Your dark minimal gear is on the way.</p>
-                <button class="btn-checkout" onclick="closeModals()" style="margin-top: 2rem;">Back to Store</button>
-            </div>
+            <h2 class="heading" style="font-size: 2rem; margin-bottom: 0.5rem;">Size Chart</h2>
+            <p style="color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.85rem;">All measurements are provided in inches.</p>
+            <table class="size-table">
+                <thead>
+                    <tr>
+                        <th>Size</th>
+                        <th>Chest</th>
+                        <th>Length</th>
+                        <th>Shoulder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>S</strong> (Small)</td>
+                        <td>38"</td>
+                        <td>27"</td>
+                        <td>18"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>M</strong> (Medium)</td>
+                        <td>40"</td>
+                        <td>28"</td>
+                        <td>19"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>L</strong> (Large)</td>
+                        <td>42"</td>
+                        <td>29"</td>
+                        <td>20"</td>
+                    </tr>
+                    <tr>
+                        <td><strong>XL</strong> (Extra Large)</td>
+                        <td>44"</td>
+                        <td>30"</td>
+                        <td>21"</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -471,7 +668,7 @@
             <div style="color: var(--text-dim); line-height: 1.8; font-size: 0.95rem;">
                 <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">14-Day Returns:</strong> You have 14 days from delivery to return unwashed, unworn items with tags attached.</p>
                 <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">Exchanges:</strong> We offer free exchanges for different sizes in Shirts and Caps (subject to stock). Tote bags and Accessories are final sale unless defective.</p>
-                <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">Process:</strong> Contact our support team with your order number. Refunds are processed to the original payment method within 5-7 business days after inspection.</p>
+                <p style="margin-bottom: 1rem;"><strong style="color:var(--text);">Process:</strong> Contact our support team with your order number.</p>
             </div>
         </div>
     </div>
@@ -480,17 +677,17 @@
     <script>
         // --- PRODUCT DATABASE ---
         const products = [
-            { id: 1, title: "AIMC Polo Shirt", sub: "Polo", category: "shirts", price: 45, imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg" },
-            { id: 2, title: "AIMC Postmark", sub: "T-Shirt", category: "shirts", price: 50, imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg" },
-            { id: 3, title: "The Starry Sky", sub: "T-Shirt", category: "shirts", price: 65, imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg" }, // Reversed: Default is Back, Hover is Front
-            { id: 4, title: "The Sporty", sub: "T-Shirt", category: "shirts", price: 70, imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png" },
-            { id: 5, title: "Canvas Utility Tote", sub: "Tote Bags", category: "bags", price: 35, imgDefault: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000" },
-            { id: 6, title: "Heavy Duty Black Tote", sub: "Tote Bags", category: "bags", price: 40, imgDefault: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000" },
-            { id: 7, title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 28, imgDefault: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
-            { id: 8, title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 30, imgDefault: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
-            { id: 9, title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 15, imgDefault: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
-            { id: 10, title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 20, imgDefault: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
-            { id: 11, title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 12, imgDefault: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
+            { id: 1, title: "AIMC Polo Shirt", sub: "Polo", category: "shirts", imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg" },
+            { id: 2, title: "AIMC Postmark", sub: "T-Shirt", category: "shirts", imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg" },
+            { id: 3, title: "The Starry Sky", sub: "T-Shirt", category: "shirts", imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg" }, 
+            { id: 4, title: "The Sporty", sub: "T-Shirt", category: "shirts", imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png" },
+            { id: 5, title: "Canvas Utility Tote", sub: "Tote Bags", category: "bags", imgDefault: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1622560480654-d96214fdc887?q=80&w=1000" },
+            { id: 6, title: "Heavy Duty Black Tote", sub: "Tote Bags", category: "bags", imgDefault: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1597633244018-b22340b0337c?q=80&w=1000" },
+            { id: 7, title: "Signature Dad Cap", sub: "Caps", category: "caps", imgDefault: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
+            { id: 8, title: "Mesh Trucker Hat", sub: "Caps", category: "caps", imgDefault: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
+            { id: 9, title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", imgDefault: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
+            { id: 10, title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", imgDefault: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
+            { id: 11, title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", imgDefault: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
         ];
 
         // --- RENDER ENGINE ---
@@ -509,16 +706,16 @@
                 if (catProducts.length === 0) return;
 
                 const section = document.createElement('section');
-                section.className = 'category-section active'; // Removed .reveal here to apply GSAP strictly to cards
+                section.className = 'category-section active'; 
                 section.id = `section-${cat.id}`;
                 
                 let cardsHTML = catProducts.map(p => `
-                    <div class="product-card">
+                    <div class="product-card" onclick="openProductPage(${p.id})">
                         <div class="img-wrapper" oncontextmenu="return false;">
                             <img src="${p.imgDefault}" class="img-default" alt="${p.title}" draggable="false">
                             <img src="${p.imgHover}" class="img-hover" alt="${p.title}" draggable="false">
                             <div class="add-overlay">
-                                <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
+                                <button class="btn-add" onclick="event.stopPropagation(); openProductPage(${p.id});">View Item</button>
                             </div>
                         </div>
                         <div class="product-info">
@@ -526,7 +723,6 @@
                                 <h3 class="product-name">${p.title}</h3>
                                 <p class="product-sub">${p.sub}</p>
                             </div>
-                            <p class="product-price">$${p.price}</p>
                         </div>
                     </div>
                 `).join('');
@@ -542,6 +738,66 @@
                 mainContent.appendChild(section);
             });
             initScrollAnimations();
+        }
+
+        // --- FULL DEDICATED PRODUCT PAGE LOGIC ---
+        let currentActiveProductId = null;
+        let selectedSize = 'M';
+
+        function openProductPage(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            currentActiveProductId = id;
+            selectedSize = 'M';
+
+            document.getElementById('p-page-title').innerText = product.title;
+            document.getElementById('p-page-sub').innerText = product.sub;
+            
+            const mainImg = document.getElementById('p-page-main-img');
+            mainImg.src = product.imgDefault;
+
+            const thumbsContainer = document.getElementById('p-page-thumbs');
+            thumbsContainer.innerHTML = `
+                <img src="${product.imgDefault}" class="p-page-thumb active" onclick="switchPageImg(this, '${product.imgDefault}')" draggable="false" oncontextmenu="return false;">
+                <img src="${product.imgHover}" class="p-page-thumb" onclick="switchPageImg(this, '${product.imgHover}')" draggable="false" oncontextmenu="return false;">
+            `;
+
+            selectSize('M');
+
+            const pageView = document.getElementById('product-page-view');
+            pageView.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function closeProductPage() {
+            const pageView = document.getElementById('product-page-view');
+            pageView.classList.remove('active');
+        }
+
+        function switchPageImg(thumb, src) {
+            document.querySelectorAll('.p-page-thumb').forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+            document.getElementById('p-page-main-img').src = src;
+        }
+
+        function selectSize(size) {
+            selectedSize = size;
+            document.querySelectorAll('.size-option').forEach(btn => {
+                if (btn.innerText === size) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+        }
+
+        function openSizeChartModal() {
+            document.getElementById('size-chart-modal').classList.add('active');
+        }
+
+        function addCurrentToWishlist() {
+            if (currentActiveProductId) {
+                addToWishlist(currentActiveProductId, selectedSize);
+                toggleWishlistDrawer(true);
+            }
         }
 
         // --- SEARCH & FILTER LOGIC ---
@@ -569,61 +825,47 @@
             renderLayout(searched);
         }
 
-        // --- CART LOGIC ---
-        let cart = [];
+        // --- WISHLIST LOGIC ---
+        let wishlist = [];
 
-        function addToCart(id) {
+        function addToWishlist(id, size = 'M') {
             const product = products.find(p => p.id === id);
-            const exists = cart.find(item => item.id === id);
-            if (exists) exists.qty++;
-            else cart.push({ ...product, qty: 1 });
-            
-            updateCartUI();
-            toggleCart(true); 
-        }
-
-        function updateQty(id, change) {
-            const item = cart.find(i => i.id === id);
-            if (item) {
-                item.qty += change;
-                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
-                updateCartUI();
+            const exists = wishlist.find(item => item.id === id && item.size === size);
+            if (!exists) {
+                wishlist.push({ ...product, size: size });
             }
+            updateWishlistUI();
         }
 
-        function updateCartUI() {
-            const container = document.getElementById('cart-items');
-            document.getElementById('cart-badge').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
+        function removeFromWishlist(id, size) {
+            wishlist = wishlist.filter(i => !(i.id === id && i.size === size));
+            updateWishlistUI();
+        }
+
+        function updateWishlistUI() {
+            const container = document.getElementById('wishlist-items');
+            const totalCount = wishlist.length;
             
-            if (cart.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-dim); text-align: center; margin-top: 2rem;">Cart is empty.</p>';
-                document.getElementById('cart-total').innerText = '$0.00';
+            document.getElementById('wishlist-badge').innerText = totalCount;
+            document.getElementById('p-page-wishlist-badge').innerText = totalCount;
+            
+            if (wishlist.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-dim); text-align: center; margin-top: 2rem;">Your Wishlist is empty.</p>';
                 return;
             }
 
-            container.innerHTML = cart.map(item => `
-                <div class="cart-item">
+            container.innerHTML = wishlist.map(item => `
+                <div class="wishlist-item">
                     <img src="${item.imgDefault}" draggable="false" oncontextmenu="return false;" style="pointer-events: none;">
                     <div class="item-details">
                         <div>
-                            <div class="heading" style="font-size: 1.2rem;">${item.title}</div>
-                            <div style="color: var(--text-dim); font-size: 0.8rem;">$${item.price}</div>
+                            <div class="heading" style="font-size: 1.1rem;">${item.title}</div>
+                            <div style="color: var(--text-dim); font-size: 0.8rem; margin-top: 0.2rem;">Size: ${item.size}</div>
                         </div>
-                        <div>
-                            <div class="qty-controls">
-                                <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                                <span>${item.qty}</span>
-                                <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
-                            </div>
-                            <button class="remove-btn" onclick="updateQty(${item.id}, -999)">Remove</button>
-                        </div>
+                        <button class="remove-btn" onclick="removeFromWishlist(${item.id}, '${item.size}')">Remove</button>
                     </div>
                 </div>
             `).join('');
-
-            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-            document.getElementById('pay-btn').innerText = `Pay $${total.toFixed(2)}`;
         }
 
         // --- UI TOGGLES ---
@@ -632,13 +874,13 @@
             document.getElementById('global-overlay').classList.add('active');
         }
 
-        function toggleCart(forceOpen = false) {
+        function toggleWishlistDrawer(forceOpen = false) {
             if (forceOpen === true) {
-                document.getElementById('cart-drawer').classList.add('open');
+                document.getElementById('wishlist-drawer').classList.add('open');
                 document.getElementById('global-overlay').classList.add('active');
             } else {
-                document.getElementById('cart-drawer').classList.toggle('open');
-                if(document.getElementById('cart-drawer').classList.contains('open')) {
+                document.getElementById('wishlist-drawer').classList.toggle('open');
+                if(document.getElementById('wishlist-drawer').classList.contains('open')) {
                     document.getElementById('global-overlay').classList.add('active');
                 } else {
                     document.getElementById('global-overlay').classList.remove('active');
@@ -647,53 +889,27 @@
         }
 
         function closeDrawers() {
-            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('wishlist-drawer').classList.remove('open');
             document.getElementById('nav-drawer').classList.remove('open');
             document.getElementById('global-overlay').classList.remove('active');
         }
 
         function openModal(id) {
-            if (id === 'checkout-modal' && cart.length === 0) {
-                alert("Cart is empty"); return;
-            }
-            if (id === 'checkout-modal') closeDrawers();
-            
+            closeDrawers();
             document.getElementById('modal-overlay').classList.add('active');
             document.getElementById(id).classList.add('active');
-            
-            if(id === 'checkout-modal') {
-                document.getElementById('checkout-form-container').style.display = 'block';
-                document.getElementById('success-screen').style.display = 'none';
-            }
         }
 
         function closeModals() {
-            document.getElementById('modal-overlay').classList.remove('active');
             document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-        }
-
-        function processCheckout(e) {
-            e.preventDefault();
-            const btn = document.getElementById('pay-btn');
-            btn.innerText = "Processing...";
-            
-            setTimeout(() => {
-                cart = []; updateCartUI();
-                document.getElementById('checkout-form-container').style.display = 'none';
-                document.getElementById('success-screen').style.display = 'block';
-                btn.innerText = "Pay Now";
-                e.target.reset();
-            }, 1500);
         }
 
         // --- SCROLL EFFECTS ---
         function initScrollAnimations() {
-            // Kill existing ScrollTriggers properly to prevent duplicates when rendering anew
             if (typeof ScrollTrigger !== 'undefined') {
                 ScrollTrigger.getAll().forEach(st => st.kill());
             }
 
-            // Normal IntersectionObserver for UI blocks (.reveal)
             const reveals = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
@@ -705,7 +921,6 @@
 
             reveals.forEach(reveal => observer.observe(reveal));
 
-            // GSAP ScrollTrigger for Product Cards (smooth raise up)
             if (typeof gsap !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
                 
