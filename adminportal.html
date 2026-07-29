@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Admin | AIMCMERCH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        :root { --bg: #f4f6f8; --surface: #ffffff; --text: #202223; --text-dim: #6d7175; --border: #c9cccf; --primary: #008060; --primary-hover: #006e52; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* LOGIN OVERLAY */
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; justify-content: center; align-items: center; }
+        .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2.5rem; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        .sidebar { width: 250px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; }
+        .nav { list-style: none; padding: 1rem 0; flex: 1; }
+        .nav li { padding: 0.8rem 1.5rem; cursor: pointer; color: var(--text-dim); font-weight: 500; transition: 0.2s; }
+        .nav li:hover, .nav li.active { background: #f0f2f4; color: var(--text); border-left: 3px solid var(--primary); }
+
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .header { background: var(--surface); padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 1.4rem; font-weight: 600; }
+        .btn { background: var(--primary); color: #fff; border: none; padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { background: #f0f2f4; }
+
+        .content { flex: 1; padding: 2rem; overflow-y: auto; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: #f9fafb; font-weight: 600; color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f9fafb; }
+        
+        .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: #e3f1df; color: #1f5139; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--surface); padding: 2rem; border-radius: 8px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 90vh; overflow-y:auto; }
+        .modal h2 { margin-bottom: 1.5rem; font-size: 1.2rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
+        .form-group input, .form-group select { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
+    </style>
+</head>
+<body>
+
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="login-screen">
+        <div class="login-card">
+            <h2 style="margin-bottom: 0.5rem;">Admin Login</h2>
+            <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem;">Enter credentials to access AIMCMERCH dashboard.</p>
+            <form id="admin-login-form">
+                <div class="form-group"><label>Email</label><input type="email" id="login-email" required placeholder="admin@aimcmerch.com"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="login-password" required placeholder="••••••••"></div>
+                <button type="submit" class="btn" style="width:100%; margin-top:1rem;">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">AIMCMERCH Admin</div>
+        <ul class="nav">
+            <li class="nav-item active" onclick="switchTab('orders-tab', this)">Orders</li>
+            <li class="nav-item" onclick="switchTab('products-tab', this)">Products</li>
+        </ul>
+        <div style="padding: 1.5rem; border-top: 1px solid var(--border);">
+            <button class="btn btn-outline" style="width: 100%;" onclick="handleLogout()">Logout</button>
+        </div>
+    </aside>
+
+    <main class="main">
+        <!-- ORDERS TAB -->
+        <div id="orders-tab" class="tab-content active">
+            <header class="header">
+                <h1>Orders</h1>
+                <button class="btn btn-outline" onclick="exportToPDF()">Export to PDF</button>
+            </header>
+            <div class="content">
+                <div class="card">
+                    <table>
+                        <thead><tr><th>Date</th><th>Customer Info</th><th>Amount / TRX ID</th><th>Items</th><th>Actions</th></tr></thead>
+                        <tbody id="orders-tbody"><tr><td colspan="5" style="text-align:center;">Loading orders...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div id="products-tab" class="tab-content">
+            <header class="header">
+                <h1>Products</h1>
+                <button class="btn" onclick="openProductModal()">Add Product</button>
+            </header>
+            <div class="content">
+                <div class="card">
+                    <table>
+                        <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead>
+                        <tbody id="products-tbody"><tr><td colspan="5" style="text-align:center;">Loading products...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PRODUCT MODAL -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal">
+            <h2 id="modal-title">Add New Product</h2>
+            <form id="product-form">
+                <input type="hidden" id="p-id">
+                <div class="form-group"><label>Title</label><input type="text" id="p-title" required></div>
+                <div class="form-group"><label>Subtitle</label><input type="text" id="p-sub" required></div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="p-category" required>
+                        <option value="shirts">Shirts</option>
+                        <option value="bags">Tote Bags</option>
+                        <option value="caps">Caps</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Price (RS)</label><input type="number" id="p-price" required></div>
+                <div class="form-group"><label>Default Image URL</label><input type="url" id="p-imgDefault" required placeholder="https://..."></div>
+                <div class="form-group"><label>Hover Image URL</label><input type="url" id="p-imgHover" required placeholder="https://..."></div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancel</button>
+                    <button type="submit" class="btn" id="p-submit-btn">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyATyFD4-0aQYGKdLrhRAn_YOYECT360nEU",
+            authDomain: "aimcmerch-540ec.firebaseapp.com",
+            projectId: "aimcmerch-540ec",
+            storageBucket: "aimcmerch-540ec.firebasestorage.app",
+            messagingSenderId: "490541069045",
+            appId: "1:490541069045:web:faf0d9c32c2662ee220bbc",
+            measurementId: "G-MQV0QC5LH4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let globalOrders = [];
+        let globalProducts = [];
+
+        const defaultCatalog = [
+            { title: "AIMC Polo Shirt", sub: "Polo", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg" },
+            { title: "AIMC Postmark", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg" },
+            { title: "The Starry Sky", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg" }, 
+            { title: "The Sporty", sub: "Drop Shoulder", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png" },
+            { title: "THE WINGS", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/EFfke5Q.png", imgHover: "https://i.imgur.com/0Y9qxvB.png" },
+            { title: "The Iqbalian Signature", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/8TsljdR.png", imgHover: "https://i.imgur.com/xUQRgEy.png" },
+            { title: "IQBALIAN", sub: "Tote Bags", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/vLkRrkD.jpeg", imgHover: "https://i.imgur.com/jzLBXuN.jpeg" },
+            { title: "SHAHEEN", sub: "Tote Bags", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/pbq2sIh.png", imgHover: "https://i.imgur.com/pbq2sIh.png" },
+            { title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 999, imgDefault: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
+            { title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 999, imgDefault: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
+            { title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 499, imgDefault: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
+            { title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 499, imgDefault: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
+            { title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 299, imgDefault: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
+        ];
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-screen').style.display = 'none';
+                fetchOrders();
+                fetchProducts();
+            } else {
+                document.getElementById('login-screen').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch(err) {
+                alert("Login failed: " + err.message);
+            }
+        });
+
+        window.handleLogout = () => signOut(auth);
+
+        window.switchTab = function(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        };
+
+        async function fetchOrders() {
+            try {
+                const snapshot = await getDocs(collection(db, "orders"));
+                globalOrders = [];
+                snapshot.forEach(doc => globalOrders.push({ id: doc.id, ...doc.data() }));
+                globalOrders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                renderOrders();
+            } catch(e) { console.error(e); }
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('orders-tbody');
+            if(globalOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No orders submitted yet.</td></tr>`; return; }
+
+            tbody.innerHTML = globalOrders.map(order => {
+                const date = new Date(order.timestamp).toLocaleString();
+                const waPhone = order.phone.replace(/^0/, '92');
+                const itemsList = order.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('<br>');
+                
+                return `
+                <tr>
+                    <td style="color:var(--text-dim);">${date}</td>
+                    <td>
+                        <strong>${order.customerName}</strong><br>
+                        <span style="font-size:0.8rem; color:var(--text-dim);">${order.phone}</span><br>
+                        <span style="font-size:0.8rem; color:var(--text-dim);">${order.class} - ${order.location}</span>
+                    </td>
+                    <td>
+                        <strong>RS ${order.total}/-</strong><br>
+                        <span class="badge">TRX: ${order.trxId}</span>
+                    </td>
+                    <td style="font-size:0.8rem; line-height: 1.4;">${itemsList}</td>
+                    <td>
+                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block;">WhatsApp</a>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        async function fetchProducts() {
+            try {
+                const snapshot = await getDocs(collection(db, "products"));
+                globalProducts = [];
+                snapshot.forEach(doc => globalProducts.push({ fbId: doc.id, ...doc.data() }));
+
+                // AUTO-SEED: If Firestore has 0 products, auto-sync standard catalog right now!
+                if (globalProducts.length === 0) {
+                    document.getElementById('products-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;">Auto-syncing products to Firebase Database...</td></tr>`;
+                    for (let item of defaultCatalog) {
+                        await addDoc(collection(db, "products"), item);
+                    }
+                    const newSnapshot = await getDocs(collection(db, "products"));
+                    globalProducts = [];
+                    newSnapshot.forEach(doc => globalProducts.push({ fbId: doc.id, ...doc.data() }));
+                }
+
+                renderProducts();
+            } catch(e) { console.error(e); }
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('products-tbody');
+            if(globalProducts.length === 0) { 
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No products in Database.</td></tr>`; 
+                return; 
+            }
+
+            tbody.innerHTML = globalProducts.map(p => `
+                <tr>
+                    <td><img src="${p.imgDefault}" style="width:40px; height:50px; object-fit:cover; border-radius:4px;"></td>
+                    <td><strong>${p.title}</strong><br><span style="font-size:0.8rem;color:var(--text-dim)">${p.sub}</span></td>
+                    <td style="text-transform:capitalize;">${p.category}</td>
+                    <td>RS ${p.price}/-</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="editProduct('${p.fbId}')">Edit</button>
+                        <button class="btn" style="background:#d82c0d; padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="deleteProduct('${p.fbId}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.openProductModal = function() {
+            document.getElementById('product-form').reset();
+            document.getElementById('p-id').value = '';
+            document.getElementById('modal-title').innerText = "Add New Product";
+            document.getElementById('product-modal').classList.add('active');
+        };
+        window.closeProductModal = function() { document.getElementById('product-modal').classList.remove('active'); };
+        
+        window.editProduct = function(fbId) {
+            const p = globalProducts.find(x => x.fbId === fbId);
+            if(!p) return;
+            document.getElementById('p-id').value = p.fbId;
+            document.getElementById('p-title').value = p.title;
+            document.getElementById('p-sub').value = p.sub;
+            document.getElementById('p-category').value = p.category;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-imgDefault').value = p.imgDefault;
+            document.getElementById('p-imgHover').value = p.imgHover;
+            document.getElementById('modal-title').innerText = "Edit Product";
+            document.getElementById('product-modal').classList.add('active');
+        };
+
+        window.deleteProduct = async function(fbId) {
+            if(confirm("Are you sure you want to delete this product?")) {
+                await deleteDoc(doc(db, "products", fbId));
+                fetchProducts();
+            }
+        };
+
+        document.getElementById('product-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('p-submit-btn');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            const fbId = document.getElementById('p-id').value;
+            const productData = {
+                title: document.getElementById('p-title').value,
+                sub: document.getElementById('p-sub').value,
+                category: document.getElementById('p-category').value,
+                price: parseInt(document.getElementById('p-price').value),
+                imgDefault: document.getElementById('p-imgDefault').value,
+                imgHover: document.getElementById('p-imgHover').value
+            };
+
+            try {
+                if(fbId) {
+                    await updateDoc(doc(db, "products", fbId), productData);
+                } else {
+                    await addDoc(collection(db, "products"), productData);
+                }
+                closeProductModal();
+                fetchProducts();
+            } catch (err) { alert("Error saving product: " + err.message); }
+            
+            btn.innerText = "Save Product"; btn.disabled = false;
+        });
+
+        window.exportToPDF = function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            doc.text("AIMCMERCH Orders Report", 14, 15);
+            
+            const tableData = globalOrders.map(o => [
+                new Date(o.timestamp).toLocaleDateString(),
+                o.customerName,
+                o.phone,
+                o.class,
+                o.location,
+                `RS ${o.total}`,
+                o.trxId,
+                o.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('\n')
+            ]);
+
+            doc.autoTable({
+                startY: 20,
+                head: [['Date', 'Name', 'Phone', 'Class', 'Pickup', 'Total', 'TRX ID', 'Items']],
+                body: tableData,
+                styles: { fontSize: 7, cellPadding: 2 },
+                headStyles: { fillColor: [0, 128, 96] }
+            });
+            
+            doc.save("AIMCMERCH_Orders.pdf");
+        };
+    </script>
+</body>
+</html>
