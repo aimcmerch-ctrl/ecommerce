@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIMCMERCH | IQBALIAN</title>
     
+    <!-- FORCES SECURE CONNECTION (HTTPS) IF OPENED VIA WHATSAPP HTTP LINK -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script>
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            location.replace(`https:${location.href.substring(location.protocol.length)}`);
+        }
+    </script>
+    
     <!-- Fonts: Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,8 +65,8 @@
         .cart-badge { position: absolute; top: -6px; right: -10px; background: var(--text); color: var(--bg); font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-family: var(--font-body); }
 
         .search-wrapper { display: flex; align-items: center; }
-        .search-input { width: 0; opacity: 0; background: transparent; border: none; border-bottom: 1px solid var(--text); color: var(--text); font-family: var(--font-body); font-size: 0.9rem; transition: width 0.4s ease, opacity 0.4s ease, padding 0.4s ease; outline: none; padding: 0; margin-left: 0; }
-        .search-input.active { width: 160px; opacity: 1; padding: 0.3rem 0.5rem; margin-left: 0.5rem; }
+        .search-input { width: 0; opacity: 0; background: transparent; border: none; border-bottom: 1px solid transparent; color: var(--text); font-family: var(--font-body); font-size: 0.9rem; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); outline: none; padding: 0; margin-left: 0; pointer-events: none; }
+        .search-input.active { width: 180px; opacity: 1; padding: 0.3rem 0.5rem; margin-left: 0.5rem; border-bottom: 1px solid var(--text-dim); pointer-events: auto; }
 
         /* HERO */
         .hero { min-height: 125vh; position: relative; display: flex; align-items: center; justify-content: center; padding: 0 3rem; overflow: hidden; }
@@ -225,7 +233,7 @@
             header { padding: 1rem 1.2rem; }
             .logo { font-size: 1rem; } 
             .icon-btn { font-size: 1.2rem; }
-            .search-input.active { width: 110px; font-size: 0.8rem; }
+            .search-input.active { width: 120px; font-size: 0.8rem; border-bottom: 1px solid var(--text-dim); }
             .hero { min-height: 110vh; }
             .hero-main-logo { max-width: 140px; } 
             .hero-subtitle { font-size: 0.65rem; margin-top: 1rem; }
@@ -355,11 +363,11 @@
                 <h1 class="heading p-page-title" id="p-page-title">Title</h1>
                 <div class="p-page-sub" id="p-page-sub">Category</div>
                 <div class="p-page-price" id="p-page-price">RS 0/-</div>
-                <div class="size-header">
+                <div class="size-header" id="p-page-size-header">
                     <label>Select Size</label>
                     <button class="btn-size-chart-link" onclick="openSizeChartModal()">Size Chart</button>
                 </div>
-                <div class="size-selector">
+                <div class="size-selector" id="p-page-size-selector">
                     <button class="size-option" onclick="selectSize('S')">S</button>
                     <button class="size-option active" onclick="selectSize('M')">M</button>
                     <button class="size-option" onclick="selectSize('L')">L</button>
@@ -728,13 +736,29 @@
         window.openProductPage = function(id) {
             const product = products.find(p => p.id == id);
             if (!product) return;
-            currentActiveProductId = id; selectedSize = 'M';
+            currentActiveProductId = id; 
+            
+            const sizeHeader = document.getElementById('p-page-size-header');
+            const sizeSelector = document.getElementById('p-page-size-selector');
+            
+            // HIDE SIZE SELECTION FOR BAGS/CAPS/ACCESSORIES
+            if (product.category === 'bags' || product.category === 'caps' || product.category === 'accessories') {
+                sizeHeader.style.display = 'none';
+                sizeSelector.style.display = 'none';
+                selectedSize = 'One Size';
+            } else {
+                sizeHeader.style.display = 'flex';
+                sizeSelector.style.display = 'grid';
+                selectedSize = 'M';
+                selectSize('M');
+            }
+            
             document.getElementById('p-page-title').innerText = product.title;
             document.getElementById('p-page-sub').innerText = product.sub;
             document.getElementById('p-page-price').innerText = `RS ${product.price}/-`;
             document.getElementById('p-page-main-img').src = product.imgDefault;
             document.getElementById('p-page-thumbs').innerHTML = `<img src="${product.imgDefault}" class="p-page-thumb active" onclick="switchPageImg(this, '${product.imgDefault}')" draggable="false"><img src="${product.imgHover}" class="p-page-thumb" onclick="switchPageImg(this, '${product.imgHover}')" draggable="false">`;
-            selectSize('M');
+            
             document.getElementById('product-page-view').classList.add('active'); window.scrollTo({ top: 0 });
         };
         window.closeProductPage = () => document.getElementById('product-page-view').classList.remove('active');
@@ -742,7 +766,18 @@
         window.selectSize = (size) => { selectedSize = size; document.querySelectorAll('.size-option').forEach(btn => btn.classList.toggle('active', btn.innerText === size)); };
         window.openSizeChartModal = () => document.getElementById('size-chart-modal').classList.add('active');
         window.addCurrentToCart = () => { if (currentActiveProductId) { addToCart(currentActiveProductId, selectedSize); toggleCartDrawer(true); } };
-        window.toggleSearch = () => { const input = document.getElementById('searchInput'); input.classList.toggle('active'); if(input.classList.contains('active')) input.focus(); };
+        
+        // BETTER SEARCH ANIMATION AND FUNCTIONALITY
+        window.toggleSearch = () => { 
+            const input = document.getElementById('searchInput'); 
+            input.classList.toggle('active'); 
+            if(input.classList.contains('active')) { 
+                input.focus(); 
+            } else { 
+                input.value = ''; 
+                window.handleSearch(); 
+            } 
+        };
         window.filterCategory = (catId) => {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active'); document.getElementById('searchInput').value = ''; 
@@ -751,6 +786,9 @@
         window.handleSearch = () => {
             const term = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if(term === '') {
+                document.querySelector('.filter-btn').classList.add('active'); // active first button (All)
+            }
             renderLayout(products.filter(p => p.title.toLowerCase().includes(term) || p.sub.toLowerCase().includes(term)));
         };
 
