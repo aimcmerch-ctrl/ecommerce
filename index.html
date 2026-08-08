@@ -12,7 +12,7 @@
         }
     </script>
     
-    <!-- Fonts (Added 300 Light weight for ultra-thin header text) -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
@@ -39,10 +39,10 @@
         button { cursor: pointer; font-family: var(--font-body); }
         ul { list-style: none; }
 
-        /* HEADER - ABSOLUTE (UN-STICKED), TRANSPARENT, THIN WHITE TEXT */
+        /* HEADER - ABSOLUTE (UN-STICKED), TRANSPARENT, WHITE TEXT */
         header { position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; transition: all 0.3s ease; background: transparent; border-bottom: none; }
         .header-left-menu, .header-right-menu { display: flex; align-items: center; gap: 1.8rem; z-index: 101; }
-        .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 300; font-size: 1.8rem; letter-spacing: 5px; color: #ffffff; text-transform: uppercase; }
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 500; font-size: 1.8rem; letter-spacing: 5px; color: #ffffff; text-transform: uppercase; }
         .header-nav-link { font-family: var(--font-head); font-size: 0.8rem; font-weight: 300; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; transition: 0.3s; }
         .header-nav-link:hover { color: #cccccc; }
         .icon-btn { background: none; border: none; color: #ffffff; font-size: 1.5rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: 0.3s ease; position: relative; }
@@ -122,15 +122,13 @@
 
         .p-page-details { display: flex; flex-direction: column; justify-content: center; }
         
-        /* CALLIGRAPHY DESIGNER NAME */
         .p-designer-badge { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #444; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
-        
         .p-page-title { font-size: 2.2rem; margin-bottom: 0.3rem; line-height: 1.1; font-weight: 900; }
         .p-page-sub { color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; font-weight: 600; }
         .p-page-price { font-size: 1.5rem; font-weight: 900; font-family: var(--font-head); margin-bottom: 1.5rem; color: var(--accent); }
         
-        /* NO CONTAINER OR BORDER ON DESCRIPTION */
-        .p-page-desc { font-size: 0.95rem; color: #333; line-height: 1.8; margin-bottom: 2.5rem; text-align: justify; }
+        /* PLACED AFTER ADD TO CART BUTTON NOW */
+        .p-page-desc { font-size: 0.95rem; color: #333; line-height: 1.8; margin-top: 2.5rem; text-align: justify; }
         
         .size-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
         .size-header label { font-size: 0.8rem; color: var(--text); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
@@ -164,19 +162,20 @@
         .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; }
         .btn-upload { background: var(--surface); border: 1.5px dashed var(--border); color: var(--text); padding: 1.2rem; width: 100%; text-align: center; font-family: var(--font-head); font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px; }
 
-        /* SKETCHY DESIGNERS SECTION WITH GSAP STITCHING LAYOUT */
+        /* MINIMALIST DESIGNERS SECTION WITH GSAP STITCHING LAYOUT */
         .designers-section { padding: 5rem 3rem; background: #fafafa; border-top: 2px dashed #111; border-bottom: 2px dashed #111; overflow: hidden; }
         .sketch-title { text-align: center; font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -1px; }
         .sketch-sub { text-align: center; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; font-weight: 800; }
         
-        .stitch-container { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4rem; padding: 4rem 0; margin: 0 auto; max-width: 800px; }
-        .stitch-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; background-image: linear-gradient(#111 60%, transparent 40%); background-size: 3px 25px; transform-origin: top; transform: scaleY(0); z-index: 1; }
+        .stitch-container { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3rem; padding: 4rem 0; margin: 0 auto; max-width: 800px; }
+        .stitch-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background-image: linear-gradient(#aaa 50%, transparent 50%); background-size: 2px 20px; transform-origin: top; transform: scaleY(0); z-index: 1; }
         
-        .designer-card { width: 45%; background: #fff; border: 2px solid #111; border-radius: 255px 15px 225px 15px/15px 225px 15px 255px; padding: 2rem 1.5rem; text-align: center; box-shadow: 6px 6px 0px #111; position: relative; z-index: 2; }
+        /* Removed borders, backgrounds, and shadows completely */
+        .designer-card { width: 45%; background: transparent; padding: 1rem 0; text-align: center; position: relative; z-index: 2; }
         .designer-card:nth-child(even) { align-self: flex-start; margin-left: 2%; }
         .designer-card:nth-child(odd) { align-self: flex-end; margin-right: 2%; }
-        .designer-name { font-family: var(--font-head); font-size: 1.15rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.5rem; color: #000; }
-        .designer-role { font-size: 0.75rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+        .designer-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.2rem; color: #000; }
+        .designer-role { font-size: 0.8rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
         
         /* ABOUT SECTION */
         .about-section { padding: 6rem 3rem; background: #ffffff; text-align: center; }
@@ -237,9 +236,12 @@
 
         @media (max-width: 768px) {
             header { padding: 1rem 1.2rem; }
+            
+            /* Hide Text Links On Mobile To Reduce Clutter Entirely */
+            .header-nav-link { display: none; }
+            
             .header-left-menu, .header-right-menu { gap: 0.8rem; }
-            .header-nav-link { font-size: 0.65rem; letter-spacing: 0.5px; }
-            .logo { font-size: 1.1rem; letter-spacing: 1.5px; } 
+            .logo { font-size: 1.2rem; letter-spacing: 2.5px; } 
             .hero { min-height: 100vh; padding: 0 1.2rem; }
             .hero-main-logo { max-width: 180px; } 
             .hero-subtitle { font-size: 0.7rem; letter-spacing: 3px; }
@@ -252,14 +254,13 @@
             
             /* Mobile Stitch Adjustments */
             .stitch-line { left: 10%; }
-            .designer-card:nth-child(even), .designer-card:nth-child(odd) { align-self: flex-end; margin: 0; margin-left: auto; width: 85%; }
+            .designer-card:nth-child(even), .designer-card:nth-child(odd) { align-self: flex-end; margin: 0; margin-left: auto; width: 85%; text-align: left; }
             
             .p-page-header, .c-page-header { padding: 0.9rem 1.2rem; }
             .p-page-body { grid-template-columns: 1fr; padding: 1.2rem; gap: 1.5rem; }
             .p-page-main-img { max-height: 50vh; }
             .p-page-title { font-size: 1.5rem; }
             .p-designer-badge { font-size: 1.8rem; }
-            .p-page-desc { font-size: 0.85rem; }
             .about-section { padding: 4rem 1.2rem; }
             .about-founders { flex-direction: column; align-items: center; gap: 2rem; }
             footer { padding: 2.5rem 1.2rem 1.5rem; }
@@ -365,12 +366,13 @@
                 </div>
                 <div class="p-page-thumbs" id="p-page-thumbs"></div>
             </div>
+            
             <div class="p-page-details">
                 <div class="p-designer-badge" id="p-page-designer">Designed by</div>
                 <h1 class="heading p-page-title" id="p-page-title">Title</h1>
                 <div class="p-page-sub" id="p-page-sub">Category</div>
                 <div class="p-page-price" id="p-page-price">RS 0/-</div>
-                <div class="p-page-desc" id="p-page-desc">Description</div>
+                
                 <div class="size-header" id="p-page-size-header"><label>Select Size</label><button class="btn-size-chart-link" onclick="openSizeChartModal()">Size Chart</button></div>
                 <div class="size-selector" id="p-page-size-selector">
                     <button class="size-option" onclick="selectSize('S')">S</button>
@@ -378,7 +380,11 @@
                     <button class="size-option" onclick="selectSize('L')">L</button>
                     <button class="size-option" onclick="selectSize('XL')">XL</button>
                 </div>
+                
                 <button class="btn-cart-main" onclick="addCurrentToCart()"><i class="ph-thin ph-shopping-bag"></i> Add to Cart</button>
+
+                <!-- MOVED PRODUCT DESCRIPTION TO BE AFTER ADD TO CART -->
+                <div class="p-page-desc" id="p-page-desc">Description</div>
             </div>
 
             <div style="grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 3.5rem;">
@@ -502,7 +508,6 @@
                 mainContent.appendChild(section);
             });
             
-            // Re-trigger GSAP for dynamically loaded sections
             setTimeout(() => { ScrollTrigger.refresh(); }, 100);
         };
 
@@ -516,29 +521,25 @@
             `).join('');
         };
 
-        // Initialize Layout
         document.getElementById('main-content').innerHTML = `<section class="category-section"><div class="horizontal-scroll">${Array(4).fill(0).map(()=>`<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>`).join('')}</div></section>`;
         setTimeout(() => renderLayout(), 200);
 
-        // GSAP Scroll Animations Initialization
         window.addEventListener("load", () => {
             gsap.registerPlugin(ScrollTrigger);
 
-            // Stitching Animation for Designers Section
             gsap.to(".stitch-line", {
                 scaleY: 1, ease: "none",
                 scrollTrigger: { trigger: ".stitch-container", start: "top 70%", end: "bottom 80%", scrub: true }
             });
             
-            // Fix: Replaced opacity:0 in CSS with fromTo to ensure they appear perfectly visible
+            // Minimal fade + slight slide for Designer Cards
             gsap.utils.toArray('.designer-card').forEach((card, i) => {
                 gsap.fromTo(card, 
-                    { x: i % 2 === 0 ? -60 : 60, opacity: 0, rotation: i % 2 === 0 ? -8 : 8 },
-                    { x: 0, opacity: 1, rotation: 0, scrollTrigger: { trigger: card, start: "top 90%", end: "top 60%", scrub: 1 } }
+                    { x: i % 2 === 0 ? -30 : 30, opacity: 0 },
+                    { x: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 85%", end: "top 60%", scrub: 1 } }
                 );
             });
 
-            // Global Scroll Reveal for all sections inside scroll-reveal-container
             const revealSections = document.querySelectorAll('.scroll-reveal-container section, .scroll-reveal-container footer');
             revealSections.forEach(sec => {
                 if(sec.id !== 'designers') { 
@@ -550,7 +551,6 @@
             });
         });
 
-        // Filter Logic
         window.filterCategory = (catId, btnEl) => {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             if(btnEl) btnEl.classList.add('active');
@@ -559,7 +559,7 @@
             renderLayout(catId === 'all' ? products : products.filter(p => p.category === catId));
         };
 
-        // Fixed Search Toggle Logic
+        // Fixed Search Logic
         window.toggleSearch = () => { 
             const inp = document.getElementById('searchInput'); 
             if (inp.classList.contains('active')) {
@@ -576,7 +576,6 @@
         
         window.handleSearch = () => { const t = document.getElementById('searchInput').value.toLowerCase(); renderLayout(products.filter(p => p.title.toLowerCase().includes(t) || p.sub.toLowerCase().includes(t) || p.designer.toLowerCase().includes(t))); };
 
-        // OCR
         document.getElementById('receipt-upload').addEventListener('change', function(e) {
             const file = e.target.files[0]; const lbl = document.getElementById('upload-label'); const trx = document.getElementById('checkout-trx-id');
             if(!file) { lbl.innerText = "Click to select image"; return; } lbl.innerText = file.name;
@@ -600,7 +599,6 @@
             }; reader.readAsDataURL(file);
         });
 
-        // Checkout Submission
         window.handleCheckoutSubmit = async function(e) {
             e.preventDefault(); const btn = document.getElementById('submit-order-btn'); btn.innerText = "Submitting..."; btn.disabled = true;
             const orderIdNum = "#AIMC-" + Math.floor(1000 + Math.random() * 9000);
@@ -615,7 +613,6 @@
             btn.innerText = "Confirm Order"; btn.disabled = false;
         };
 
-        // Product Logic
         let currentId = null; let selSize = 'M'; let cart = [];
         window.openProductPage = (id) => {
             const p = products.find(x => x.id == id); if (!p) return; currentId = id; 
