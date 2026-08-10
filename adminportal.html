@@ -13,18 +13,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        :root { --bg: #f4f6f8; --surface: #ffffff; --text: #202223; --text-dim: #6d7175; --border: #c9cccf; --primary: #008060; --primary-hover: #006e52; }
+        :root { --bg: #f4f6f8; --surface: #ffffff; --text: #202223; --text-dim: #6d7175; --border: #c9cccf; --primary: #000000; --primary-hover: #333333; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
         
         /* LOGIN OVERLAY */
-        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; justify-content: center; align-items: center; }
+        #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 5000; display: flex; justify-content: center; align-items: center; padding: 1rem; }
         .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 2.5rem; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-        .sidebar { width: 250px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar { width: 250px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
         .sidebar-header { padding: 1.5rem; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 1.2rem; letter-spacing: 1px; }
         .nav { list-style: none; padding: 1rem 0; flex: 1; }
-        .nav li { padding: 0.8rem 1.5rem; cursor: pointer; color: var(--text-dim); font-weight: 500; transition: 0.2s; }
+        .nav li { padding: 0.8rem 1.5rem; cursor: pointer; color: var(--text-dim); font-weight: 500; transition: 0.2s; border-left: 3px solid transparent; }
         .nav li:hover, .nav li.active { background: #f0f2f4; color: var(--text); border-left: 3px solid var(--primary); }
 
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -36,7 +36,7 @@
         .btn-outline:hover { background: #f0f2f4; }
 
         .content { flex: 1; padding: 2rem; overflow-y: auto; }
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 2rem; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th, td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
@@ -48,13 +48,32 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
         .modal-overlay.active { display: flex; }
-        .modal { background: var(--surface); padding: 2rem; border-radius: 8px; width: 100%; max-width: 500px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 90vh; overflow-y:auto; }
+        .modal { background: var(--surface); padding: 2rem; border-radius: 8px; width: 100%; max-width: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-height: 90vh; overflow-y:auto; }
         .modal h2 { margin-bottom: 1.5rem; font-size: 1.2rem; }
+        
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; }
-        .form-group input, .form-group select { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
+        .form-group textarea { resize: vertical; }
+        .help-text { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.3rem; display: block; }
+
+        @media (max-width: 768px) {
+            body { display: block; overflow-y: auto; height: auto; min-height: 100dvh; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); display: block; }
+            .sidebar-header { text-align: center; }
+            .nav { display: flex; padding: 0; overflow-x: auto;}
+            .nav li { flex: 1; text-align: center; border-left: none; border-bottom: 3px solid transparent; padding: 1rem; white-space: nowrap;}
+            .nav li.active { border-left: none; border-bottom: 3px solid var(--primary); }
+            .sidebar > div { border-top: none; padding: 1rem; text-align: center; }
+            .main { display: block; overflow: visible; }
+            .header { flex-direction: column; gap: 1rem; text-align: center; padding: 1rem; }
+            .content { padding: 1rem; overflow: visible; }
+            .card { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1rem;}
+            table { min-width: 700px; }
+            .modal { padding: 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -77,9 +96,10 @@
         <ul class="nav">
             <li class="nav-item active" onclick="switchTab('orders-tab', this)">Orders</li>
             <li class="nav-item" onclick="switchTab('products-tab', this)">Products</li>
+            <li class="nav-item" onclick="switchTab('settings-tab', this)">Theme Settings</li>
         </ul>
-        <div style="padding: 1.5rem; border-top: 1px solid var(--border);">
-            <button class="btn btn-outline" style="width: 100%;" onclick="handleLogout()">Logout</button>
+        <div>
+            <button class="btn btn-outline" style="width: 100%; max-width: 300px;" onclick="handleLogout()">Logout</button>
         </div>
     </aside>
 
@@ -91,7 +111,7 @@
                 <button class="btn btn-outline" onclick="exportToPDF()">Export to PDF</button>
             </header>
             <div class="content">
-                <div class="card">
+                <div class="card" style="padding: 0;">
                     <table>
                         <thead><tr><th>Date</th><th>Customer Info</th><th>Amount / TRX ID</th><th>Items</th><th>Actions</th></tr></thead>
                         <tbody id="orders-tbody"><tr><td colspan="5" style="text-align:center;">Loading orders...</td></tr></tbody>
@@ -107,11 +127,49 @@
                 <button class="btn" onclick="openProductModal()">Add Product</button>
             </header>
             <div class="content">
-                <div class="card">
+                <div class="card" style="padding: 0;">
                     <table>
                         <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead>
                         <tbody id="products-tbody"><tr><td colspan="5" style="text-align:center;">Loading products...</td></tr></tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="settings-tab" class="tab-content">
+            <header class="header">
+                <h1>Theme & Settings</h1>
+                <button class="btn" onclick="saveThemeSettings()">Save Changes</button>
+            </header>
+            <div class="content">
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Visual Identity</h3>
+                    
+                    <div class="form-group">
+                        <label>Main Store Logo URL (Also updates browser tab Favicon)</label>
+                        <input type="url" id="set-logo" placeholder="https://imgur.com/logo.png">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Hero Background Images (One URL per line)</label>
+                        <textarea id="set-hero-bgs" rows="4" placeholder="https://imgur.com/bg1.jpeg&#10;https://imgur.com/bg2.jpeg"></textarea>
+                        <span class="help-text">If you add multiple images, the homepage will automatically slide between them.</span>
+                    </div>
+
+                    <h3 style="margin-top: 2.5rem; margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Typography & Colors</h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Base Font Size (px)</label>
+                            <input type="number" id="set-font-size" placeholder="16" min="12" max="24">
+                            <span class="help-text">Default is 16px. Affects the entire website.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Accent Color (Buttons, Highlights)</label>
+                            <input type="color" id="set-accent-color" value="#000000" style="padding: 0; height: 40px; cursor: pointer;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,9 +182,11 @@
             <form id="product-form">
                 <input type="hidden" id="p-id">
                 <div class="form-group"><label>Title</label><input type="text" id="p-title" required></div>
-                <div class="form-group"><label>Subtitle</label><input type="text" id="p-sub" required></div>
+                <div class="form-group"><label>Subtitle (Category Label)</label><input type="text" id="p-sub" required></div>
+                <div class="form-group"><label>Designer Name</label><input type="text" id="p-designer" required></div>
+                <div class="form-group"><label>Urdu Name (Optional)</label><input type="text" id="p-urdu"></div>
                 <div class="form-group">
-                    <label>Category</label>
+                    <label>Category (Filter)</label>
                     <select id="p-category" required>
                         <option value="shirts">Shirts</option>
                         <option value="bags">Tote Bags</option>
@@ -137,6 +197,7 @@
                 <div class="form-group"><label>Price (RS)</label><input type="number" id="p-price" required></div>
                 <div class="form-group"><label>Default Image URL</label><input type="url" id="p-imgDefault" required placeholder="https://..."></div>
                 <div class="form-group"><label>Hover Image URL</label><input type="url" id="p-imgHover" required placeholder="https://..."></div>
+                <div class="form-group"><label>Description</label><textarea id="p-desc" rows="4" required></textarea></div>
                 
                 <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
                     <button type="button" class="btn btn-outline" onclick="closeProductModal()">Cancel</button>
@@ -149,7 +210,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyATyFD4-0aQYGKdLrhRAn_YOYECT360nEU",
@@ -168,27 +229,12 @@
         let globalOrders = [];
         let globalProducts = [];
 
-        const defaultCatalog = [
-            { title: "AIMC Polo Shirt", sub: "Polo", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg" },
-            { title: "AIMC Postmark", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg" },
-            { title: "The Starry Sky", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg" }, 
-            { title: "The Sporty", sub: "Drop Shoulder", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png" },
-            { title: "THE WINGS", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/EFfke5Q.png", imgHover: "https://i.imgur.com/0Y9qxvB.png" },
-            { title: "The Iqbalian Signature", sub: "Drop Shoulder", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/8TsljdR.png", imgHover: "https://i.imgur.com/xUQRgEy.png" },
-            { title: "IQBALIAN", sub: "Tote Bags", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/vLkRrkD.jpeg", imgHover: "https://i.imgur.com/jzLBXuN.jpeg" },
-            { title: "SHAHEEN", sub: "Tote Bags", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/pbq2sIh.png", imgHover: "https://i.imgur.com/pbq2sIh.png" },
-            { title: "Signature Dad Cap", sub: "Caps", category: "caps", price: 999, imgDefault: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000" },
-            { title: "Mesh Trucker Hat", sub: "Caps", category: "caps", price: 999, imgDefault: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?q=80&w=1000" },
-            { title: "Matte Metal Keychain", sub: "Keychains", category: "accessories", price: 499, imgDefault: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1606903723385-bd3a0c49cc39?q=80&w=1000" },
-            { title: "Leather Loop Keychain", sub: "Keychains", category: "accessories", price: 499, imgDefault: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=1000" },
-            { title: "Graphite Pencil Set", sub: "Pencils", category: "accessories", price: 299, imgDefault: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000", imgHover: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?q=80&w=1000" }
-        ];
-
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('login-screen').style.display = 'none';
                 fetchOrders();
                 fetchProducts();
+                loadThemeSettings();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
             }
@@ -214,6 +260,40 @@
             element.classList.add('active');
         };
 
+        // --- THEME SETTINGS LOGIC ---
+        async function loadThemeSettings() {
+            try {
+                const docSnap = await getDoc(doc(db, "settings", "store_theme"));
+                if(docSnap.exists()) {
+                    const d = docSnap.data();
+                    if(d.logo) document.getElementById('set-logo').value = d.logo;
+                    if(d.hero_bg) document.getElementById('set-hero-bgs').value = d.hero_bg.join('\n');
+                    if(d.font_size) document.getElementById('set-font-size').value = d.font_size;
+                    if(d.accent_color) document.getElementById('set-accent-color').value = d.accent_color;
+                }
+            } catch(e) { console.error("Error loading theme", e); }
+        }
+
+        window.saveThemeSettings = async function() {
+            const btn = document.querySelector('#settings-tab .btn');
+            btn.innerText = "Saving...";
+            
+            const bgs = document.getElementById('set-hero-bgs').value.split('\n').map(s=>s.trim()).filter(s=>s!=='');
+            const data = {
+                logo: document.getElementById('set-logo').value.trim(),
+                hero_bg: bgs,
+                font_size: document.getElementById('set-font-size').value,
+                accent_color: document.getElementById('set-accent-color').value
+            };
+
+            try {
+                await setDoc(doc(db, "settings", "store_theme"), data);
+                alert("Settings applied successfully to the main website!");
+            } catch(e) { alert("Error saving settings."); }
+            btn.innerText = "Save Changes";
+        };
+
+        // --- ORDER LOGIC ---
         async function fetchOrders() {
             try {
                 const snapshot = await getDocs(collection(db, "orders"));
@@ -229,7 +309,7 @@
             if(globalOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No orders submitted yet.</td></tr>`; return; }
 
             tbody.innerHTML = globalOrders.map(order => {
-                const date = new Date(order.timestamp).toLocaleString();
+                const date = new Date(order.timestamp).toLocaleDateString();
                 const waPhone = order.phone.replace(/^0/, '92');
                 const itemsList = order.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('<br>');
                 
@@ -247,30 +327,19 @@
                     </td>
                     <td style="font-size:0.8rem; line-height: 1.4;">${itemsList}</td>
                     <td>
-                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block;">WhatsApp</a>
+                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block; padding:0.3rem 0.6rem; font-size:0.75rem;">WhatsApp</a>
                     </td>
                 </tr>
                 `;
             }).join('');
         }
 
+        // --- PRODUCT LOGIC ---
         async function fetchProducts() {
             try {
                 const snapshot = await getDocs(collection(db, "products"));
                 globalProducts = [];
                 snapshot.forEach(doc => globalProducts.push({ fbId: doc.id, ...doc.data() }));
-
-                // AUTO-SEED: If Firestore has 0 products, auto-sync standard catalog right now!
-                if (globalProducts.length === 0) {
-                    document.getElementById('products-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;">Auto-syncing products to Firebase Database...</td></tr>`;
-                    for (let item of defaultCatalog) {
-                        await addDoc(collection(db, "products"), item);
-                    }
-                    const newSnapshot = await getDocs(collection(db, "products"));
-                    globalProducts = [];
-                    newSnapshot.forEach(doc => globalProducts.push({ fbId: doc.id, ...doc.data() }));
-                }
-
                 renderProducts();
             } catch(e) { console.error(e); }
         }
@@ -310,10 +379,14 @@
             document.getElementById('p-id').value = p.fbId;
             document.getElementById('p-title').value = p.title;
             document.getElementById('p-sub').value = p.sub;
+            document.getElementById('p-designer').value = p.designer || '';
+            document.getElementById('p-urdu').value = p.urdu || '';
             document.getElementById('p-category').value = p.category;
             document.getElementById('p-price').value = p.price;
             document.getElementById('p-imgDefault').value = p.imgDefault;
             document.getElementById('p-imgHover').value = p.imgHover;
+            document.getElementById('p-desc').value = p.desc || '';
+            
             document.getElementById('modal-title').innerText = "Edit Product";
             document.getElementById('product-modal').classList.add('active');
         };
@@ -334,10 +407,13 @@
             const productData = {
                 title: document.getElementById('p-title').value,
                 sub: document.getElementById('p-sub').value,
+                designer: document.getElementById('p-designer').value,
+                urdu: document.getElementById('p-urdu').value,
                 category: document.getElementById('p-category').value,
                 price: parseInt(document.getElementById('p-price').value),
                 imgDefault: document.getElementById('p-imgDefault').value,
-                imgHover: document.getElementById('p-imgHover').value
+                imgHover: document.getElementById('p-imgHover').value,
+                desc: document.getElementById('p-desc').value
             };
 
             try {
@@ -374,7 +450,7 @@
                 head: [['Date', 'Name', 'Phone', 'Class', 'Pickup', 'Total', 'TRX ID', 'Items']],
                 body: tableData,
                 styles: { fontSize: 7, cellPadding: 2 },
-                headStyles: { fillColor: [0, 128, 96] }
+                headStyles: { fillColor: [0, 0, 0] }
             });
             
             doc.save("AIMCMERCH_Orders.pdf");
