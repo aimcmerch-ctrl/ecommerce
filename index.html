@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIMCMERCH | IQBALIAN</title>
+    <link rel="icon" id="favicon" href="https://aimcmerch.store/logo.png" type="image/png">
     
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <script>
@@ -15,7 +16,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@700&family=Dancing+Script:wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
     
     <!-- Icons & Libraries -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -42,16 +43,33 @@
         /* HEADER - ABSOLUTE (UN-STICKED), TRANSPARENT, WHITE TEXT */
         header { position: absolute; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 100; transition: all 0.3s ease; background: transparent; border-bottom: none; }
         .header-left-menu, .header-right-menu { display: flex; align-items: center; gap: 1.8rem; z-index: 101; }
-        .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 500; font-size: 1.8rem; letter-spacing: 5px; color: #ffffff; text-transform: uppercase; }
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 900; font-size: 1.8rem; letter-spacing: 5px; color: #ffffff; text-transform: uppercase; }
+        
+        .quick-add-btn { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); color: #000; width: 34px; height: 34px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); font-size: 1.2rem; cursor: pointer; z-index: 15; opacity: 0; transform: scale(0.9); transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .product-card:hover .quick-add-btn { opacity: 1; transform: scale(1); }
+        .quick-add-btn:hover { background: #000; color: #fff; border-color: #000; }
+        @media (max-width: 768px) { .quick-add-btn { opacity: 1; transform: scale(1); } }
         .header-nav-link { font-family: var(--font-head); font-size: 0.8rem; font-weight: 300; text-transform: uppercase; letter-spacing: 1.5px; color: #ffffff; transition: 0.3s; }
         .header-nav-link:hover { color: #cccccc; }
         .icon-btn { background: none; border: none; color: #ffffff; font-size: 1.5rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: 0.3s ease; position: relative; }
         .icon-btn:hover { color: #cccccc; }
         .cart-badge { position: absolute; top: -4px; right: -8px; background: #ffffff; color: var(--accent); font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 700; }
-        .search-wrapper { display: flex; align-items: center; }
-        .search-input { width: 0; opacity: 0; background: transparent; border: none; border-bottom: 1px solid transparent; color: #ffffff; font-family: var(--font-body); font-size: 0.85rem; font-weight: 300; transition: all 0.4s ease; outline: none; padding: 0; margin-left: 0; pointer-events: none; }
-        .search-input.active { width: 150px; opacity: 1; padding: 0.3rem 0.5rem; margin-left: 0.5rem; border-bottom: 1px solid #ffffff; pointer-events: auto; }
-        .search-input::placeholder { color: rgba(255, 255, 255, 0.7); font-weight: 300; }
+        body.search-active header { background: #ffffff; border-bottom: 1px solid var(--border); }
+        body.search-active .logo, body.search-active .header-nav-link, body.search-active .icon-btn { color: #000000; }
+        body.search-active .hero-main-logo { filter: invert(0); }
+
+        .search-overlay { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); z-index: 99; display: flex; flex-direction: column; padding: 7rem 3rem 2rem; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .search-overlay.active { opacity: 1; visibility: visible; }
+        .subtle-search { width: 100%; border: none; border-bottom: 1px solid #ddd; font-family: var(--font-head); font-size: 2.5rem; font-weight: 300; padding: 1rem 0; outline: none; background: transparent; color: #000; }
+        .subtle-search::placeholder { color: #ccc; }
+        .pop-searches { margin-top: 1.5rem; }
+        .pop-tag { display: inline-block; cursor: pointer; color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; font-weight: 600; padding-right: 1.5rem; transition: 0.3s; }
+        .pop-tag:hover { color: #000; }
+
+        .quick-add-btn { position: absolute; top: 10px; right: 10px; background: transparent; color: #111; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid #111; font-size: 1rem; cursor: pointer; z-index: 15; opacity: 0; transform: scale(0.9); transition: all 0.3s ease; }
+        .product-card:hover .quick-add-btn { opacity: 1; transform: scale(1); }
+        .quick-add-btn:hover { background: #111; color: #fff; }
+        @media (max-width: 768px) { .quick-add-btn { opacity: 1; transform: scale(1); } .subtle-search { font-size: 1.5rem; } .search-overlay { padding: 5rem 1.2rem 1.2rem; } }
 
         /* HERO - 100VH, FASTER ZOOM, INVERTED LOGO */
         .hero { min-height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; padding: 0 3rem; overflow: hidden; background: #000; }
@@ -61,7 +79,7 @@
         .hero-content { max-width: 900px; display: flex; flex-direction: column; align-items: center; text-align: center; z-index: 10; margin-top: 4rem; }
         .hero-main-logo { width: 100%; max-width: 250px; height: auto; opacity: 0; transform: translateY(30px); filter: invert(1); animation: smoothFadeUp 1s forwards; }
         .hero-subtitle { font-family: var(--font-head); font-size: clamp(0.85rem, 2vw, 1.1rem); letter-spacing: 5px; color: #ffffff; margin-top: 1.8rem; font-weight: 800; opacity: 0; transform: translateY(20px); animation: smoothFadeUp 1s 0.2s forwards; }
-        .hero-desc { max-width: 650px; margin-top: 1.2rem; font-size: 0.95rem; color: #f0f0f0; line-height: 1.6; font-weight: 400; opacity: 0; animation: smoothFadeUp 1s 0.4s forwards; }
+        .hero-desc { max-width: 650px; margin-top: 1.2rem; font-size: 0.85rem; color: #f0f0f0; line-height: 1.6; font-weight: 300; font-family: var(--font-body); font-style: normal; letter-spacing: 1px; opacity: 0; animation: smoothFadeUp 1s 0.4s forwards; text-transform: none; }
         @keyframes smoothFadeUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
 
         /* FILTER BAR */
@@ -78,7 +96,12 @@
         .horizontal-scroll { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 0 3rem; }
         .product-card { display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s ease; }
         .product-card:hover { transform: translateY(-4px); }
-        .img-wrapper { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: var(--surface); position: relative; border-radius: 6px; border: none; }
+        .img-wrapper { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: transparent; position: relative; border-radius: 6px; border: none; }
+        
+        .promo-banner { width: 100%; margin: 2rem 0; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .promo-banner img { width: 100%; height: auto; display: block; }
+        .promo-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 1; pointer-events: none; }
+        .promo-text { position: absolute; color: #ffffff; font-family: var(--font-head); font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; z-index: 2; pointer-events: none; margin: 0; }
         .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, opacity 0.5s ease; position: absolute; top: 0; left: 0; }
         .img-default { opacity: 1; z-index: 2; }
         .img-hover { opacity: 0; z-index: 1; }
@@ -113,16 +136,16 @@
 
         .p-page-body { max-width: 1250px; width: 100%; margin: 0 auto; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; flex: 1; align-items: start; }
         .p-page-gallery { display: flex; flex-direction: column; gap: 1rem; }
-        .p-page-main-img { width: 100%; aspect-ratio: 3/4; background: var(--surface); overflow: hidden; position: relative; border-radius: 8px; border: none; cursor: zoom-in; }
+        .p-page-main-img { width: 100%; aspect-ratio: 3/4; background: transparent; overflow: hidden; position: relative; border-radius: 8px; border: none; cursor: zoom-in; }
         .p-page-main-img img { width: 100%; height: 100%; object-fit: cover; }
         .zoom-hint { position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.92); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .p-page-thumbs { display: flex; gap: 0.8rem; }
-        .p-page-thumb { width: 80px; height: 105px; object-fit: cover; cursor: pointer; border: none; border-radius: 4px; opacity: 0.6; transition: 0.3s; background: var(--surface); }
+        .p-page-thumb { width: 80px; height: 105px; object-fit: cover; cursor: pointer; border: none; border-radius: 4px; opacity: 0.6; transition: 0.3s; background: transparent; }
         .p-page-thumb.active, .p-page-thumb:hover { opacity: 1; }
 
         .p-page-details { display: flex; flex-direction: column; justify-content: center; }
         
-        .p-designer-badge { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #444; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
+        .p-designer-badge { font-family: 'Great Vibes', cursive; font-size: 1.7rem; font-weight: 300; color: #666; margin-bottom: 0.5rem; letter-spacing: 1px; }
         .p-page-title { font-size: 2.2rem; margin-bottom: 0.3rem; line-height: 1.1; font-weight: 900; }
         .p-page-sub { color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; font-weight: 600; }
         .p-page-price { font-size: 1.5rem; font-weight: 900; font-family: var(--font-head); margin-bottom: 1.5rem; color: var(--accent); }
@@ -272,6 +295,7 @@
 <body>
     <header id="header">
         <div class="header-left-menu">
+            <button class="icon-btn" onclick="toggleSearch()"><i id="search-icon-btn" class="ph-thin ph-magnifying-glass"></i></button>
             <a href="#section-shirts" class="header-nav-link" onclick="filterCategory('shirts')">Shirts</a>
             <a href="#section-bags" class="header-nav-link" onclick="filterCategory('bags')">Tote Bags</a>
         </div>
@@ -279,15 +303,27 @@
         <div class="header-right-menu">
             <a href="#designers" class="header-nav-link">Designers</a>
             <a href="#about" class="header-nav-link">About</a>
-            <div class="search-wrapper">
-                <button class="icon-btn" onclick="toggleSearch()"><i class="ph-thin ph-magnifying-glass"></i></button>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search..." onkeyup="handleSearch()">
-            </div>
             <button class="icon-btn" onclick="toggleCartDrawer()">
                 <i class="ph-thin ph-shopping-bag"></i><span class="cart-badge" id="cart-badge">0</span>
             </button>
         </div>
     </header>
+
+    <div class="search-overlay" id="search-overlay">
+        <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
+            <input type="text" id="fullscreen-search" class="subtle-search" placeholder="What are you looking for?" onkeyup="handleFullscreenSearch()">
+            <div class="pop-searches" id="pop-searches-box">
+                <h4 style="color: #999; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 1rem; font-family: var(--font-head); letter-spacing: 1px;">Popular Searches</h4>
+                <div style="display:flex; flex-wrap: wrap;">
+                    <span class="pop-tag" onclick="triggerSearch('AIMC Polo')">AIMC Polo</span>
+                    <span class="pop-tag" onclick="triggerSearch('Drop Shoulder')">Drop Shoulder</span>
+                    <span class="pop-tag" onclick="triggerSearch('Tote Bags')">Tote Bags</span>
+                    <span class="pop-tag" onclick="triggerSearch('Iqbalian')">Iqbalian</span>
+                </div>
+            </div>
+            <div id="search-results-grid" class="horizontal-scroll" style="margin-top: 3rem; padding: 0; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;"></div>
+        </div>
+    </div>
 
     <section class="hero">
         <div class="hero-bg"></div>
@@ -322,6 +358,7 @@
                 <div class="designer-card"><div class="designer-name">Muhammad Hasnain</div><div class="designer-role">AIMC Polo & Signature Shirt</div></div>
                 <div class="designer-card"><div class="designer-name">Shiza Amir</div><div class="designer-role">The Starry Sky</div></div>
                 <div class="designer-card"><div class="designer-name">Zukhruf Zia</div><div class="designer-role">AIMC Postmark & Shaheen Tote Bag</div></div>
+                <div class="designer-card"><div class="designer-name">Ain Ul Quds</div><div class="designer-role">Creative Contributor</div></div>
             </div>
         </section>
 
@@ -439,6 +476,24 @@
     
     <div class="modal" id="contact-modal"><div class="modal-content"><button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button><h2 class="heading" style="margin-bottom:1rem;">Contact</h2><p style="color:var(--text-dim); font-size:0.9rem;"><strong>Phone/WhatsApp:</strong> 03120510151<br><strong>Insta:</strong> @aimcmerch</p></div></div>
 
+    <div class="modal" id="quick-add-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button>
+            <h2 class="heading" id="qa-title" style="margin-bottom:0.5rem; font-size:1.2rem;">Product Name</h2>
+            <p id="qa-price" style="font-weight:900; font-family:var(--font-head); margin-bottom:1.5rem; color:var(--accent);"></p>
+            <div id="qa-size-section">
+                <label style="font-size:0.8rem; font-weight:800; text-transform:uppercase; margin-bottom:0.8rem; display:block;">Select Size</label>
+                <div class="size-selector" id="qa-size-selector" style="margin-bottom: 1.5rem;">
+                    <button class="size-option" onclick="selectQAsize('S')">S</button>
+                    <button class="size-option active" onclick="selectQAsize('M')">M</button>
+                    <button class="size-option" onclick="selectQAsize('L')">L</button>
+                    <button class="size-option" onclick="selectQAsize('XL')">XL</button>
+                </div>
+            </div>
+            <button class="btn-cart-main" onclick="confirmQuickAdd()"><i class="ph-thin ph-shopping-bag"></i> Confirm Add</button>
+        </div>
+    </div>
+
     <div class="modal" id="success-modal">
         <div class="modal-content" style="text-align: center;">
             <div class="ios-checkmark-wrapper"><svg viewBox="0 0 52 52" style="width: 100%; height: 100%;"><circle class="ios-checkmark-circle" cx="26" cy="26" r="25"/><path class="ios-checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
@@ -461,7 +516,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
         const app = initializeApp({
             apiKey: "AIzaSyATyFD4-0aQYGKdLrhRAn_YOYECT360nEU", authDomain: "aimcmerch-540ec.firebaseapp.com",
@@ -472,16 +527,7 @@
 
         const categories = [ { id: 'shirts', name: 'Shirts' }, { id: 'bags', name: 'Tote Bags' }, { id: 'caps', name: 'Caps' }, { id: 'accessories', name: 'Accessories' } ];
         
-        let products = [
-            { id: "1", title: "AIMC Polo Shirt", sub: "Polo Shirt", designer: "Muhammad Hasnain", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/zDkDXy6.jpeg", imgHover: "https://i.imgur.com/rQdIeLL.jpeg", desc: "Classic sophistication tailored exclusively for the proud Iqbalian. Embodying the rich academic legacy and dignified spirit of Allama Iqbal Medical College, this polo shirt is meticulously designed for those who walk the hospital halls with purpose. Blending professional elegance with supreme comfort, it is the perfect companion for long clinical hours, intense ward rounds, or casually unwinding at the college cafe. Crafted with premium, highly breathable fabric, the precise stitching and elegantly embroidered crest stand as a powerful testament to the excellence demanded by our institution. When you wear this polo, you carry the heavy, beautiful weight of a history shaped by brilliant minds—transforming an ordinary day on campus into a continuation of a profound medical legacy. A true wardrobe essential for every future doctor who deeply values both tradition and modern functionality." },
-            { id: "2", title: "AIMC Postmark", sub: "Drop Shoulder", designer: "Zukhruf Zia", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/p3gPMgt.jpeg", imgHover: "https://i.imgur.com/HlpfIs2.jpeg", desc: "A definitive stamp of honor and identity. This premium oversized drop-shoulder shirt seamlessly carries the vintage postcard aesthetic of AIMC's timeless heritage into the modern streetwear era. The intricate postmark design is a nostalgic homage to the timeless journey of medical students traversing through these historic corridors. Designed for maximum breathability and an unrestrictive, relaxed fit, this piece allows every thread to remind you of the golden history and the countless pioneers who have graced our revered institution over the decades. It's not just a piece of clothing; it's a wearable piece of history, an emblem that connects the fierce passion of today's students with the immortal legacy of the college." },
-            { id: "3", title: "The Starry Sky", sub: "Drop Shoulder", designer: "Shiza Amir", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/yRP6PoP.jpeg", imgHover: "https://i.imgur.com/5HqmLCz.jpeg", desc: "Profoundly inspired by Allama Iqbal's celestial vision 'Sitaron Se Aage Jahan Aur Bhi Hain'. This stunning drop-shoulder shirt is intricately designed to remind every medical student to continuously reach beyond the visible horizons. The cosmic, starry aesthetic encapsulates the infinite potential of a healer's hands and the breathtaking beauty of our shared journey in medicine. The high-quality, plush fabric ensures unparalleled comfort during those grueling late-night study sessions or winter evenings in the hostel. Every time you wear The Starry Sky, let it be a personal reminder that your capabilities are limitless, your journey is vast, and your purpose in the medical field shines as brilliantly as the stars in the night sky." }, 
-            { id: "4", title: "The Sporty", sub: "Drop Shoulder", designer: "Mahrukh Nadeem", category: "shirts", price: 1699, imgDefault: "https://i.imgur.com/svOcGjp.jpeg", imgHover: "https://i.imgur.com/6AuArO1.png", desc: "Dynamic, versatile, and unapologetically modern. 'The Sporty' drop shoulder is fundamentally built for the highly active, fast-paced campus life while holding incredibly strong to the underlying energetic vibe of Allama Iqbal Medical College. Whether you're rushing aggressively to the wards to catch a morning round, enthusiastically participating in the annual sports week, or studying late into the night in the library, this shirt moves fluidly with you. The bold typography and striking contrast offer a fresh, athletic take on college pride. It bridges the gap between high-end streetwear and institutional loyalty, making sure you always look sharp, feel incredibly comfortable, and boldly represent your college spirit wherever you go." },
-            { id: "5", title: "THE WINGS", sub: "Drop Shoulder", designer: "Tanzeela", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/EFfke5Q.png", imgHover: "https://i.imgur.com/0Y9qxvB.png", desc: "Symbolizing high flight, unparalleled vision, and absolute resilience. 'The Wings' is masterfully crafted with high-grade, durable fabric explicitly chosen to give you the wings of Iqbal's Shaheen. The striking wing motif spread across the back is a bold statement of freedom, intellect, and the relentless pursuit of medical excellence. Wear it as a daily, powerful testament to your unyielding strength and the soaring ambitions that brought you to the prestigious, competitive grounds of AIMC. This drop shoulder guarantees a relaxed, comfortable fit that drapes perfectly, making it an instant classic for any medical student ready to take on the world and elevate their impact on humanity." },
-            { id: "6", title: "The Iqbalian Signature", sub: "Drop Shoulder", designer: "Muhammad Hasnain", category: "shirts", price: 1399, imgDefault: "https://i.imgur.com/xUQRgEy.png", imgHover: "https://i.imgur.com/8TsljdR.png", desc: "An absolute iconic statement piece flawlessly encapsulating the immense prestige and deeply-rooted brotherhood of AIMC. Featuring a bold, unapologetic, and sweeping signature design that instantly commands respect, this drop shoulder honors the unshakeable bond shared by all true Iqbalians across generations. The minimalist yet highly impactful aesthetic ensures that the focus remains entirely on the institutional pride you carry. Tailored for an oversized, highly comfortable fit, it is perfect for layering during chilly mornings or wearing standalone to make a strong visual impact. It stands not merely as merchandise, but as a prestigious badge of honor, worn over the heart by those destined to heal the world." },
-            { id: "7", title: "IQBALIAN", urdu: "اقبالین", sub: "Canvas Tote", designer: "Tanzeela", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/vLkRrkD.jpeg", imgHover: "https://i.imgur.com/vLkRrkD.jpeg", desc: "Elegantly and prominently featuring the stunning Urdu Calligraphy 'اقبالین', this heavy-duty canvas tote is meticulously designed to carry your medical essentials with absolute pride and style. Understanding the daily struggles of a medical student, it is strongly crafted with reinforced stitching to easily withstand the significant weight of your thickest medical textbooks, clinical manuals, and personal gadgets. Beyond its sheer practicality, the exquisite calligraphy showcases your deep, spiritual connection to our poetic and historic lineage. It serves as a beautiful daily reminder of the philosophy of Allama Iqbal, seamlessly blending immense utility with profound cultural and institutional pride for your everyday campus travels." },
-            { id: "8", title: "SHAHEEN", urdu: "شاہین", sub: "Canvas Tote", designer: "Zukhruf Zia", category: "bags", price: 1199, imgDefault: "https://i.imgur.com/pbq2sIh.png", imgHover: "https://i.imgur.com/pbq2sIh.png", desc: "Majestically featuring 'شاہین' calligraphy, this extraordinary tote bag embodies the raw strength, soaring ambitions, and the fiery spirit of Allama Iqbal's youth. The Shaheen (Falcon) is a universal symbol of sharp vision, high flight, and living beyond the ordinary—traits deeply embedded in the heart of every AIMC student. This robust, spacious tote bag acts as a highly functional companion for your rigorous academic schedule while acting as a daily, motivational reminder to constantly elevate your thoughts, fearlessly push your boundaries, and strike with absolute precision in your demanding medical career. A true masterpiece of utility infused with profound poetic meaning." }
-        ];
+        let products = [];
 
         window.renderLayout = function(filteredProducts = products) {
             const mainContent = document.getElementById('main-content');
@@ -500,29 +546,170 @@
 
                 let cardsHTML = catProducts.map(p => `
                     <div class="product-card" onclick="openProductPage('${p.id}')">
-                        <div class="img-wrapper"><img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover"><div class="add-overlay"><button class="btn-add">View Item</button></div></div>
+                        <div class="img-wrapper">
+                            <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                            <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                            <div class="add-overlay"><button class="btn-add">View Item</button></div>
+                        </div>
                         <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
                     </div>
                 `).join('');
+                
+                // Inject the custom edge-to-edge image banner with text
+                if (cat.id === 'bags') {
+                    const banner = document.createElement('div');
+                    banner.className = 'promo-banner';
+                    banner.innerHTML = `
+                        <div class="promo-overlay"></div>
+                        <img src="https://i.imgur.com/3nunzOU.jpeg" alt="Tote Bags Collection Banner" draggable="false">
+                        <h2 class="promo-text">Tote Bags</h2>
+                    `;
+                    mainContent.appendChild(banner);
+                }
+
                 section.innerHTML = `<div class="category-header"><h2 class="heading category-title">${cat.name}</h2></div><div class="horizontal-scroll">${cardsHTML}</div>`;
                 mainContent.appendChild(section);
             });
             
-            setTimeout(() => { ScrollTrigger.refresh(); }, 100);
+            setTimeout(() => { 
+                ScrollTrigger.refresh(); 
+                
+                // GSAP ScrollTrigger for the Promo Banner
+                const banner = document.querySelector('.promo-banner');
+                if (banner) {
+                    gsap.fromTo(banner.querySelector('img'), 
+                        { scale: 1.15, opacity: 0 }, 
+                        { scale: 1, opacity: 1, duration: 1.2, ease: "power2.out", scrollTrigger: { trigger: banner, start: "top 85%", toggleActions: "play none none reverse" } }
+                    );
+                    gsap.fromTo(banner.querySelector('.promo-text'), 
+                        { y: 30, opacity: 0 }, 
+                        { y: 0, opacity: 1, duration: 1, delay: 0.2, ease: "power2.out", scrollTrigger: { trigger: banner, start: "top 85%", toggleActions: "play none none reverse" } }
+                    );
+                }
+            }, 100);
         };
 
         window.renderRelatedProducts = function(excludeId) {
             let related = products.filter(p => p.id !== excludeId).sort(() => 0.5 - Math.random()).slice(0, 4);
             document.getElementById('p-page-related').innerHTML = related.map(p => `
                 <div class="product-card" onclick="openProductPage('${p.id}')">
-                    <div class="img-wrapper"><img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover"><div class="add-overlay"><button class="btn-add">View Item</button></div></div>
+                    <div class="img-wrapper">
+                        <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                        <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                        <div class="add-overlay"><button class="btn-add">View Item</button></div>
+                    </div>
                     <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
                 </div>
             `).join('');
         };
 
         document.getElementById('main-content').innerHTML = `<section class="category-section"><div class="horizontal-scroll">${Array(4).fill(0).map(()=>`<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>`).join('')}</div></section>`;
-        setTimeout(() => renderLayout(), 200);
+        
+        let heroImages = ["https://i.imgur.com/ksQ0oOw.jpeg"];
+        let currentHeroIdx = 0;
+
+        async function loadStoreData() {
+            // 1. FETCH PRODUCTS FIRST (Guaranteed to run)
+            try {
+                const snapshot = await getDocs(collection(db, "products"));
+                let fetched = [];
+                snapshot.forEach(doc => {
+                    fetched.push({ id: doc.id, ...doc.data() });
+                });
+                if (fetched.length > 0) {
+                    products = fetched;
+                }
+            } catch (err) { 
+                console.error("Error fetching products:", err); 
+            }
+
+            // 2. FETCH THEME SETTINGS INDEPENDENTLY
+            try {
+                const themeDoc = await getDoc(doc(db, "settings", "store_theme"));
+                if (themeDoc.exists()) {
+                    const t = themeDoc.data();
+                    if(t.logo) { 
+                        document.querySelectorAll('.hero-main-logo').forEach(i=>i.src=t.logo); 
+                        const fav = document.getElementById('favicon');
+                        if(fav) fav.href = t.logo; 
+                    }
+                    if(t.hero_bg && t.hero_bg.length > 0) {
+                        heroImages = t.hero_bg;
+                        document.querySelector('.hero-bg').style.backgroundImage = `url(${heroImages[0]})`;
+                        if(heroImages.length > 1) {
+                            setInterval(() => {
+                                currentHeroIdx = (currentHeroIdx + 1) % heroImages.length;
+                                document.querySelector('.hero-bg').style.backgroundImage = `url(${heroImages[currentHeroIdx]})`;
+                                document.querySelector('.hero-bg').style.transition = 'background-image 1s ease-in-out';
+                            }, 5000);
+                        }
+                    }
+                    if(t.accent_color) document.documentElement.style.setProperty('--accent', t.accent_color);
+                    if(t.font_size) document.documentElement.style.fontSize = t.font_size + 'px';
+                }
+            } catch (err) { 
+                console.warn("Theme settings not found or blocked (this is fine):", err); 
+            }
+            
+            // 3. RENDER THE LAYOUT
+            renderLayout();
+        }
+        loadStoreData();
+
+        window.toggleSearch = () => { 
+            const overlay = document.getElementById('search-overlay');
+            const body = document.body;
+            const icon = document.getElementById('search-icon-btn');
+            
+            if(overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                body.classList.remove('search-active');
+                icon.className = "ph-thin ph-magnifying-glass";
+                document.getElementById('fullscreen-search').value = '';
+                document.getElementById('search-results-grid').innerHTML = '';
+                document.getElementById('pop-searches-box').style.display = 'block';
+            } else {
+                overlay.classList.add('active');
+                body.classList.add('search-active');
+                icon.className = "ph-thin ph-x";
+                setTimeout(() => document.getElementById('fullscreen-search').focus(), 300);
+            }
+        };
+
+        window.triggerSearch = (term) => {
+            const inp = document.getElementById('fullscreen-search');
+            inp.value = term;
+            handleFullscreenSearch();
+        };
+
+        window.handleFullscreenSearch = () => { 
+            const t = document.getElementById('fullscreen-search').value.toLowerCase(); 
+            const grid = document.getElementById('search-results-grid');
+            const popBox = document.getElementById('pop-searches-box');
+            
+            if (t.length === 0) { 
+                grid.innerHTML = ''; 
+                popBox.style.display = 'block'; 
+                return; 
+            }
+            
+            popBox.style.display = 'none';
+            const filtered = products.filter(p => p.title.toLowerCase().includes(t) || (p.sub && p.sub.toLowerCase().includes(t)) || (p.designer && p.designer.toLowerCase().includes(t)));
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<p style="color: #999;">No products found.</p>';
+            } else {
+                grid.innerHTML = filtered.map(p => `
+                    <div class="product-card" onclick="window.toggleSearch(); openProductPage('${p.id}')">
+                        <div class="img-wrapper">
+                            <button class="quick-add-btn" onclick="event.stopPropagation(); window.toggleSearch(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                            <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                        </div>
+                        <div class="product-info"><h3 class="product-name" style="font-size:0.9rem;">${p.title}</h3><div class="product-price" style="font-size:0.85rem;">RS ${p.price}/-</div></div>
+                    </div>
+                `).join('');
+            }
+        };
 
         window.addEventListener("load", () => {
             gsap.registerPlugin(ScrollTrigger);
@@ -559,22 +746,7 @@
             renderLayout(catId === 'all' ? products : products.filter(p => p.category === catId));
         };
 
-        // Fixed Search Logic
-        window.toggleSearch = () => { 
-            const inp = document.getElementById('searchInput'); 
-            if (inp.classList.contains('active')) {
-                if (inp.value.trim() !== '') {
-                    inp.value = ''; handleSearch();
-                } else {
-                    inp.classList.remove('active');
-                }
-            } else {
-                inp.classList.add('active');
-                inp.focus();
-            }
-        };
         
-        window.handleSearch = () => { const t = document.getElementById('searchInput').value.toLowerCase(); renderLayout(products.filter(p => p.title.toLowerCase().includes(t) || p.sub.toLowerCase().includes(t) || p.designer.toLowerCase().includes(t))); };
 
         document.getElementById('receipt-upload').addEventListener('change', function(e) {
             const file = e.target.files[0]; const lbl = document.getElementById('upload-label'); const trx = document.getElementById('checkout-trx-id');
@@ -607,7 +779,7 @@
             try {
                 await addDoc(collection(db, "orders"), { orderId: orderIdNum, customerName: nm, class: cl, phone: document.getElementById('c-phone').value, location: loc, trxId: tx, total: getCartTotal(), items: cart, timestamp: new Date().toISOString() });
                 document.getElementById('success-order-num').innerText = orderIdNum; document.getElementById('rec-id').innerText = orderIdNum; document.getElementById('rec-name').innerText = nm; document.getElementById('rec-class').innerText = cl; document.getElementById('rec-trx').innerText = tx; document.getElementById('rec-pickup').innerText = loc.includes("Girls") ? "Girls Hostel" : "Boys Hostel"; document.getElementById('rec-total').innerText = `RS ${getCartTotal()}/-`;
-                document.getElementById('rec-items-list').innerHTML = cart.map(i => `<div class="receipt-row"><span>${i.title} (${i.size}) x${i.quantity}</span><span>RS ${i.price * i.quantity}/-</span></div>`).join('');
+                document.getElementById('rec-items-list').innerHTML = cart.map(i => `<div class="receipt-row"><span>${i.title} ${i.urdu ? `(${i.urdu})` : ''} - ${i.size} x${i.quantity}</span><span>RS ${i.price * i.quantity}/-</span></div>`).join('');
                 cart = []; updateCartUI(); document.getElementById('checkout-page-view').classList.remove('active'); document.getElementById('checkout-form').reset(); document.getElementById('upload-label').innerText = "Click to select image"; openModal('success-modal');
             } catch(error) { alert("Error submitting order."); }
             btn.innerText = "Confirm Order"; btn.disabled = false;
@@ -673,6 +845,48 @@
         window.closeDrawers = () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('global-overlay').classList.remove('active'); };
         window.openModal = (id) => { closeDrawers(); document.getElementById(id).classList.add('active'); };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+
+        let qaProductId = null;
+        let qaSelectedSize = 'M';
+        
+        window.openQuickAddModal = (id) => {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            qaProductId = id;
+            
+            document.getElementById('qa-title').innerText = p.title;
+            document.getElementById('qa-price').innerText = `RS ${p.price}/-`;
+            
+            const sizeSec = document.getElementById('qa-size-section');
+            if(p.category === 'bags' || p.category === 'accessories') {
+                sizeSec.style.display = 'none';
+                qaSelectedSize = 'One Size';
+            } else {
+                sizeSec.style.display = 'block';
+                qaSelectedSize = 'M';
+                selectQAsize('M');
+            }
+            openModal('quick-add-modal');
+        };
+
+        window.selectQAsize = (sz) => {
+            qaSelectedSize = sz;
+            document.querySelectorAll('#qa-size-selector .size-option').forEach(b => {
+                b.classList.toggle('active', b.innerText === sz);
+            });
+        };
+
+        window.confirmQuickAdd = () => {
+            const p = products.find(x => x.id === qaProductId);
+            if(p) {
+                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize);
+                if(ex) ex.quantity += 1;
+                else cart.push({ ...p, size: qaSelectedSize, quantity: 1 });
+                updateCartUI();
+                closeModals();
+                toggleCartDrawer(true);
+            }
+        };
     </script>
 </body>
 </html>
