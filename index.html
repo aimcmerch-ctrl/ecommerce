@@ -559,9 +559,11 @@
                 if (cat.id === 'bags') {
                     const banner = document.createElement('div');
                     banner.className = 'promo-banner';
+                    // Bottom half black, top half pure white
+                    banner.style.background = 'linear-gradient(to top, #000000 50%, #ffffff 50%)';
+                    // Removed <div class="promo-overlay"></div> to eliminate the grey shadow tint
                     banner.innerHTML = `
-                        <div class="promo-overlay"></div>
-                        <img src="https://i.imgur.com/3nunzOU.jpeg" alt="Tote Bags Collection Banner" draggable="false">
+                        <img src="https://aimcmerch.store/Tote%20Bag.PNG" alt="Tote Bags Collection Banner" draggable="false">
                         <h2 class="promo-text">Tote Bags</h2>
                     `;
                     mainContent.appendChild(banner);
