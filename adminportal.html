@@ -108,7 +108,10 @@
         <div id="orders-tab" class="tab-content active">
             <header class="header">
                 <h1>Orders</h1>
-                <button class="btn btn-outline" onclick="exportToPDF()">Export to PDF</button>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-outline" style="background: #2b579a; color: #fff; border: none;" onclick="exportToWord()">Export Word</button>
+                    <button class="btn btn-outline" onclick="exportToPDF()">Export PDF</button>
+                </div>
             </header>
             <div class="content">
                 <div class="card" style="padding: 0;">
@@ -174,6 +177,27 @@
             </div>
         </div>
     </main>
+
+    <!-- ORDER EDIT MODAL -->
+    <div class="modal-overlay" id="order-modal">
+        <div class="modal">
+            <h2>Edit Order Details</h2>
+            <form id="order-form">
+                <input type="hidden" id="o-id">
+                <div class="form-group"><label>Customer Name</label><input type="text" id="o-name" required></div>
+                <div class="form-group"><label>WhatsApp Phone</label><input type="text" id="o-phone" required></div>
+                <div class="form-group"><label>Class/Batch</label><input type="text" id="o-class" required></div>
+                <div class="form-group"><label>Pickup Location</label><input type="text" id="o-location" required></div>
+                <div class="form-group"><label>Transaction ID (TRX)</label><input type="text" id="o-trx" required></div>
+                <div class="form-group"><label>Total Amount (RS)</label><input type="number" id="o-total" required></div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Cancel</button>
+                    <button type="submit" class="btn" id="o-submit-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- PRODUCT MODAL -->
     <div class="modal-overlay" id="product-modal">
@@ -326,8 +350,10 @@
                         <span class="badge">TRX: ${order.trxId}</span>
                     </td>
                     <td style="font-size:0.8rem; line-height: 1.4;">${itemsList}</td>
-                    <td>
+                    <td style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block; padding:0.3rem 0.6rem; font-size:0.75rem;">WhatsApp</a>
+                        <button class="btn btn-outline" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="editOrder('${order.id}')">Edit</button>
+                        <button class="btn" style="background:#d82c0d; padding:0.3rem 0.6rem; font-size:0.75rem; border:none; color:white;" onclick="deleteOrder('${order.id}')">Delete</button>
                     </td>
                 </tr>
                 `;
@@ -428,6 +454,96 @@
             
             btn.innerText = "Save Product"; btn.disabled = false;
         });
+
+        // --- ORDER EDIT & DELETE LOGIC ---
+        window.closeOrderModal = function() { document.getElementById('order-modal').classList.remove('active'); };
+        
+        window.editOrder = function(orderId) {
+            const o = globalOrders.find(x => x.id === orderId);
+            if(!o) return;
+            document.getElementById('o-id').value = o.id;
+            document.getElementById('o-name').value = o.customerName;
+            document.getElementById('o-phone').value = o.phone;
+            document.getElementById('o-class').value = o.class;
+            document.getElementById('o-location').value = o.location;
+            document.getElementById('o-trx').value = o.trxId;
+            document.getElementById('o-total').value = o.total;
+            
+            document.getElementById('order-modal').classList.add('active');
+        };
+
+        window.deleteOrder = async function(orderId) {
+            if(confirm("Are you sure you want to permanently delete this order?")) {
+                try {
+                    await deleteDoc(doc(db, "orders", orderId));
+                    fetchOrders(); // Refresh table
+                } catch(e) {
+                    alert("Error deleting order: " + e.message);
+                }
+            }
+        };
+
+        document.getElementById('order-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('o-submit-btn');
+            btn.innerText = "Saving..."; btn.disabled = true;
+            
+            const orderId = document.getElementById('o-id').value;
+            const updatedData = {
+                customerName: document.getElementById('o-name').value,
+                phone: document.getElementById('o-phone').value,
+                class: document.getElementById('o-class').value,
+                location: document.getElementById('o-location').value,
+                trxId: document.getElementById('o-trx').value,
+                total: parseInt(document.getElementById('o-total').value)
+            };
+
+            try {
+                await updateDoc(doc(db, "orders", orderId), updatedData);
+                closeOrderModal();
+                fetchOrders();
+            } catch (err) { alert("Error updating order: " + err.message); }
+            
+            btn.innerText = "Save Changes"; btn.disabled = false;
+        });
+
+        // --- EXPORT LOGIC ---
+        window.exportToWord = function() {
+            // Create a basic HTML table structure for MS Word
+            let tableHTML = "<table border='1' style='border-collapse: collapse; width: 100%; font-family: sans-serif;'>";
+            tableHTML += "<tr style='background-color: #f2f2f2;'><th>Date</th><th>Customer Name</th><th>Phone</th><th>Class</th><th>Pickup</th><th>Total (RS)</th><th>TRX ID</th><th>Items Ordered</th></tr>";
+
+            globalOrders.forEach(o => {
+                const date = new Date(o.timestamp).toLocaleDateString();
+                const itemsStr = o.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('<br>');
+                tableHTML += `<tr>
+                    <td style="padding: 5px;">${date}</td>
+                    <td style="padding: 5px;">${o.customerName}</td>
+                    <td style="padding: 5px;">${o.phone}</td>
+                    <td style="padding: 5px;">${o.class}</td>
+                    <td style="padding: 5px;">${o.location}</td>
+                    <td style="padding: 5px;">${o.total}</td>
+                    <td style="padding: 5px;">${o.trxId}</td>
+                    <td style="padding: 5px;">${itemsStr}</td>
+                </tr>`;
+            });
+            tableHTML += "</table>";
+
+            // Add Word specific HTML namespaces
+            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>AIMCMERCH Orders</title></head><body>";
+            const footer = "</body></html>";
+            
+            // Create Blob and trigger download
+            const sourceHTML = header + "<h2>AIMCMERCH Orders Report</h2>" + tableHTML + footer;
+            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            
+            const fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'AIMCMERCH_Orders.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        };
 
         window.exportToPDF = function() {
             const { jsPDF } = window.jspdf;
