@@ -39,12 +39,14 @@
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 2rem; padding: 1.5rem; }
         
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th, td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: top; }
         th { background: #f9fafb; font-weight: 600; color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f9fafb; }
         
         .badge { display: inline-block; padding: 0.3rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: #e3f1df; color: #1f5139; }
+        .badge-promo { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.72rem; font-weight: 700; background: #ede9fe; color: #5b21b6; margin-top: 4px; }
+        .badge-sleeve { display: inline-block; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; background: #fef3c7; color: #92400e; margin-top: 2px; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -71,7 +73,7 @@
             .header { flex-direction: column; gap: 1rem; text-align: center; padding: 1rem; }
             .content { padding: 1rem; overflow: visible; }
             .card { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1rem;}
-            table { min-width: 700px; }
+            table { min-width: 750px; }
             .modal { padding: 1.5rem; }
         }
     </style>
@@ -96,10 +98,10 @@
         <ul class="nav">
             <li class="nav-item active" onclick="switchTab('orders-tab', this)">Orders</li>
             <li class="nav-item" onclick="switchTab('products-tab', this)">Products</li>
-            <li class="nav-item" onclick="switchTab('settings-tab', this)">Theme Settings</li>
+            <li class="nav-item" onclick="switchTab('settings-tab', this)">Theme & Promo Settings</li>
         </ul>
-        <div>
-            <button class="btn btn-outline" style="width: 100%; max-width: 300px;" onclick="handleLogout()">Logout</button>
+        <div style="padding: 1.5rem;">
+            <button class="btn btn-outline" style="width: 100%;" onclick="handleLogout()">Logout</button>
         </div>
     </aside>
 
@@ -116,8 +118,8 @@
             <div class="content">
                 <div class="card" style="padding: 0;">
                     <table>
-                        <thead><tr><th>Date</th><th>Customer Info</th><th>Amount / TRX ID</th><th>Items</th><th>Actions</th></tr></thead>
-                        <tbody id="orders-tbody"><tr><td colspan="5" style="text-align:center;">Loading orders...</td></tr></tbody>
+                        <thead><tr><th>Date</th><th>Customer Info</th><th>Amount / TRX</th><th>Items Ordered</th><th>Actions</th></tr></thead>
+                        <tbody id="orders-tbody"><tr><td colspan="5" style="text-align:center; padding: 2rem;">Loading orders...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -132,8 +134,8 @@
             <div class="content">
                 <div class="card" style="padding: 0;">
                     <table>
-                        <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead>
-                        <tbody id="products-tbody"><tr><td colspan="5" style="text-align:center;">Loading products...</td></tr></tbody>
+                        <thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Base Price</th><th>Actions</th></tr></thead>
+                        <tbody id="products-tbody"><tr><td colspan="5" style="text-align:center; padding: 2rem;">Loading products...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -142,16 +144,44 @@
         <!-- SETTINGS TAB -->
         <div id="settings-tab" class="tab-content">
             <header class="header">
-                <h1>Theme & Settings</h1>
+                <h1>Theme & Promo Settings</h1>
                 <button class="btn" onclick="saveThemeSettings()">Save Changes</button>
             </header>
             <div class="content">
+                <!-- PROMO CODE SECTION -->
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; display:flex; align-items:center; gap:0.5rem;">
+                        🎟️ Store Promo Code & Discounts
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label>Promo Code</label>
+                            <input type="text" id="set-promo-code" placeholder="e.g. IQBALIAN10" style="text-transform:uppercase; font-weight:700;">
+                            <span class="help-text">Coupon code users enter at checkout.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Discount Percentage (%)</label>
+                            <input type="number" id="set-promo-discount" placeholder="10" min="1" max="100">
+                            <span class="help-text">Percentage off total (e.g. 10 for 10% off).</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Promo Status</label>
+                            <select id="set-promo-active">
+                                <option value="true">Active (Enabled)</option>
+                                <option value="false">Inactive (Disabled)</option>
+                            </select>
+                            <span class="help-text">Toggle promo validity on store.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISUAL IDENTITY SECTION -->
                 <div class="card">
                     <h3 style="margin-bottom: 1.5rem; font-size: 1.1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Visual Identity</h3>
                     
                     <div class="form-group">
                         <label>Main Store Logo URL (Also updates browser tab Favicon)</label>
-                        <input type="url" id="set-logo" placeholder="https://imgur.com/logo.png">
+                        <input type="url" id="set-logo" placeholder="https://aimcmerch.store/logo.png">
                     </div>
                     
                     <div class="form-group">
@@ -212,7 +242,7 @@
                 <div class="form-group">
                     <label>Category (Filter)</label>
                     <select id="p-category" required>
-                        <option value="shirts">Shirts</option>
+                        <option value="shirts">Shirts (Supports Sleeves Customization)</option>
                         <option value="bags">Tote Bags</option>
                         <option value="caps">Caps</option>
                         <option value="accessories">Accessories</option>
@@ -284,7 +314,7 @@
             element.classList.add('active');
         };
 
-        // --- THEME SETTINGS LOGIC ---
+        // --- THEME & PROMO SETTINGS LOGIC ---
         async function loadThemeSettings() {
             try {
                 const docSnap = await getDoc(doc(db, "settings", "store_theme"));
@@ -294,12 +324,17 @@
                     if(d.hero_bg) document.getElementById('set-hero-bgs').value = d.hero_bg.join('\n');
                     if(d.font_size) document.getElementById('set-font-size').value = d.font_size;
                     if(d.accent_color) document.getElementById('set-accent-color').value = d.accent_color;
+                    
+                    // Promo fields
+                    if(d.promoCode) document.getElementById('set-promo-code').value = d.promoCode;
+                    if(d.promoDiscount) document.getElementById('set-promo-discount').value = d.promoDiscount;
+                    if(d.promoActive !== undefined) document.getElementById('set-promo-active').value = d.promoActive ? "true" : "false";
                 }
-            } catch(e) { console.error("Error loading theme", e); }
+            } catch(e) { console.error("Error loading theme settings", e); }
         }
 
         window.saveThemeSettings = async function() {
-            const btn = document.querySelector('#settings-tab .btn');
+            const btn = document.querySelector('#settings-tab .header .btn');
             btn.innerText = "Saving...";
             
             const bgs = document.getElementById('set-hero-bgs').value.split('\n').map(s=>s.trim()).filter(s=>s!=='');
@@ -307,13 +342,16 @@
                 logo: document.getElementById('set-logo').value.trim(),
                 hero_bg: bgs,
                 font_size: document.getElementById('set-font-size').value,
-                accent_color: document.getElementById('set-accent-color').value
+                accent_color: document.getElementById('set-accent-color').value,
+                promoCode: document.getElementById('set-promo-code').value.trim().toUpperCase(),
+                promoDiscount: parseInt(document.getElementById('set-promo-discount').value) || 0,
+                promoActive: document.getElementById('set-promo-active').value === "true"
             };
 
             try {
-                await setDoc(doc(db, "settings", "store_theme"), data);
-                alert("Settings applied successfully to the main website!");
-            } catch(e) { alert("Error saving settings."); }
+                await setDoc(doc(db, "settings", "store_theme"), data, { merge: true });
+                alert("Settings & Promo Code successfully saved to AIMCMERCH!");
+            } catch(e) { alert("Error saving settings: " + e.message); }
             btn.innerText = "Save Changes";
         };
 
@@ -330,30 +368,36 @@
 
         function renderOrders() {
             const tbody = document.getElementById('orders-tbody');
-            if(globalOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No orders submitted yet.</td></tr>`; return; }
+            if(globalOrders.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem;">No orders submitted yet.</td></tr>`; return; }
 
             tbody.innerHTML = globalOrders.map(order => {
                 const date = new Date(order.timestamp).toLocaleDateString();
-                const waPhone = order.phone.replace(/^0/, '92');
-                const itemsList = order.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('<br>');
+                const waPhone = (order.phone || '').replace(/^0/, '92');
                 
+                const itemsList = (order.items || []).map(i => {
+                    const sleeveBadge = i.sleeves ? `<br><span class="badge-sleeve">+ Full Sleeves (+RS 150)</span>` : '';
+                    return `• <strong>${i.quantity}x</strong> ${i.title} (${i.size}) ${sleeveBadge}`;
+                }).join('<br><br>');
+                
+                const promoInfo = order.promoCode ? `<br><span class="badge-promo">PROMO: ${order.promoCode} (-${order.discountAmount || 0} RS)</span>` : '';
+
                 return `
                 <tr>
-                    <td style="color:var(--text-dim);">${date}</td>
+                    <td style="color:var(--text-dim); white-space:nowrap;">${date}<br><small style="font-weight:700; color:#000;">${order.orderId || ''}</small></td>
                     <td>
                         <strong>${order.customerName}</strong><br>
                         <span style="font-size:0.8rem; color:var(--text-dim);">${order.phone}</span><br>
                         <span style="font-size:0.8rem; color:var(--text-dim);">${order.class} - ${order.location}</span>
                     </td>
                     <td>
-                        <strong>RS ${order.total}/-</strong><br>
-                        <span class="badge">TRX: ${order.trxId}</span>
+                        <strong>RS ${order.total}/-</strong>${promoInfo}<br>
+                        <span class="badge" style="margin-top:4px;">TRX: ${order.trxId}</span>
                     </td>
-                    <td style="font-size:0.8rem; line-height: 1.4;">${itemsList}</td>
+                    <td style="font-size:0.82rem; line-height: 1.3;">${itemsList}</td>
                     <td style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block; padding:0.3rem 0.6rem; font-size:0.75rem;">WhatsApp</a>
-                        <button class="btn btn-outline" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="editOrder('${order.id}')">Edit</button>
-                        <button class="btn" style="background:#d82c0d; padding:0.3rem 0.6rem; font-size:0.75rem; border:none; color:white;" onclick="deleteOrder('${order.id}')">Delete</button>
+                        <a href="https://wa.me/${waPhone}" target="_blank" class="btn" style="background:#25D366; text-decoration:none; display:inline-block; padding:0.35rem 0.7rem; font-size:0.75rem;">WhatsApp</a>
+                        <button class="btn btn-outline" style="padding:0.35rem 0.7rem; font-size:0.75rem;" onclick="editOrder('${order.id}')">Edit</button>
+                        <button class="btn" style="background:#d82c0d; padding:0.35rem 0.7rem; font-size:0.75rem; border:none; color:white;" onclick="deleteOrder('${order.id}')">Delete</button>
                     </td>
                 </tr>
                 `;
@@ -373,7 +417,7 @@
         function renderProducts() {
             const tbody = document.getElementById('products-tbody');
             if(globalProducts.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No products in Database.</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:2rem;">No products in Database.</td></tr>`; 
                 return; 
             }
 
@@ -381,7 +425,7 @@
                 <tr>
                     <td><img src="${p.imgDefault}" style="width:40px; height:50px; object-fit:cover; border-radius:4px;"></td>
                     <td><strong>${p.title}</strong><br><span style="font-size:0.8rem;color:var(--text-dim)">${p.sub}</span></td>
-                    <td style="text-transform:capitalize;">${p.category}</td>
+                    <td style="text-transform:capitalize;">${p.category} ${p.category==='shirts'?'<span style="font-size:0.7rem; color:#d97706;">(Sleeves option available)</span>':''}</td>
                     <td>RS ${p.price}/-</td>
                     <td>
                         <button class="btn btn-outline" style="padding:0.3rem 0.6rem; font-size:0.75rem;" onclick="editProduct('${p.fbId}')">Edit</button>
@@ -476,7 +520,7 @@
             if(confirm("Are you sure you want to permanently delete this order?")) {
                 try {
                     await deleteDoc(doc(db, "orders", orderId));
-                    fetchOrders(); // Refresh table
+                    fetchOrders();
                 } catch(e) {
                     alert("Error deleting order: " + e.message);
                 }
@@ -509,31 +553,30 @@
 
         // --- EXPORT LOGIC ---
         window.exportToWord = function() {
-            // Create a basic HTML table structure for MS Word
             let tableHTML = "<table border='1' style='border-collapse: collapse; width: 100%; font-family: sans-serif;'>";
-            tableHTML += "<tr style='background-color: #f2f2f2;'><th>Date</th><th>Customer Name</th><th>Phone</th><th>Class</th><th>Pickup</th><th>Total (RS)</th><th>TRX ID</th><th>Items Ordered</th></tr>";
+            tableHTML += "<tr style='background-color: #f2f2f2;'><th>Date</th><th>Order ID</th><th>Customer</th><th>Phone</th><th>Class</th><th>Pickup</th><th>Total (RS)</th><th>Promo Code</th><th>TRX ID</th><th>Items Ordered</th></tr>";
 
             globalOrders.forEach(o => {
                 const date = new Date(o.timestamp).toLocaleDateString();
-                const itemsStr = o.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('<br>');
+                const itemsStr = (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Full Sleeves +RS 150]' : ''}`).join('<br>');
                 tableHTML += `<tr>
-                    <td style="padding: 5px;">${date}</td>
-                    <td style="padding: 5px;">${o.customerName}</td>
-                    <td style="padding: 5px;">${o.phone}</td>
-                    <td style="padding: 5px;">${o.class}</td>
-                    <td style="padding: 5px;">${o.location}</td>
-                    <td style="padding: 5px;">${o.total}</td>
-                    <td style="padding: 5px;">${o.trxId}</td>
-                    <td style="padding: 5px;">${itemsStr}</td>
+                    <td style="padding: 6px;">${date}</td>
+                    <td style="padding: 6px;">${o.orderId || '-'}</td>
+                    <td style="padding: 6px;">${o.customerName}</td>
+                    <td style="padding: 6px;">${o.phone}</td>
+                    <td style="padding: 6px;">${o.class}</td>
+                    <td style="padding: 6px;">${o.location}</td>
+                    <td style="padding: 6px;">RS ${o.total}/-</td>
+                    <td style="padding: 6px;">${o.promoCode ? `${o.promoCode} (-RS ${o.discountAmount || 0})` : 'None'}</td>
+                    <td style="padding: 6px;">${o.trxId}</td>
+                    <td style="padding: 6px;">${itemsStr}</td>
                 </tr>`;
             });
             tableHTML += "</table>";
 
-            // Add Word specific HTML namespaces
             const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>AIMCMERCH Orders</title></head><body>";
             const footer = "</body></html>";
             
-            // Create Blob and trigger download
             const sourceHTML = header + "<h2>AIMCMERCH Orders Report</h2>" + tableHTML + footer;
             const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
             
@@ -547,23 +590,24 @@
 
         window.exportToPDF = function() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = new jsPDF('landscape');
             doc.text("AIMCMERCH Orders Report", 14, 15);
             
             const tableData = globalOrders.map(o => [
                 new Date(o.timestamp).toLocaleDateString(),
+                o.orderId || '-',
                 o.customerName,
                 o.phone,
                 o.class,
                 o.location,
-                `RS ${o.total}`,
+                `RS ${o.total} ${o.promoCode ? `(${o.promoCode})` : ''}`,
                 o.trxId,
-                o.items.map(i => `${i.quantity}x ${i.title} (${i.size})`).join('\n')
+                (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Sleeves +150]' : ''}`).join('\n')
             ]);
 
             doc.autoTable({
                 startY: 20,
-                head: [['Date', 'Name', 'Phone', 'Class', 'Pickup', 'Total', 'TRX ID', 'Items']],
+                head: [['Date', 'Order ID', 'Name', 'Phone', 'Class', 'Pickup', 'Total', 'TRX ID', 'Items']],
                 body: tableData,
                 styles: { fontSize: 7, cellPadding: 2 },
                 headStyles: { fillColor: [0, 0, 0] }
