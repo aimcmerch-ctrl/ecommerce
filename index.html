@@ -163,6 +163,41 @@
         .size-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 2.5rem; }
         .size-option { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.8rem 0; text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; border-radius: 4px; }
         .size-option:hover, .size-option.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+        
+        /* LUXURY MINIMALIST SLEEVES OPTION */
+        .sleeve-select-section { margin-bottom: 1.8rem; }
+        .sleeve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+        .sleeve-header label { font-size: 0.75rem; color: var(--text); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .sleeve-toggle-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .sleeve-btn { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            padding: 0.75rem 0.5rem; 
+            text-align: center; 
+            font-family: var(--font-head); 
+            font-weight: 800; 
+            font-size: 0.78rem; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px; 
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .sleeve-btn:hover { border-color: #000; }
+        .sleeve-btn.active { background: #000000; color: #ffffff; border-color: #000000; }
+        .sleeve-btn small { font-size: 0.7rem; font-weight: 600; opacity: 0.8; }
+        .sleeve-btn.active small { color: #ddd; }
+
+        /* PROMO CODE SECTION */
+        .promo-input-group { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
+        .btn-promo-apply { background: #000; color: #fff; border: none; padding: 0 1.2rem; font-family: var(--font-head); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; }
+        .promo-msg { font-size: 0.75rem; font-weight: 700; display: block; }
+        
         .btn-cart-main { background: var(--accent); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.8rem; transition: 0.3s; border-radius: 4px; }
         .btn-cart-main:hover { background: #222; }
 
@@ -419,6 +454,17 @@
                     <button class="size-option" onclick="selectSize('L')">L</button>
                     <button class="size-option" onclick="selectSize('XL')">XL</button>
                 </div>
+
+                <!-- MINIMALIST SLEEVE TYPE SELECTOR -->
+                <div class="sleeve-select-section" id="p-page-sleeve-box">
+                    <div class="sleeve-header">
+                        <label>Sleeve Type</label>
+                    </div>
+                    <div class="sleeve-toggle-group">
+                        <button type="button" class="sleeve-btn active" id="btn-sleeve-half" onclick="selectPageSleeve(false)">Half Sleeves</button>
+                        <button type="button" class="sleeve-btn" id="btn-sleeve-full" onclick="selectPageSleeve(true)">Full Sleeves <small>(+150)</small></button>
+                    </div>
+                </div>
                 
                 <button class="btn-cart-main" onclick="addCurrentToCart()"><i class="ph-thin ph-shopping-bag"></i> Add to Cart</button>
 
@@ -450,9 +496,24 @@
                 <div class="form-group"><label>Class / Designation</label><select id="c-class" class="form-select" required><option value="" disabled selected>Select class</option><option value="1st year MBBS">1st year MBBS</option><option value="2nd year MBBS">2nd year MBBS</option><option value="3rd year MBBS">3rd year MBBS</option><option value="4th year MBBS">4th year MBBS</option><option value="Final year MBBS">Final year MBBS</option><option value="DPT">DPT</option><option value="MLT">MLT</option><option value="Nursing">Nursing</option><option value="House Officer">House Officer</option><option value="PG">PG</option></select></div>
                 <div class="form-group"><label>Mobile Number</label><input type="tel" id="c-phone" class="form-control" required placeholder="03XXXXXXXXX"></div>
                 <div class="form-group"><label>Pickup Location</label><select id="c-location" class="form-select" required><option value="" disabled selected>Select pickup</option><option value="Female pickup from Girls Hostel">Female pickup from Girls Hostel</option><option value="Male pickup from Boys Hostel">Male pickup from Boys Hostel</option></select></div>
-                <h2 class="heading form-section-title" style="margin-top: 1rem;">Payment</h2>
+                <h2 class="heading form-section-title" style="margin-top: 1rem;">Promo & Payment</h2>
+                
+                <!-- PROMO CODE INPUT -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Have a Promo Code?</label>
+                    <div class="promo-input-group">
+                        <input type="text" id="checkout-promo-input" class="form-control" placeholder="Enter coupon code" style="text-transform: uppercase; font-weight: 800;">
+                        <button type="button" class="btn-promo-apply" onclick="applyPromoCode()">Apply</button>
+                    </div>
+                    <span id="promo-status-msg" class="promo-msg"></span>
+                </div>
+
                 <div class="payment-box">
-                    <label style="font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 0.4rem; font-weight: 700;">Total Amount</label>
+                    <div id="checkout-pricing-breakdown" style="font-size:0.85rem; margin-bottom: 0.8rem; display:none; border-bottom: 1px dashed var(--border); padding-bottom: 0.8rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span>Subtotal:</span><span id="checkout-subtotal-val">RS 0/-</span></div>
+                        <div style="display:flex; justify-content:space-between; color:#16a34a; font-weight:700;"><span>Promo Discount:</span><span id="checkout-discount-val">- RS 0/-</span></div>
+                    </div>
+                    <label style="font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 0.4rem; font-weight: 700;">Payable Amount</label>
                     <div class="payment-amount" id="checkout-total-amount">RS 0/-</div>
                     <div class="account-row"><div class="acc-details"><h5>HBL - Muzamil Fiaz</h5><p>12447901757503</p></div><button type="button" class="btn-copy" onclick="copyToClipboard('12447901757503', this)">Copy</button></div>
                     <div class="account-row" style="margin-top: 0.8rem;"><div class="acc-details"><h5>JazzCash/SadaPay - Muzamil Fiaz</h5><p>03120510151</p></div><button type="button" class="btn-copy" onclick="copyToClipboard('03120510151', this)">Copy</button></div>
@@ -485,11 +546,22 @@
             <p id="qa-price" style="font-weight:900; font-family:var(--font-head); margin-bottom:1.5rem; color:var(--accent);"></p>
             <div id="qa-size-section">
                 <label style="font-size:0.8rem; font-weight:800; text-transform:uppercase; margin-bottom:0.8rem; display:block;">Select Size</label>
-                <div class="size-selector" id="qa-size-selector" style="margin-bottom: 1.5rem;">
+                <div class="size-selector" id="qa-size-selector" style="margin-bottom: 1rem;">
                     <button class="size-option" onclick="selectQAsize('S')">S</button>
                     <button class="size-option active" onclick="selectQAsize('M')">M</button>
                     <button class="size-option" onclick="selectQAsize('L')">L</button>
                     <button class="size-option" onclick="selectQAsize('XL')">XL</button>
+                </div>
+                
+                <!-- QUICK ADD MINIMALIST SLEEVE SELECTOR -->
+                <div class="sleeve-select-section" id="qa-sleeve-box" style="margin-bottom: 1.5rem; text-align: left;">
+                    <div class="sleeve-header">
+                        <label>Sleeve Type</label>
+                    </div>
+                    <div class="sleeve-toggle-group">
+                        <button type="button" class="sleeve-btn active" id="qa-btn-sleeve-half" onclick="selectQASleeve(false)">Half Sleeves</button>
+                        <button type="button" class="sleeve-btn" id="qa-btn-sleeve-full" onclick="selectQASleeve(true)">Full Sleeves <small>(+150)</small></button>
+                    </div>
                 </div>
             </div>
             <button class="btn-cart-main" onclick="confirmQuickAdd()"><i class="ph-thin ph-shopping-bag"></i> Confirm Add</button>
@@ -597,8 +669,11 @@
         let heroImages = ["https://i.imgur.com/ksQ0oOw.jpeg"];
         let currentHeroIdx = 0;
 
+        let activePromo = null; // { code: 'IQBALIAN10', discount: 10, active: true }
+        let appliedPromo = null;
+
         async function loadStoreData() {
-            // 1. FETCH PRODUCTS FIRST (Guaranteed to run)
+            // 1. FETCH PRODUCTS
             try {
                 const snapshot = await getDocs(collection(db, "products"));
                 let fetched = [];
@@ -612,7 +687,7 @@
                 console.error("Error fetching products:", err); 
             }
 
-            // 2. FETCH THEME SETTINGS INDEPENDENTLY
+            // 2. FETCH THEME & PROMO SETTINGS
             try {
                 const themeDoc = await getDoc(doc(db, "settings", "store_theme"));
                 if (themeDoc.exists()) {
@@ -638,12 +713,21 @@
                     }
                     if(t.accent_color) document.documentElement.style.setProperty('--accent', t.accent_color);
                     if(t.font_size) document.documentElement.style.fontSize = t.font_size + 'px';
+
+                    // Promo Code config
+                    if(t.promoCode && t.promoActive) {
+                        activePromo = {
+                            code: t.promoCode.toUpperCase(),
+                            discount: parseInt(t.promoDiscount) || 0,
+                            active: true
+                        };
+                    }
                 }
             } catch (err) { 
-                console.warn("Theme settings not found or blocked (this is fine):", err); 
+                console.warn("Theme settings load:", err); 
             }
             
-            // 3. RENDER THE LAYOUT
+            // 3. RENDER LAYOUT
             renderLayout();
         }
         loadStoreData();
@@ -711,7 +795,6 @@
                 scrollTrigger: { trigger: ".stitch-container", start: "top 70%", end: "bottom 80%", scrub: true }
             });
             
-            // Minimal fade + slight slide for Designer Cards
             gsap.utils.toArray('.designer-card').forEach((card, i) => {
                 gsap.fromTo(card, 
                     { x: i % 2 === 0 ? -30 : 30, opacity: 0 },
@@ -721,7 +804,6 @@
 
             const revealSections = document.querySelectorAll('.scroll-reveal-container section, .scroll-reveal-container footer');
             revealSections.forEach(sec => {
-                // Exclude the designers section AND the filter section from GSAP animations
                 if(sec.id !== 'designers' && !sec.classList.contains('filter-section')) { 
                     gsap.from(sec, {
                         opacity: 0, y: 40, duration: 1, ease: "power2.out",
@@ -736,14 +818,11 @@
             if(btnEl) btnEl.classList.add('active');
             else { const tab = document.querySelector(`.filter-btn[onclick*="${catId}"]`); if(tab) tab.classList.add('active'); }
             
-            // Fix the javascript error (the ID was wrong, causing the function to crash)
             const searchInput = document.getElementById('fullscreen-search');
             if (searchInput) searchInput.value = ''; 
             
             renderLayout(catId === 'all' ? products : products.filter(p => p.category === catId));
         };
-
-        
 
         document.getElementById('receipt-upload').addEventListener('change', function(e) {
             const file = e.target.files[0]; const lbl = document.getElementById('upload-label'); const trx = document.getElementById('checkout-trx-id');
@@ -768,26 +847,32 @@
             }; reader.readAsDataURL(file);
         });
 
-        window.handleCheckoutSubmit = async function(e) {
-            e.preventDefault(); const btn = document.getElementById('submit-order-btn'); btn.innerText = "Submitting..."; btn.disabled = true;
-            const orderIdNum = "#AIMC-" + Math.floor(1000 + Math.random() * 9000);
-            const nm = document.getElementById('c-name').value, cl = document.getElementById('c-class').value, tx = document.getElementById('checkout-trx-id').value, loc = document.getElementById('c-location').value;
-            
-            try {
-                await addDoc(collection(db, "orders"), { orderId: orderIdNum, customerName: nm, class: cl, phone: document.getElementById('c-phone').value, location: loc, trxId: tx, total: getCartTotal(), items: cart, timestamp: new Date().toISOString() });
-                document.getElementById('success-order-num').innerText = orderIdNum; document.getElementById('rec-id').innerText = orderIdNum; document.getElementById('rec-name').innerText = nm; document.getElementById('rec-class').innerText = cl; document.getElementById('rec-trx').innerText = tx; document.getElementById('rec-pickup').innerText = loc.includes("Girls") ? "Girls Hostel" : "Boys Hostel"; document.getElementById('rec-total').innerText = `RS ${getCartTotal()}/-`;
-                document.getElementById('rec-items-list').innerHTML = cart.map(i => `<div class="receipt-row"><span>${i.title} ${i.urdu ? `(${i.urdu})` : ''} - ${i.size} x${i.quantity}</span><span>RS ${i.price * i.quantity}/-</span></div>`).join('');
-                cart = []; updateCartUI(); document.getElementById('checkout-page-view').classList.remove('active'); document.getElementById('checkout-form').reset(); document.getElementById('upload-label').innerText = "Click to select image"; openModal('success-modal');
-            } catch(error) { alert("Error submitting order."); }
-            btn.innerText = "Confirm Order"; btn.disabled = false;
+        // --- CART & PRICING WITH SLEEVES & PROMO ---
+        let currentId = null; 
+        let selSize = 'M'; 
+        let selSleeves = false;
+        let cart = [];
+
+        window.selectPageSleeve = (isFull) => {
+            selSleeves = isFull;
+            document.getElementById('btn-sleeve-half').classList.toggle('active', !isFull);
+            document.getElementById('btn-sleeve-full').classList.toggle('active', isFull);
         };
 
-        let currentId = null; let selSize = 'M'; let cart = [];
         window.openProductPage = (id) => {
             const p = products.find(x => x.id == id); if (!p) return; currentId = id; 
             const sh = document.getElementById('p-page-size-header'), ss = document.getElementById('p-page-size-selector');
-            if (p.category === 'bags') { sh.style.display = 'none'; ss.style.display = 'none'; selSize = 'One Size'; } 
-            else { sh.style.display = 'flex'; ss.style.display = 'grid'; selSize = 'M'; selectSize('M'); }
+            const sleeveBox = document.getElementById('p-page-sleeve-box');
+            
+            selectPageSleeve(false); // Reset to default half sleeves
+
+            if (p.category === 'bags') { 
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; selSize = 'One Size'; 
+            } else if (p.category === 'shirts') {
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; selSize = 'M'; selectSize('M');
+            } else {
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; selSize = 'M'; selectSize('M');
+            }
             
             document.getElementById('p-page-designer').innerText = `Designed by ${p.designer}`;
             document.getElementById('p-page-title').innerText = p.title + (p.urdu ? ` (${p.urdu})` : '');
@@ -800,6 +885,7 @@
             renderRelatedProducts(id);
             document.getElementById('product-page-view').classList.add('active'); window.scrollTo({ top: 0 });
         };
+
         window.closeProductPage = () => document.getElementById('product-page-view').classList.remove('active');
         window.switchPageImg = (thumb, src) => { document.querySelectorAll('.p-page-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); document.getElementById('p-page-main-img').src = src; document.getElementById('lightbox-img').src = src; };
         
@@ -812,6 +898,244 @@
             else { img.style.transform = "scale(1)"; img.style.cursor = "zoom-in"; icon.className = "ph-bold ph-magnifying-glass-plus"; }
         };
 
+        window.selectSize = (sz) => { selSize = sz; document.querySelectorAll('#p-page-size-selector .size-option').forEach(b => b.classList.toggle('active', b.innerText === sz)); };
+        window.openSizeChartModal = () => document.getElementById('size-chart-modal').classList.add('active');
+
+        window.addCurrentToCart = () => { 
+            if (currentId) { 
+                const p = products.find(x => x.id == currentId); 
+                const isShirt = p.category === 'shirts';
+                const hasSleeves = isShirt ? selSleeves : false;
+                const unitPrice = p.price + (hasSleeves ? 150 : 0);
+
+                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves); 
+                if (ex) {
+                    ex.quantity += 1; 
+                } else {
+                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, unitPrice: unitPrice, quantity: 1 }); 
+                }
+                updateCartUI(); 
+                toggleCartDrawer(true); 
+            } 
+        };
+        
+        window.updateQuantity = (id, sz, sleeves, del) => { 
+            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true)); 
+            if (i) { 
+                i.quantity += del; 
+                if (i.quantity <= 0) {
+                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true))); 
+                }
+                updateCartUI(); 
+                if(document.getElementById('checkout-page-view').classList.contains('active')) { 
+                    if (cart.length === 0) closeCheckoutPage(); 
+                    else renderCheckoutSummary(); 
+                } 
+            } 
+        };
+
+        const getSubtotal = () => cart.reduce((acc, i) => acc + ((i.unitPrice || i.price) * i.quantity), 0);
+        
+        const getFinalTotal = () => {
+            const sub = getSubtotal();
+            if(appliedPromo && appliedPromo.discount > 0) {
+                const discVal = Math.round(sub * (appliedPromo.discount / 100));
+                return Math.max(0, sub - discVal);
+            }
+            return sub;
+        };
+
+        const getDiscountAmount = () => {
+            const sub = getSubtotal();
+            if(appliedPromo && appliedPromo.discount > 0) {
+                return Math.round(sub * (appliedPromo.discount / 100));
+            }
+            return 0;
+        };
+        
+        function updateCartUI() {
+            const cnt = cart.reduce((acc, i) => acc + i.quantity, 0); 
+            document.getElementById('cart-badge').innerText = cnt; 
+            document.getElementById('p-page-cart-badge').innerText = cnt; 
+            document.getElementById('cart-total-price').innerText = `RS ${getSubtotal()}/-`;
+            
+            if (cart.length === 0) {
+                document.getElementById('cart-items').innerHTML = '<p style="color:var(--text-dim); text-align:center; margin-top:2rem;">Bag empty.</p>';
+                return;
+            }
+
+            document.getElementById('cart-items').innerHTML = cart.map(i => {
+                const itemUnit = i.unitPrice || i.price;
+                const sleeveText = i.sleeves ? `<div style="color:#000; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">• Full Sleeves (+RS 150)</div>` : '';
+                return `
+                <div class="cart-item">
+                    <img src="${i.imgDefault}">
+                    <div class="item-details">
+                        <div>
+                            <div class="heading" style="font-size:0.85rem;">${i.title}</div>
+                            <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
+                            ${sleeveText}
+                            <div style="font-weight:800; margin-top:0.2rem;">RS ${itemUnit * i.quantity}/-</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, -1)">-</button>
+                            <span style="font-size:0.8rem;">${i.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- CHECKOUT & PROMO CODE SYSTEM ---
+        window.applyPromoCode = () => {
+            const inp = document.getElementById('checkout-promo-input');
+            const msg = document.getElementById('promo-status-msg');
+            const val = inp.value.trim().toUpperCase();
+
+            if(!val) {
+                msg.style.color = "#dc2626";
+                msg.innerText = "Please enter a promo code.";
+                return;
+            }
+
+            if(activePromo && activePromo.active && val === activePromo.code) {
+                appliedPromo = activePromo;
+                msg.style.color = "#16a34a";
+                msg.innerText = `Promo "${val}" applied: ${activePromo.discount}% OFF!`;
+                renderCheckoutSummary();
+            } else {
+                appliedPromo = null;
+                msg.style.color = "#dc2626";
+                msg.innerText = "Invalid or expired promo code.";
+                renderCheckoutSummary();
+            }
+        };
+
+        window.renderCheckoutSummary = () => { 
+            const sub = getSubtotal();
+            const disc = getDiscountAmount();
+            const tot = getFinalTotal();
+
+            const breakdown = document.getElementById('checkout-pricing-breakdown');
+            if(appliedPromo && disc > 0) {
+                breakdown.style.display = 'block';
+                document.getElementById('checkout-subtotal-val').innerText = `RS ${sub}/-`;
+                document.getElementById('checkout-discount-val').innerText = `- RS ${disc}/- (${appliedPromo.discount}%)`;
+            } else {
+                breakdown.style.display = 'none';
+            }
+
+            document.getElementById('checkout-total-amount').innerText = `RS ${tot}/-`; 
+            
+            document.getElementById('checkout-order-summary').innerHTML = cart.map(i => {
+                const itemUnit = i.unitPrice || i.price;
+                const sleeveText = i.sleeves ? `<div style="color:#d97706; font-size:0.7rem; font-weight:800;">• Full Sleeves (+RS 150)</div>` : '';
+                return `
+                <div class="checkout-item">
+                    <img src="${i.imgDefault}">
+                    <div class="checkout-item-details">
+                        <div>
+                            <div class="heading" style="font-size:0.85rem;">${i.title}</div>
+                            <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
+                            ${sleeveText}
+                            <div style="font-weight:800; margin-top:2px;">RS ${itemUnit * i.quantity}/-</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, -1)">-</button>
+                            <span style="font-size:0.8rem;">${i.quantity}</span>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join(''); 
+        };
+
+        window.openCheckoutPage = () => { 
+            if(cart.length === 0) return alert("Add items to your bag first."); 
+            renderCheckoutSummary(); 
+            closeDrawers(); 
+            document.getElementById('checkout-page-view').classList.add('active'); 
+            window.scrollTo({top:0}); 
+        };
+
+        window.closeCheckoutPage = () => { 
+            document.getElementById('checkout-page-view').classList.remove('active'); 
+            toggleCartDrawer(true); 
+        };
+
+        window.handleCheckoutSubmit = async function(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('submit-order-btn'); 
+            btn.innerText = "Submitting..."; 
+            btn.disabled = true;
+            
+            const orderIdNum = "#AIMC-" + Math.floor(1000 + Math.random() * 9000);
+            const nm = document.getElementById('c-name').value;
+            const cl = document.getElementById('c-class').value;
+            const tx = document.getElementById('checkout-trx-id').value;
+            const loc = document.getElementById('c-location').value;
+            const ph = document.getElementById('c-phone').value;
+            const tot = getFinalTotal();
+            const sub = getSubtotal();
+            const disc = getDiscountAmount();
+
+            const orderPayload = { 
+                orderId: orderIdNum, 
+                customerName: nm, 
+                class: cl, 
+                phone: ph, 
+                location: loc, 
+                trxId: tx, 
+                subtotal: sub,
+                discountAmount: disc,
+                promoCode: appliedPromo ? appliedPromo.code : null,
+                total: tot, 
+                items: cart, 
+                timestamp: new Date().toISOString() 
+            };
+            
+            try {
+                await addDoc(collection(db, "orders"), orderPayload);
+                
+                document.getElementById('success-order-num').innerText = orderIdNum; 
+                document.getElementById('rec-id').innerText = orderIdNum; 
+                document.getElementById('rec-name').innerText = nm; 
+                document.getElementById('rec-class').innerText = cl; 
+                document.getElementById('rec-trx').innerText = tx; 
+                document.getElementById('rec-pickup').innerText = loc.includes("Girls") ? "Girls Hostel" : "Boys Hostel"; 
+                
+                let recItemsHtml = cart.map(i => {
+                    const itemUnit = i.unitPrice || i.price;
+                    const slv = i.sleeves ? ' [+Full Sleeves]' : '';
+                    return `<div class="receipt-row"><span>${i.title}${slv} - ${i.size} x${i.quantity}</span><span>RS ${itemUnit * i.quantity}/-</span></div>`;
+                }).join('');
+
+                if(appliedPromo && disc > 0) {
+                    recItemsHtml += `<div class="receipt-row" style="color:#16a34a; font-weight:bold;"><span>Promo (${appliedPromo.code}):</span><span>- RS ${disc}/-</span></div>`;
+                }
+
+                document.getElementById('rec-items-list').innerHTML = recItemsHtml;
+                document.getElementById('rec-total').innerText = `RS ${tot}/-`;
+                
+                // Clear state
+                cart = []; 
+                appliedPromo = null;
+                updateCartUI(); 
+                document.getElementById('checkout-page-view').classList.remove('active'); 
+                document.getElementById('checkout-form').reset(); 
+                document.getElementById('upload-label').innerText = "Click to select image"; 
+                document.getElementById('promo-status-msg').innerText = '';
+                openModal('success-modal');
+            } catch(error) { 
+                alert("Error submitting order: " + error.message); 
+            }
+            btn.innerText = "Confirm Order"; 
+            btn.disabled = false;
+        };
+
         window.downloadReceipt = () => {
             if (typeof html2canvas !== 'undefined') {
                 html2canvas(document.getElementById('printable-receipt'), { scale: 2 }).then(canvas => {
@@ -820,31 +1144,22 @@
             }
         };
 
-        window.selectSize = (sz) => { selSize = sz; document.querySelectorAll('.size-option').forEach(b => b.classList.toggle('active', b.innerText === sz)); };
-        window.openSizeChartModal = () => document.getElementById('size-chart-modal').classList.add('active');
-        window.addCurrentToCart = () => { if (currentId) { const p = products.find(x => x.id == currentId); const ex = cart.find(i => i.id == currentId && i.size === selSize); if (ex) ex.quantity += 1; else cart.push({ ...p, size: selSize, quantity: 1 }); updateCartUI(); toggleCartDrawer(true); } };
-        
-        window.updateQuantity = (id, sz, del) => { const i = cart.find(x => x.id == id && x.size === sz); if (i) { i.quantity += del; if (i.quantity <= 0) cart = cart.filter(x => !(x.id == id && x.size === sz)); updateCartUI(); if(document.getElementById('checkout-page-view').classList.contains('active')) { if (cart.length === 0) closeCheckoutPage(); else renderCheckoutSummary(); } } };
-        const getCartTotal = () => cart.reduce((acc, i) => acc + (i.price * i.quantity), 0);
-        
-        function updateCartUI() {
-            const cnt = cart.reduce((acc, i) => acc + i.quantity, 0); document.getElementById('cart-badge').innerText = cnt; document.getElementById('p-page-cart-badge').innerText = cnt; document.getElementById('cart-total-price').innerText = `RS ${getCartTotal()}/-`;
-            if (cart.length === 0) return document.getElementById('cart-items').innerHTML = '<p style="color:var(--text-dim); text-align:center; margin-top:2rem;">Bag empty.</p>';
-            document.getElementById('cart-items').innerHTML = cart.map(i => `<div class="cart-item"><img src="${i.imgDefault}"><div class="item-details"><div><div class="heading" style="font-size:0.85rem;">${i.title}</div><div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div><div style="font-weight:800; margin-top:0.2rem;">RS ${i.price}/-</div></div><div class="qty-controls"><button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', -1)">-</button><span style="font-size:0.8rem;">${i.quantity}</span><button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', 1)">+</button></div></div></div>`).join('');
-        }
-
-        window.renderCheckoutSummary = () => { document.getElementById('checkout-total-amount').innerText = `RS ${getCartTotal()}/-`; document.getElementById('checkout-order-summary').innerHTML = cart.map(i => `<div class="checkout-item"><img src="${i.imgDefault}"><div class="checkout-item-details"><div><div class="heading" style="font-size:0.85rem;">${i.title}</div><div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div><div style="font-weight:800;">RS ${i.price}/-</div></div><div class="qty-controls"><button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', -1)">-</button><span style="font-size:0.8rem;">${i.quantity}</span><button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', 1)">+</button></div></div></div>`).join(''); };
-        window.openCheckoutPage = () => { if(cart.length===0) return alert("Add items first."); renderCheckoutSummary(); closeDrawers(); document.getElementById('checkout-page-view').classList.add('active'); window.scrollTo({top:0}); };
-        window.closeCheckoutPage = () => { document.getElementById('checkout-page-view').classList.remove('active'); toggleCartDrawer(true); };
         window.copyToClipboard = (t, b) => { navigator.clipboard.writeText(t).then(()=>{ const o=b.innerText; b.innerText="Copied!"; setTimeout(()=>{b.innerText=o;},2000); }); };
-        
         window.toggleCartDrawer = (f) => { if(f===true){document.getElementById('cart-drawer').classList.add('open'); document.getElementById('global-overlay').classList.add('active');} else { document.getElementById('cart-drawer').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('active', document.getElementById('cart-drawer').classList.contains('open')); } };
         window.closeDrawers = () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('global-overlay').classList.remove('active'); };
         window.openModal = (id) => { closeDrawers(); document.getElementById(id).classList.add('active'); };
         window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
 
+        // --- QUICK ADD MODAL LOGIC WITH SLEEVES ---
         let qaProductId = null;
         let qaSelectedSize = 'M';
+        let qaSleeves = false;
+
+        window.selectQASleeve = (isFull) => {
+            qaSleeves = isFull;
+            document.getElementById('qa-btn-sleeve-half').classList.toggle('active', !isFull);
+            document.getElementById('qa-btn-sleeve-full').classList.toggle('active', isFull);
+        };
         
         window.openQuickAddModal = (id) => {
             const p = products.find(x => x.id === id);
@@ -855,11 +1170,22 @@
             document.getElementById('qa-price').innerText = `RS ${p.price}/-`;
             
             const sizeSec = document.getElementById('qa-size-section');
+            const sleeveBox = document.getElementById('qa-sleeve-box');
+            
+            selectQASleeve(false); // Reset to default half sleeves
+
             if(p.category === 'bags' || p.category === 'accessories') {
                 sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
                 qaSelectedSize = 'One Size';
+            } else if(p.category === 'shirts') {
+                sizeSec.style.display = 'block';
+                sleeveBox.style.display = 'block';
+                qaSelectedSize = 'M';
+                selectQAsize('M');
             } else {
                 sizeSec.style.display = 'block';
+                sleeveBox.style.display = 'none';
                 qaSelectedSize = 'M';
                 selectQAsize('M');
             }
@@ -876,9 +1202,16 @@
         window.confirmQuickAdd = () => {
             const p = products.find(x => x.id === qaProductId);
             if(p) {
-                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize);
-                if(ex) ex.quantity += 1;
-                else cart.push({ ...p, size: qaSelectedSize, quantity: 1 });
+                const isShirt = p.category === 'shirts';
+                const hasSleeves = isShirt ? qaSleeves : false;
+                const unitPrice = p.price + (hasSleeves ? 150 : 0);
+
+                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves);
+                if(ex) {
+                    ex.quantity += 1;
+                } else {
+                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, unitPrice: unitPrice, quantity: 1 });
+                }
                 updateCartUI();
                 closeModals();
                 toggleCartDrawer(true);
