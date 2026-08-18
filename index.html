@@ -379,7 +379,9 @@
             <button class="filter-btn" onclick="filterCategory('shirts', this)">Shirts</button>
             <button class="filter-btn" onclick="filterCategory('bags', this)">Tote Bags</button>
             <button class="filter-btn" onclick="filterCategory('caps', this)">Caps</button>
-            <button class="filter-btn" onclick="filterCategory('accessories', this)">Accessories</button>
+            <button class="filter-btn" onclick="filterCategory('keychains', this)">Keychains</button>
+            <button class="filter-btn" onclick="filterCategory('badges', this)">Badges</button>
+            <button class="filter-btn" onclick="filterCategory('pens', this)">Pens</button>
         </section>
 
         <main id="main-content"></main>
@@ -463,6 +465,19 @@
                     <div class="sleeve-toggle-group">
                         <button type="button" class="sleeve-btn active" id="btn-sleeve-half" onclick="selectPageSleeve(false)">Half Sleeves</button>
                         <button type="button" class="sleeve-btn" id="btn-sleeve-full" onclick="selectPageSleeve(true)">Full Sleeves <small>(+150)</small></button>
+                    </div>
+                </div>
+
+                <!-- CUSTOMIZATION INPUTS -->
+                <div class="sleeve-select-section" id="p-page-custom-box" style="display: none; margin-bottom: 1.5rem;">
+                    <div class="sleeve-header">
+                        <label>Personalization</label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="p-page-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                    <div class="form-group" id="p-page-custom-desig-group" style="display: none; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="p-page-custom-desig" placeholder="Enter Designation (e.g. Medical Officer)..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
                     </div>
                 </div>
                 
@@ -563,6 +578,19 @@
                         <button type="button" class="sleeve-btn" id="qa-btn-sleeve-full" onclick="selectQASleeve(true)">Full Sleeves <small>(+150)</small></button>
                     </div>
                 </div>
+                
+                <!-- QUICK ADD CUSTOMIZATION INPUTS -->
+                <div class="sleeve-select-section" id="qa-custom-box" style="display: none; margin-bottom: 1.5rem; text-align: left;">
+                    <div class="sleeve-header">
+                        <label>Personalization</label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="qa-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                    <div class="form-group" id="qa-custom-desig-group" style="display: none; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="qa-custom-desig" placeholder="Enter Designation (e.g. Medical Officer)..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                </div>
             </div>
             <button class="btn-cart-main" onclick="confirmQuickAdd()"><i class="ph-thin ph-shopping-bag"></i> Confirm Add</button>
         </div>
@@ -599,7 +627,7 @@
         });
         const db = getFirestore(app);
 
-        const categories = [ { id: 'shirts', name: 'Shirts' }, { id: 'bags', name: 'Tote Bags' }, { id: 'caps', name: 'Caps' }, { id: 'accessories', name: 'Accessories' } ];
+        const categories = [ { id: 'shirts', name: 'Shirts' }, { id: 'bags', name: 'Tote Bags' }, { id: 'caps', name: 'Caps' }, { id: 'keychains', name: 'Keychains' }, { id: 'badges', name: 'Badges' }, { id: 'pens', name: 'Pens' } ];
         
         let products = [];
 
@@ -610,7 +638,7 @@
                 const section = document.createElement('section');
                 section.className = 'category-section'; section.id = `section-${cat.id}`;
                 
-                if (cat.id === 'caps' || cat.id === 'accessories') {
+                if (cat.id === 'caps') {
                     section.innerHTML = `<div class="category-header"><h2 class="heading category-title">${cat.name}</h2></div><div style="padding: 1rem 3rem; color: var(--text-dim); font-size: 0.9rem; font-weight: 800; letter-spacing: 2px;">COMING SOON...</div>`;
                     mainContent.appendChild(section); return;
                 }
@@ -866,15 +894,31 @@
             
             selectPageSleeve(false); // Reset to default half sleeves
 
+            const customBox = document.getElementById('p-page-custom-box');
+            const customDesigGroup = document.getElementById('p-page-custom-desig-group');
+            document.getElementById('p-page-custom-name').value = '';
+            document.getElementById('p-page-custom-desig').value = '';
+
             if (p.category === 'bags') { 
-                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; selSize = 'One Size'; 
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; selSize = 'One Size'; 
             } else if (p.category === 'shirts') {
-                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; selSize = 'M'; selectSize('M');
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; customBox.style.display = 'none'; selSize = 'M'; selectSize('M');
+            } else if (p.category === 'keychains' || p.category === 'pens') {
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'none'; selSize = 'One Size';
+            } else if (p.category === 'badges') {
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'flex'; selSize = 'One Size';
             } else {
-                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; selSize = 'M'; selectSize('M');
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; selSize = 'M'; selectSize('M');
             }
             
-            document.getElementById('p-page-designer').innerText = `Designed by ${p.designer}`;
+            const designerBadge = document.getElementById('p-page-designer');
+            if (p.category === 'keychains' || p.category === 'badges' || p.category === 'pens' || !p.designer) {
+                designerBadge.style.display = 'none';
+            } else {
+                designerBadge.style.display = 'block';
+                designerBadge.innerText = `Designed by ${p.designer}`;
+            }
+            
             document.getElementById('p-page-title').innerText = p.title + (p.urdu ? ` (${p.urdu})` : '');
             document.getElementById('p-page-sub').innerText = p.sub; document.getElementById('p-page-price').innerText = `RS ${p.price}/-`; document.getElementById('p-page-desc').innerText = p.desc;
             document.getElementById('p-page-main-img').src = p.imgDefault; document.getElementById('lightbox-img').src = p.imgDefault;
@@ -904,27 +948,41 @@
         window.addCurrentToCart = () => { 
             if (currentId) { 
                 const p = products.find(x => x.id == currentId); 
+                
+                let customName = '';
+                let customDesig = '';
+                if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
+                    customName = document.getElementById('p-page-custom-name').value.trim();
+                    if (!customName) return alert("Please enter the name for personalization.");
+                    if (p.category === 'badges') {
+                        customDesig = document.getElementById('p-page-custom-desig').value.trim();
+                        if (!customDesig) return alert("Please enter the designation for the badge.");
+                    }
+                }
+
                 const isShirt = p.category === 'shirts';
                 const hasSleeves = isShirt ? selSleeves : false;
                 const unitPrice = p.price + (hasSleeves ? 150 : 0);
 
-                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves); 
+                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig); 
                 if (ex) {
                     ex.quantity += 1; 
                 } else {
-                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, unitPrice: unitPrice, quantity: 1 }); 
+                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, unitPrice: unitPrice, quantity: 1 }); 
                 }
                 updateCartUI(); 
                 toggleCartDrawer(true); 
             } 
         };
         
-        window.updateQuantity = (id, sz, sleeves, del) => { 
-            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true)); 
+        window.updateQuantity = (id, sz, sleeves, customNameStr, customDesigStr, del) => { 
+            const cName = customNameStr === 'null' ? '' : customNameStr;
+            const cDesig = customDesigStr === 'null' ? '' : customDesigStr;
+            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig); 
             if (i) { 
                 i.quantity += del; 
                 if (i.quantity <= 0) {
-                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true))); 
+                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig)); 
                 }
                 updateCartUI(); 
                 if(document.getElementById('checkout-page-view').classList.contains('active')) { 
@@ -967,6 +1025,9 @@
             document.getElementById('cart-items').innerHTML = cart.map(i => {
                 const itemUnit = i.unitPrice || i.price;
                 const sleeveText = i.sleeves ? `<div style="color:#000; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">• Full Sleeves (+RS 150)</div>` : '';
+                const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
+                const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
+                const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
                 return `
                 <div class="cart-item">
                     <img src="${i.imgDefault}">
@@ -975,12 +1036,13 @@
                             <div class="heading" style="font-size:0.85rem;">${i.title}</div>
                             <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
                             ${sleeveText}
+                            ${customText}
                             <div style="font-weight:800; margin-top:0.2rem;">RS ${itemUnit * i.quantity}/-</div>
                         </div>
                         <div class="qty-controls">
-                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, -1)">-</button>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', -1)">-</button>
                             <span style="font-size:0.8rem;">${i.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, 1)">+</button>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -1032,6 +1094,9 @@
             document.getElementById('checkout-order-summary').innerHTML = cart.map(i => {
                 const itemUnit = i.unitPrice || i.price;
                 const sleeveText = i.sleeves ? `<div style="color:#d97706; font-size:0.7rem; font-weight:800;">• Full Sleeves (+RS 150)</div>` : '';
+                const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
+                const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
+                const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
                 return `
                 <div class="checkout-item">
                     <img src="${i.imgDefault}">
@@ -1040,12 +1105,13 @@
                             <div class="heading" style="font-size:0.85rem;">${i.title}</div>
                             <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
                             ${sleeveText}
+                            ${customText}
                             <div style="font-weight:800; margin-top:2px;">RS ${itemUnit * i.quantity}/-</div>
                         </div>
                         <div class="qty-controls">
-                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, -1)">-</button>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', -1)">-</button>
                             <span style="font-size:0.8rem;">${i.quantity}</span>
-                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, 1)">+</button>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -1110,7 +1176,11 @@
                 let recItemsHtml = cart.map(i => {
                     const itemUnit = i.unitPrice || i.price;
                     const slv = i.sleeves ? ' [+Full Sleeves]' : '';
-                    return `<div class="receipt-row"><span>${i.title}${slv} - ${i.size} x${i.quantity}</span><span>RS ${itemUnit * i.quantity}/-</span></div>`;
+                    const cText = i.customName ? ` (Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''})` : '';
+                    return `<div class="receipt-row" style="flex-direction:column; margin-bottom:0.6rem;">
+                        <div style="display:flex; justify-content:space-between;"><span>${i.title}${slv} - ${i.size} x${i.quantity}</span><span>RS ${itemUnit * i.quantity}/-</span></div>
+                        ${cText ? `<div style="font-size:0.7rem; color:#555; margin-top:2px;">${cText}</div>` : ''}
+                    </div>`;
                 }).join('');
 
                 if(appliedPromo && disc > 0) {
@@ -1174,18 +1244,38 @@
             
             selectQASleeve(false); // Reset to default half sleeves
 
-            if(p.category === 'bags' || p.category === 'accessories') {
+            const qaCustomBox = document.getElementById('qa-custom-box');
+            const qaCustomDesigGroup = document.getElementById('qa-custom-desig-group');
+            document.getElementById('qa-custom-name').value = '';
+            document.getElementById('qa-custom-desig').value = '';
+
+            if(p.category === 'bags') {
                 sizeSec.style.display = 'none';
                 sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'none';
                 qaSelectedSize = 'One Size';
             } else if(p.category === 'shirts') {
                 sizeSec.style.display = 'block';
                 sleeveBox.style.display = 'block';
+                qaCustomBox.style.display = 'none';
                 qaSelectedSize = 'M';
                 selectQAsize('M');
+            } else if(p.category === 'keychains' || p.category === 'pens') {
+                sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'block';
+                qaCustomDesigGroup.style.display = 'none';
+                qaSelectedSize = 'One Size';
+            } else if(p.category === 'badges') {
+                sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'block';
+                qaCustomDesigGroup.style.display = 'flex';
+                qaSelectedSize = 'One Size';
             } else {
                 sizeSec.style.display = 'block';
                 sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'none';
                 qaSelectedSize = 'M';
                 selectQAsize('M');
             }
@@ -1202,15 +1292,26 @@
         window.confirmQuickAdd = () => {
             const p = products.find(x => x.id === qaProductId);
             if(p) {
+                let customName = '';
+                let customDesig = '';
+                if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
+                    customName = document.getElementById('qa-custom-name').value.trim();
+                    if (!customName) return alert("Please enter the name for personalization.");
+                    if (p.category === 'badges') {
+                        customDesig = document.getElementById('qa-custom-desig').value.trim();
+                        if (!customDesig) return alert("Please enter the designation for the badge.");
+                    }
+                }
+
                 const isShirt = p.category === 'shirts';
                 const hasSleeves = isShirt ? qaSleeves : false;
                 const unitPrice = p.price + (hasSleeves ? 150 : 0);
 
-                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves);
+                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig);
                 if(ex) {
                     ex.quantity += 1;
                 } else {
-                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, unitPrice: unitPrice, quantity: 1 });
+                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, unitPrice: unitPrice, quantity: 1 });
                 }
                 updateCartUI();
                 closeModals();
