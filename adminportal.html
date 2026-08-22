@@ -277,11 +277,15 @@
                         <option value="bags">Tote Bags</option>
                         <option value="caps">Caps</option>
                         <option value="keychains">Keychains (Requires Name Personalization)</option>
-                        <option value="badges">Badges (Requires Name & Desig Personalization)</option>
+                        <option value="badges">Badges (Requires Badge Selection & Personalization)</option>
                         <option value="pens">Pens (Requires Name Personalization)</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Price (RS)</label><input type="number" id="p-price" required></div>
+                <div class="form-group">
+                    <label>Price (RS)</label>
+                    <input type="number" id="p-price" required>
+                    <span id="price-help-text" class="help-text" style="display:none; color:#d97706; font-weight:600;">For Badges, this base price is overridden on the website by the badge type selected by the user.</span>
+                </div>
                 <div class="form-group"><label>Default Image URL</label><input type="url" id="p-imgDefault" required placeholder="https://..."></div>
                 <div class="form-group"><label>Hover Image URL</label><input type="url" id="p-imgHover" required placeholder="https://..."></div>
                 <div class="form-group"><label>Description</label><textarea id="p-desc" rows="4" required></textarea></div>
@@ -529,8 +533,9 @@
                 
                 const itemsList = (order.items || []).map(i => {
                     const sleeveBadge = i.sleeves ? `<br><span class="badge-sleeve">+ Full Sleeves (+RS 150)</span>` : '';
-                    const customBadge = i.customName ? `<br><span style="font-size:0.75rem; color:#4b5563; background:#f3f4f6; padding:0.1rem 0.3rem; border-radius:4px;">Name: ${i.customName}${i.customDesig ? ` | Desig: ${i.customDesig}` : ''}</span>` : '';
-                    return `• <strong>${i.quantity}x</strong> ${i.title} (${i.size}) ${sleeveBadge}${customBadge}`;
+                    const badgeTypeBadge = i.badgeType ? `<br><span style="font-size:0.75rem; color:#4b5563; background:#e5e7eb; padding:0.1rem 0.3rem; border-radius:4px; margin-top:2px; display:inline-block;">Type: ${i.badgeType}</span>` : '';
+                    const customBadge = i.customName ? `<br><span style="font-size:0.75rem; color:#4b5563; background:#f3f4f6; padding:0.1rem 0.3rem; border-radius:4px; margin-top:2px; display:inline-block;">Name: ${i.customName}${i.customDesig ? ` | Desig: ${i.customDesig}` : ''}</span>` : '';
+                    return `• <strong>${i.quantity}x</strong> ${i.title} (${i.size}) ${sleeveBadge}${badgeTypeBadge}${customBadge}`;
                 }).join('<br><br>');
                 
                 const promoInfo = order.promoCode ? `<br><span class="badge-promo">PROMO: ${order.promoCode} (-${order.discountAmount || 0} RS)</span>` : '';
@@ -593,6 +598,8 @@
             const cat = document.getElementById('p-category').value;
             const designerGroup = document.getElementById('designer-group');
             const designerInput = document.getElementById('p-designer');
+            const priceHelp = document.getElementById('price-help-text');
+            
             if(cat === 'keychains' || cat === 'badges' || cat === 'pens') {
                 designerGroup.style.display = 'none';
                 designerInput.removeAttribute('required');
@@ -600,6 +607,12 @@
             } else {
                 designerGroup.style.display = 'block';
                 designerInput.setAttribute('required', 'true');
+            }
+
+            if(cat === 'badges') {
+                if(priceHelp) priceHelp.style.display = 'block';
+            } else {
+                if(priceHelp) priceHelp.style.display = 'none';
             }
         };
 
@@ -728,7 +741,7 @@
 
             globalOrders.forEach(o => {
                 const date = new Date(o.timestamp).toLocaleDateString();
-                const itemsStr = (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Full Sleeves +RS 150]' : ''}${i.customName ? ` [Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''}]` : ''}`).join('<br>');
+                const itemsStr = (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Full Sleeves +RS 150]' : ''}${i.badgeType ? ` [Type: ${i.badgeType}]` : ''}${i.customName ? ` [Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''}]` : ''}`).join('<br>');
                 tableHTML += `<tr>
                     <td style="padding: 6px;">${date}</td>
                     <td style="padding: 6px;">${o.orderId || '-'}</td>
@@ -772,7 +785,7 @@
                 o.location,
                 `RS ${o.total} ${o.promoCode ? `(${o.promoCode})` : ''}`,
                 o.trxId,
-                (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Sleeves]' : ''}${i.customName ? ` [Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''}]` : ''}`).join('\n')
+                (o.items || []).map(i => `${i.quantity}x ${i.title} (${i.size})${i.sleeves ? ' [+Sleeves]' : ''}${i.badgeType ? ` [Type: ${i.badgeType}]` : ''}${i.customName ? ` [Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''}]` : ''}`).join('\n')
             ]);
 
             doc.autoTable({
