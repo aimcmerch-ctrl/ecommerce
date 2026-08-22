@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- Forces pitch black color behind the notch/status bar on mobile phones -->
     <meta name="theme-color" content="#000000">
@@ -326,7 +326,23 @@
             footer { padding: 2.5rem 1.2rem 1.5rem; }
             .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
             .huge-footer-text { font-size: 4rem; }
+            
+            /* Prevents Safari/Mobile browsers from zooming in on input focus */
+            input[type="text"], input[type="tel"], input[type="number"], input[type="email"], select, textarea {
+                font-size: 16px !important;
+            }
         }
+
+        /* Minimal Checkbox-like Badge Selector */
+        .badge-type-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .badge-option { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: 0.2s ease; background: var(--surface); }
+        .badge-option:hover { border-color: #000; }
+        .badge-option.active { border-color: #000; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .badge-check { width: 16px; height: 16px; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s ease; }
+        .badge-option.active .badge-check { background: #000; border-color: #000; }
+        .badge-option.active .badge-check::after { content: '\2713'; color: #fff; font-size: 11px; font-weight: bold; }
+        .badge-option span { font-size: 0.75rem; font-weight: 700; flex: 1; color: var(--text); line-height: 1.3; }
+        .badge-price { font-size: 0.75rem; font-weight: 900; color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -471,7 +487,34 @@
                 <!-- CUSTOMIZATION INPUTS -->
                 <div class="sleeve-select-section" id="p-page-custom-box" style="display: none; margin-bottom: 1.5rem;">
                     <div class="sleeve-header">
-                        <label>Personalization</label>
+                        <label>Personalization & Options</label>
+                    </div>
+                    <div id="p-page-badge-type-group" style="display: none; flex-direction: column; margin-bottom: 1.5rem;">
+                        <div class="sleeve-header" style="margin-bottom: 0.6rem;">
+                            <label>Select Badge Type</label>
+                        </div>
+                        <div id="p-page-badge-options" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button type="button" class="sleeve-btn active" onclick="selectBadgeType('page', 'Plastic name tag with safety pin', 370, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 370</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Plastic name tag (logo) with safety pin', 450, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag (logo) w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 450</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Plastic name tag with Magnet', 750, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 750</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Steel name tag with Magnet', 900, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel name tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 900</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Steel Name tag (logo) with Magnet', 1050, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel Name tag (logo) w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 1050</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
                         <input type="text" id="p-page-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
@@ -582,7 +625,34 @@
                 <!-- QUICK ADD CUSTOMIZATION INPUTS -->
                 <div class="sleeve-select-section" id="qa-custom-box" style="display: none; margin-bottom: 1.5rem; text-align: left;">
                     <div class="sleeve-header">
-                        <label>Personalization</label>
+                        <label>Personalization & Options</label>
+                    </div>
+                    <div id="qa-badge-type-group" style="display: none; flex-direction: column; margin-bottom: 1.5rem;">
+                        <div class="sleeve-header" style="margin-bottom: 0.6rem;">
+                            <label>Select Badge Type</label>
+                        </div>
+                        <div id="qa-badge-options" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button type="button" class="sleeve-btn active" onclick="selectBadgeType('qa', 'Plastic name tag with safety pin', 370, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 370</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Plastic name tag (logo) with safety pin', 450, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag (logo) w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 450</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Plastic name tag with Magnet', 750, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 750</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Steel name tag with Magnet', 900, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel name tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 900</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Steel Name tag (logo) with Magnet', 1050, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel Name tag (logo) w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 1050</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
                         <input type="text" id="qa-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
@@ -894,28 +964,59 @@
             document.getElementById('btn-sleeve-full').classList.toggle('active', isFull);
         };
 
+        let selectedBadgeType = 'Plastic name tag with safety pin';
+        let selectedBadgePrice = 370;
+        let qaSelectedBadgeType = 'Plastic name tag with safety pin';
+        let qaSelectedBadgePrice = 370;
+
+        window.selectBadgeType = (context, type, price, el) => {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.sleeve-btn').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+            
+            if (context === 'page') {
+                selectedBadgeType = type;
+                selectedBadgePrice = price;
+                document.getElementById('p-page-price').innerText = `RS ${price}/-`;
+            } else if (context === 'qa') {
+                qaSelectedBadgeType = type;
+                qaSelectedBadgePrice = price;
+                document.getElementById('qa-price').innerText = `RS ${price}/-`;
+            }
+        };
+
         window.openProductPage = (id) => {
             const p = products.find(x => x.id == id); if (!p) return; currentId = id; 
             const sh = document.getElementById('p-page-size-header'), ss = document.getElementById('p-page-size-selector');
             const sleeveBox = document.getElementById('p-page-sleeve-box');
             
-            selectPageSleeve(false); // Reset to default half sleeves
+            selectPageSleeve(false); 
 
             const customBox = document.getElementById('p-page-custom-box');
             const customDesigGroup = document.getElementById('p-page-custom-desig-group');
+            const badgeTypeGroup = document.getElementById('p-page-badge-type-group');
             document.getElementById('p-page-custom-name').value = '';
             document.getElementById('p-page-custom-desig').value = '';
+            
+            if (document.getElementById('p-page-badge-options')) {
+                document.querySelectorAll('#p-page-badge-options .sleeve-btn').forEach((opt, idx) => {
+                    if(idx === 0) opt.classList.add('active');
+                    else opt.classList.remove('active');
+                });
+                selectedBadgeType = 'Plastic name tag with safety pin';
+                selectedBadgePrice = 370;
+            }
 
             if (p.category === 'bags') { 
-                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; selSize = 'One Size'; 
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'One Size'; 
             } else if (p.category === 'shirts') {
-                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; customBox.style.display = 'none'; selSize = 'M'; selectSize('M');
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'M'; selectSize('M');
             } else if (p.category === 'keychains' || p.category === 'pens') {
-                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'none'; selSize = 'One Size';
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'One Size';
             } else if (p.category === 'badges') {
-                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'flex'; selSize = 'One Size';
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'flex'; badgeTypeGroup.style.display = 'flex'; selSize = 'One Size';
             } else {
-                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; selSize = 'M'; selectSize('M');
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'M'; selectSize('M');
             }
             
             const designerBadge = document.getElementById('p-page-designer');
@@ -927,7 +1028,12 @@
             }
             
             document.getElementById('p-page-title').innerText = p.title + (p.urdu ? ` (${p.urdu})` : '');
-            document.getElementById('p-page-sub').innerText = p.sub; document.getElementById('p-page-price').innerText = `RS ${p.price}/-`; document.getElementById('p-page-desc').innerText = p.desc;
+            document.getElementById('p-page-sub').innerText = p.sub; 
+            
+            if (p.category === 'badges') document.getElementById('p-page-price').innerText = `RS ${selectedBadgePrice}/-`;
+            else document.getElementById('p-page-price').innerText = `RS ${p.price}/-`; 
+            
+            document.getElementById('p-page-desc').innerText = p.desc;
             document.getElementById('p-page-main-img').src = p.imgDefault; document.getElementById('lightbox-img').src = p.imgDefault;
             
             if(p.imgDefault !== p.imgHover) { document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active" onclick="switchPageImg(this, '${p.imgDefault}')"><img src="${p.imgHover}" class="p-page-thumb" onclick="switchPageImg(this, '${p.imgHover}')">`; } 
@@ -958,38 +1064,50 @@
                 
                 let customName = '';
                 let customDesig = '';
+                let badgeType = null;
+                let unitPrice = p.price;
+
                 if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
                     customName = document.getElementById('p-page-custom-name').value.trim();
                     if (!customName) return alert("Please enter the name for personalization.");
                     if (p.category === 'badges') {
                         customDesig = document.getElementById('p-page-custom-desig').value.trim();
                         if (!customDesig) return alert("Please enter the designation for the badge.");
+                        
+                        badgeType = selectedBadgeType;
+                        unitPrice = selectedBadgePrice;
                     }
                 }
 
                 const isShirt = p.category === 'shirts';
                 const hasSleeves = isShirt ? selSleeves : false;
-                const unitPrice = p.price + (hasSleeves ? 150 : 0);
+                if (isShirt) unitPrice = p.price + (hasSleeves ? 150 : 0);
 
-                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig); 
+                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig && i.badgeType === badgeType); 
                 if (ex) {
                     ex.quantity += 1; 
                 } else {
-                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, unitPrice: unitPrice, quantity: 1 }); 
+                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, badgeType: badgeType, unitPrice: unitPrice, quantity: 1 }); 
                 }
+                
+                // UX Improvement: Clear inputs after adding to cart so user can easily add a different personalized badge
+                if(document.getElementById('p-page-custom-name')) document.getElementById('p-page-custom-name').value = '';
+                if(document.getElementById('p-page-custom-desig')) document.getElementById('p-page-custom-desig').value = '';
+
                 updateCartUI(); 
                 toggleCartDrawer(true); 
             } 
         };
         
-        window.updateQuantity = (id, sz, sleeves, customNameStr, customDesigStr, del) => { 
+        window.updateQuantity = (id, sz, sleeves, customNameStr, customDesigStr, badgeTypeStr, del) => { 
             const cName = customNameStr === 'null' ? '' : customNameStr;
             const cDesig = customDesigStr === 'null' ? '' : customDesigStr;
-            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig); 
+            const bType = badgeTypeStr === 'null' ? null : badgeTypeStr;
+            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig && (x.badgeType || null) === bType); 
             if (i) { 
                 i.quantity += del; 
                 if (i.quantity <= 0) {
-                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig)); 
+                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig && (x.badgeType || null) === bType)); 
                 }
                 updateCartUI(); 
                 if(document.getElementById('checkout-page-view').classList.contains('active')) { 
@@ -1032,9 +1150,12 @@
             document.getElementById('cart-items').innerHTML = cart.map(i => {
                 const itemUnit = i.unitPrice || i.price;
                 const sleeveText = i.sleeves ? `<div style="color:#000; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">• Full Sleeves (+RS 150)</div>` : '';
+                const badgeText = i.badgeType ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Type: ${i.badgeType}</div>` : '';
                 const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
+                
                 const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
                 const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
+                const cBadgeArg = i.badgeType ? i.badgeType.replace(/'/g, "\\'") : 'null';
                 return `
                 <div class="cart-item">
                     <img src="${i.imgDefault}">
@@ -1043,13 +1164,14 @@
                             <div class="heading" style="font-size:0.85rem;">${i.title}</div>
                             <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
                             ${sleeveText}
+                            ${badgeText}
                             ${customText}
                             <div style="font-weight:800; margin-top:0.2rem;">RS ${itemUnit * i.quantity}/-</div>
                         </div>
                         <div class="qty-controls">
-                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', -1)">-</button>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', -1)">-</button>
                             <span style="font-size:0.8rem;">${i.quantity}</span>
-                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', 1)">+</button>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -1104,9 +1226,11 @@
             document.getElementById('checkout-order-summary').innerHTML = cart.map(i => {
                 const itemUnit = i.unitPrice || i.price;
                 const sleeveText = i.sleeves ? `<div style="color:#d97706; font-size:0.7rem; font-weight:800;">• Full Sleeves (+RS 150)</div>` : '';
+                const badgeText = i.badgeType ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Type: ${i.badgeType}</div>` : '';
                 const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
                 const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
                 const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
+                const cBadgeArg = i.badgeType ? i.badgeType.replace(/'/g, "\\'") : 'null';
                 return `
                 <div class="checkout-item">
                     <img src="${i.imgDefault}">
@@ -1115,13 +1239,14 @@
                             <div class="heading" style="font-size:0.85rem;">${i.title}</div>
                             <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
                             ${sleeveText}
+                            ${badgeText}
                             ${customText}
                             <div style="font-weight:800; margin-top:2px;">RS ${itemUnit * i.quantity}/-</div>
                         </div>
                         <div class="qty-controls">
-                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', -1)">-</button>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', -1)">-</button>
                             <span style="font-size:0.8rem;">${i.quantity}</span>
-                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', 1)">+</button>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', 1)">+</button>
                         </div>
                     </div>
                 </div>
@@ -1186,10 +1311,11 @@
                 let recItemsHtml = cart.map(i => {
                     const itemUnit = i.unitPrice || i.price;
                     const slv = i.sleeves ? ' [+Full Sleeves]' : '';
+                    const bType = i.badgeType ? `<br>Type: ${i.badgeType}` : '';
                     const cText = i.customName ? ` (Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''})` : '';
                     return `<div class="receipt-row" style="flex-direction:column; margin-bottom:0.6rem;">
                         <div style="display:flex; justify-content:space-between;"><span>${i.title}${slv} - ${i.size} x${i.quantity}</span><span>RS ${itemUnit * i.quantity}/-</span></div>
-                        ${cText ? `<div style="font-size:0.7rem; color:#555; margin-top:2px;">${cText}</div>` : ''}
+                        <div style="font-size:0.7rem; color:#555; margin-top:2px;">${bType}${cText}</div>
                     </div>`;
                 }).join('');
 
@@ -1247,27 +1373,38 @@
             qaProductId = id;
             
             document.getElementById('qa-title').innerText = p.title;
-            document.getElementById('qa-price').innerText = `RS ${p.price}/-`;
             
             const sizeSec = document.getElementById('qa-size-section');
             const sleeveBox = document.getElementById('qa-sleeve-box');
             
-            selectQASleeve(false); // Reset to default half sleeves
+            selectQASleeve(false); 
 
             const qaCustomBox = document.getElementById('qa-custom-box');
             const qaCustomDesigGroup = document.getElementById('qa-custom-desig-group');
+            const qaBadgeTypeGroup = document.getElementById('qa-badge-type-group');
             document.getElementById('qa-custom-name').value = '';
             document.getElementById('qa-custom-desig').value = '';
+            
+            if (document.getElementById('qa-badge-options')) {
+                document.querySelectorAll('#qa-badge-options .sleeve-btn').forEach((opt, idx) => {
+                    if(idx === 0) opt.classList.add('active');
+                    else opt.classList.remove('active');
+                });
+                qaSelectedBadgeType = 'Plastic name tag with safety pin';
+                qaSelectedBadgePrice = 370;
+            }
 
             if(p.category === 'bags') {
                 sizeSec.style.display = 'none';
                 sleeveBox.style.display = 'none';
                 qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
                 qaSelectedSize = 'One Size';
             } else if(p.category === 'shirts') {
                 sizeSec.style.display = 'block';
                 sleeveBox.style.display = 'block';
                 qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
                 qaSelectedSize = 'M';
                 selectQAsize('M');
             } else if(p.category === 'keychains' || p.category === 'pens') {
@@ -1275,20 +1412,27 @@
                 sleeveBox.style.display = 'none';
                 qaCustomBox.style.display = 'block';
                 qaCustomDesigGroup.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
                 qaSelectedSize = 'One Size';
             } else if(p.category === 'badges') {
                 sizeSec.style.display = 'none';
                 sleeveBox.style.display = 'none';
                 qaCustomBox.style.display = 'block';
                 qaCustomDesigGroup.style.display = 'flex';
+                qaBadgeTypeGroup.style.display = 'flex';
                 qaSelectedSize = 'One Size';
             } else {
                 sizeSec.style.display = 'block';
                 sleeveBox.style.display = 'none';
                 qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
                 qaSelectedSize = 'M';
                 selectQAsize('M');
             }
+            
+            if(p.category === 'badges') document.getElementById('qa-price').innerText = `RS ${qaSelectedBadgePrice}/-`;
+            else document.getElementById('qa-price').innerText = `RS ${p.price}/-`;
+            
             openModal('quick-add-modal');
         };
 
@@ -1304,25 +1448,36 @@
             if(p) {
                 let customName = '';
                 let customDesig = '';
+                let badgeType = null;
+                let unitPrice = p.price;
+
                 if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
                     customName = document.getElementById('qa-custom-name').value.trim();
                     if (!customName) return alert("Please enter the name for personalization.");
                     if (p.category === 'badges') {
                         customDesig = document.getElementById('qa-custom-desig').value.trim();
                         if (!customDesig) return alert("Please enter the designation for the badge.");
+                        
+                        badgeType = qaSelectedBadgeType;
+                        unitPrice = qaSelectedBadgePrice;
                     }
                 }
 
                 const isShirt = p.category === 'shirts';
                 const hasSleeves = isShirt ? qaSleeves : false;
-                const unitPrice = p.price + (hasSleeves ? 150 : 0);
+                if(isShirt) unitPrice = p.price + (hasSleeves ? 150 : 0);
 
-                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig);
+                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig && i.badgeType === badgeType);
                 if(ex) {
                     ex.quantity += 1;
                 } else {
-                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, unitPrice: unitPrice, quantity: 1 });
+                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, badgeType: badgeType, unitPrice: unitPrice, quantity: 1 });
                 }
+
+                // UX Improvement: Clear inputs after adding to cart
+                if(document.getElementById('qa-custom-name')) document.getElementById('qa-custom-name').value = '';
+                if(document.getElementById('qa-custom-desig')) document.getElementById('qa-custom-desig').value = '';
+
                 updateCartUI();
                 closeModals();
                 toggleCartDrawer(true);
