@@ -697,7 +697,7 @@
         let heroImages = ["https://i.imgur.com/ksQ0oOw.jpeg"];
         let currentHeroIdx = 0;
 
-        let activePromo = null; // { code: 'IQBALIAN10', discount: 10, active: true }
+        let activePromos = []; // Array to hold multiple promo codes
         let appliedPromo = null;
 
         async function loadStoreData() {
@@ -743,12 +743,19 @@
                     if(t.font_size) document.documentElement.style.fontSize = t.font_size + 'px';
 
                     // Promo Code config
-                    if(t.promoCode && t.promoActive) {
-                        activePromo = {
+                    if (t.promos && Array.isArray(t.promos)) {
+                        activePromos = t.promos.filter(p => p.active).map(p => ({
+                            code: p.code.toUpperCase(),
+                            discount: parseInt(p.discount) || 0,
+                            active: true
+                        }));
+                    } else if (t.promoCode && t.promoActive) {
+                        // Fallback for legacy single promo code
+                        activePromos = [{
                             code: t.promoCode.toUpperCase(),
                             discount: parseInt(t.promoDiscount) || 0,
                             active: true
-                        };
+                        }];
                     }
                 }
             } catch (err) { 
@@ -1062,10 +1069,13 @@
                 return;
             }
 
-            if(activePromo && activePromo.active && val === activePromo.code) {
-                appliedPromo = activePromo;
+            // Look through the array of active promo codes for a match
+            const matchedPromo = activePromos.find(p => p.code === val);
+
+            if(matchedPromo) {
+                appliedPromo = matchedPromo;
                 msg.style.color = "#16a34a";
-                msg.innerText = `Promo "${val}" applied: ${activePromo.discount}% OFF!`;
+                msg.innerText = `Promo "${val}" applied: ${matchedPromo.discount}% OFF!`;
                 renderCheckoutSummary();
             } else {
                 appliedPromo = null;
