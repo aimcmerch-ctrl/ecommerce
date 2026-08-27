@@ -45,16 +45,8 @@
         button { cursor: pointer; font-family: var(--font-body); }
         ul { list-style: none; }
 
-        /* PROMO COUNTDOWN BAR */
-        .promo-countdown-bar { position: sticky; top: 0; left: 0; width: 100%; height: 42px; background: #000000; color: #ffffff; z-index: 1001; display: flex; justify-content: center; align-items: center; font-family: var(--font-head); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; gap: 12px; }
-        .pulse-dot { width: 6px; height: 6px; background-color: #ffffff; border-radius: 50%; animation: pulseWhite 1.5s infinite; }
-        @keyframes pulseWhite { 0% { box-shadow: 0 0 0 0 rgba(255,255,255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255,255,255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255, 0); } }
-        .countdown-timer { display: flex; gap: 5px; align-items: center; }
-        .countdown-timer span { background: #ffffff; color: #000000; padding: 3px 5px; border-radius: 3px; font-variant-numeric: tabular-nums; min-width: 32px; text-align: center; font-weight: 900; letter-spacing: 0.5px; }
-        @media (max-width: 768px) { .promo-countdown-bar { height: 38px; font-size: 0.65rem; gap: 8px; letter-spacing: 1px; } .countdown-timer span { padding: 3px 4px; min-width: 26px; } header { top: 38px !important; } }
-        
         /* HEADER - STICKY, WHITE BACKGROUND, DARK TEXT */
-        header { position: sticky; top: 42px; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: all 0.3s ease; background: #ffffff; border-bottom: 1px solid var(--border); }
+        header { position: sticky; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: all 0.3s ease; background: #ffffff; border-bottom: 1px solid var(--border); }
         .header-left-menu, .header-right-menu { display: flex; align-items: center; gap: 1.8rem; z-index: 101; }
         .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 900; font-size: 1.8rem; letter-spacing: 5px; color: #000000; text-transform: uppercase; }
         
@@ -114,6 +106,8 @@
         .promo-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 1; pointer-events: none; }
         .promo-text { position: absolute; color: #ffffff; font-family: var(--font-head); font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; z-index: 2; pointer-events: none; margin: 0; }
         .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, opacity 0.5s ease; position: absolute; top: 0; left: 0; }
+        .blend-img { mix-blend-mode: multiply; }
+        .contain-img img { object-fit: contain !important; }
         .img-default { opacity: 1; z-index: 2; }
         .img-hover { opacity: 0; z-index: 1; }
         .product-card:hover .img-default { opacity: 0; }
@@ -354,16 +348,6 @@
     </style>
 </head>
 <body>
-    <div class="promo-countdown-bar">
-        <div class="pulse-dot"></div>
-        <span id="promo-countdown-text">Sales Closing Soon</span>
-        <div class="countdown-timer" id="countdown-timer">
-            <span id="cd-days">00D</span><b style="font-weight:900;">:</b>
-            <span id="cd-hours">00H</span><b style="font-weight:900;">:</b>
-            <span id="cd-mins">00M</span><b style="font-weight:900;">:</b>
-            <span id="cd-secs">00S</span>
-        </div>
-    </div>
     <header id="header">
         <div class="header-left-menu">
             <button class="icon-btn" onclick="toggleSearch()"><i id="search-icon-btn" class="ph-thin ph-magnifying-glass"></i></button>
@@ -440,8 +424,9 @@
                 <h2 class="heading about-title">ABOUT AIMCMERCH</h2>
                 <p class="about-text">AIMCMERCH was launched in 2025, debuting with our winter merchandise under the supervision and vision of CEO Shahab Zafar. Created to strengthen the deep attachment to the soul of our college legacy, AIMC Merch unites talented student designers, models, and visionaries to embody the pride and brotherhood of Allama Iqbal Medical College. We strive to provide premium quality attire that truly resonates with the academic prestige and poetic lineage of our institution.</p>
                 <div class="about-founders">
-                    <div class="founder-box"><h5>CEO & Founder</h5><p>Shahab Zafar</p></div>
-                    <div class="founder-box"><h5>Co-Founder</h5><p>Muzamil Fiaz</p></div>
+                    <div class="founder-box"><h5>Founder</h5><p>Shahab Zafar</p></div>
+                    <div class="founder-box"><h5>CEO & Co-Founder</h5><p>Muzamil Fiaz</p></div>
+                    <div class="founder-box"><h5>Managing Director</h5><p>Shiza Amir</p></div>
                 </div>
             </div>
         </section>
@@ -736,9 +721,9 @@
 
                 let cardsHTML = catProducts.map(p => `
                     <div class="product-card" onclick="openProductPage('${p.id}')">
-                        <div class="img-wrapper">
+                        <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
                             <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
-                            <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                            <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
                             <div class="add-overlay"><button class="btn-add">View Item</button></div>
                         </div>
                         <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
@@ -770,9 +755,9 @@
             let related = products.filter(p => p.id !== excludeId).sort(() => 0.5 - Math.random()).slice(0, 4);
             document.getElementById('p-page-related').innerHTML = related.map(p => `
                 <div class="product-card" onclick="openProductPage('${p.id}')">
-                    <div class="img-wrapper">
+                    <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
                         <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
-                        <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                        <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
                         <div class="add-overlay"><button class="btn-add">View Item</button></div>
                     </div>
                     <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
@@ -900,9 +885,9 @@
             } else {
                 grid.innerHTML = filtered.map(p => `
                     <div class="product-card" onclick="window.toggleSearch(); openProductPage('${p.id}')">
-                        <div class="img-wrapper">
+                        <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
                             <button class="quick-add-btn" onclick="event.stopPropagation(); window.toggleSearch(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
-                            <img src="${p.imgDefault}" class="img-default"><img src="${p.imgHover}" class="img-hover">
+                            <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
                         </div>
                         <div class="product-info"><h3 class="product-name" style="font-size:0.9rem;">${p.title}</h3><div class="product-price" style="font-size:0.85rem;">RS ${p.price}/-</div></div>
                     </div>
@@ -911,25 +896,6 @@
         };
 
         window.addEventListener("load", () => {
-            // Countdown Timer Logic (Strictly Pakistan Standard Time - PKT)
-            const targetDate = new Date("2026-08-26T23:59:59+05:00").getTime();
-            const countdownEls = { d: document.getElementById('cd-days'), h: document.getElementById('cd-hours'), m: document.getElementById('cd-mins'), s: document.getElementById('cd-secs') };
-            
-            const updateTimer = setInterval(() => {
-                const distance = targetDate - new Date().getTime();
-                if (distance < 0) {
-                    clearInterval(updateTimer);
-                    document.getElementById('promo-countdown-text').innerText = "SALES HAVE ENDED";
-                    document.getElementById('countdown-timer').style.display = 'none';
-                    document.querySelector('.pulse-dot').style.display = 'none';
-                    return;
-                }
-                countdownEls.d.innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0') + 'D';
-                countdownEls.h.innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0') + 'H';
-                countdownEls.m.innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0') + 'M';
-                countdownEls.s.innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0') + 'S';
-            }, 1000);
-
             gsap.registerPlugin(ScrollTrigger);
 
             gsap.to(".stitch-line", {
@@ -1071,10 +1037,24 @@
             else document.getElementById('p-page-price').innerText = `RS ${p.price}/-`; 
             
             document.getElementById('p-page-desc').innerText = p.desc;
-            document.getElementById('p-page-main-img').src = p.imgDefault; document.getElementById('lightbox-img').src = p.imgDefault;
             
-            if(p.imgDefault !== p.imgHover) { document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active" onclick="switchPageImg(this, '${p.imgDefault}')"><img src="${p.imgHover}" class="p-page-thumb" onclick="switchPageImg(this, '${p.imgHover}')">`; } 
-            else { document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active" onclick="switchPageImg(this, '${p.imgDefault}')">`; }
+            const mainImg = document.getElementById('p-page-main-img');
+            const lbImg = document.getElementById('lightbox-img');
+            
+            if(p.category === 'shirts') { mainImg.classList.add('blend-img'); lbImg.classList.add('blend-img'); } 
+            else { mainImg.classList.remove('blend-img'); lbImg.classList.remove('blend-img'); }
+            
+            if(p.category === 'pens') { mainImg.style.objectFit = 'contain'; } 
+            else { mainImg.style.objectFit = 'cover'; }
+            
+            mainImg.src = p.imgDefault; lbImg.src = p.imgDefault;
+            
+            const blendClass = p.category === 'shirts' ? 'blend-img' : '';
+            if(p.imgDefault !== p.imgHover) { 
+                document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active ${blendClass}" onclick="switchPageImg(this, '${p.imgDefault}')"><img src="${p.imgHover}" class="p-page-thumb ${blendClass}" onclick="switchPageImg(this, '${p.imgHover}')">`; 
+            } else { 
+                document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active ${blendClass}" onclick="switchPageImg(this, '${p.imgDefault}')">`; 
+            }
 
             renderRelatedProducts(id);
             document.getElementById('product-page-view').classList.add('active'); window.scrollTo({ top: 0 });
