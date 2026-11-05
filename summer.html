@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Forces pitch black color behind the notch/status bar on mobile phones -->
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <title>AIMCMERCH | IQBALIAN</title>
+    <link rel="icon" id="favicon" href="https://aimcmerch.store/logo.png" type="image/png">
+    
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <script>
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            location.replace(`https:${location.href.substring(location.protocol.length)}`);
+        }
+    </script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@700&family=Dancing+Script:wght@600&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #ffffff; --surface: #f6f6f8; --text: #050505; --text-dim: #666666; --border: #e2e2e8; --accent: #000000;
+            --font-head: 'Montserrat', sans-serif; --font-body: 'Montserrat', sans-serif; --font-urdu: 'Noto Nastaliq Urdu', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { width: 100%; scroll-behavior: smooth; }
+        body { background-color: var(--bg); color: var(--text); font-family: var(--font-body); overflow-x: hidden; width: 100%; position: relative; }
+        h1, h2, h3, .heading { font-family: var(--font-head); font-weight: 800; text-transform: uppercase; letter-spacing: 1px;}
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; font-family: var(--font-body); }
+        ul { list-style: none; }
+
+        /* HEADER - STICKY, WHITE BACKGROUND, DARK TEXT */
+        header { position: sticky; top: 0; left: 0; width: 100%; padding: 1.5rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: all 0.3s ease; background: #ffffff; border-bottom: 1px solid var(--border); }
+        .header-left-menu, .header-right-menu { display: flex; align-items: center; gap: 1.8rem; z-index: 101; }
+        .logo { position: absolute; left: 50%; transform: translateX(-50%); z-index: 101; font-family: var(--font-head); font-weight: 900; font-size: 1.8rem; letter-spacing: 5px; color: #000000; text-transform: uppercase; }
+        
+        .quick-add-btn { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); color: #000; width: 34px; height: 34px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); font-size: 1.2rem; cursor: pointer; z-index: 15; opacity: 0; transform: scale(0.9); transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .product-card:hover .quick-add-btn { opacity: 1; transform: scale(1); }
+        .quick-add-btn:hover { background: #000; color: #fff; border-color: #000; }
+        @media (max-width: 768px) { .quick-add-btn { opacity: 1; transform: scale(1); } }
+        .header-nav-link { font-family: var(--font-head); font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #000000; transition: 0.3s; }
+        .header-nav-link:hover { color: #666666; }
+        .icon-btn { background: none; border: none; color: #000000; font-size: 1.5rem; font-weight: 300; display: flex; align-items: center; justify-content: center; transition: 0.3s ease; position: relative; }
+        .icon-btn:hover { color: #666666; }
+        .cart-badge { position: absolute; top: -4px; right: -8px; background: #000000; color: #ffffff; font-size: 0.6rem; width: 16px; height: 16px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 700; }
+        body.search-active header { background: #ffffff; border-bottom: 1px solid var(--border); }
+        body.search-active .logo, body.search-active .header-nav-link, body.search-active .icon-btn { color: #000000; }
+        body.search-active .hero-main-logo { filter: invert(0); }
+
+        .search-overlay { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); z-index: 99; display: flex; flex-direction: column; padding: 7rem 3rem 2rem; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .search-overlay.active { opacity: 1; visibility: visible; }
+        .subtle-search { width: 100%; border: none; border-bottom: 1px solid #ddd; font-family: var(--font-head); font-size: 2.5rem; font-weight: 300; padding: 1rem 0; outline: none; background: transparent; color: #000; }
+        .subtle-search::placeholder { color: #ccc; }
+        .pop-searches { margin-top: 1.5rem; }
+        .pop-tag { display: inline-block; cursor: pointer; color: var(--text-dim); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; font-weight: 600; padding-right: 1.5rem; transition: 0.3s; }
+        .pop-tag:hover { color: #000; }
+
+        .quick-add-btn { position: absolute; top: 10px; right: 10px; background: transparent; color: #111; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid #111; font-size: 1rem; cursor: pointer; z-index: 15; opacity: 0; transform: scale(0.9); transition: all 0.3s ease; }
+        .product-card:hover .quick-add-btn { opacity: 1; transform: scale(1); }
+        .quick-add-btn:hover { background: #111; color: #fff; }
+        @media (max-width: 768px) { .quick-add-btn { opacity: 1; transform: scale(1); } .subtle-search { font-size: 1.5rem; } .search-overlay { padding: 5rem 1.2rem 1.2rem; } }
+
+        /* HEADER IMAGE SECTION (Replaces old Hero) */
+        .header-image-section { width: 100%; padding: 4rem clamp(1.2rem, 5vw, 3rem) 1rem; display: flex; align-items: center; justify-content: center; background: #ffffff; }
+        .header-promo-inner { width: 100%; max-width: 900px; background: linear-gradient(to top, #000000 50%, #ffffff 50%); border-radius: 8px; display: flex; justify-content: center; position: relative; }
+        
+        /* Forces the logo to be black and tucks it behind the PNG */
+        .header-overlapping-logo { position: absolute; top: 0; left: 50%; transform: translate(-50%, -30%); width: 100%; max-width: 320px; filter: brightness(0); z-index: 1; }
+        .header-main-png { width: 100%; height: auto; display: block; position: relative; z-index: 2; }
+
+        /* FILTER BAR */
+        .filter-section { padding: 1.2rem 3rem 1rem 3rem; display: flex; gap: 0.8rem; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; border-bottom: none; align-items: center; background: #ffffff; }
+        .filter-section::-webkit-scrollbar { display: none; }
+        .filter-btn { background: #f4f4f6; border: 1px solid var(--border); color: var(--text-dim); padding: 0.55rem 1.3rem; border-radius: 30px; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s ease; font-family: var(--font-head); font-weight: 800; white-space: nowrap; flex-shrink: 0; cursor: pointer; }
+        .filter-btn:hover { background: #e8e8ed; color: var(--text); }
+        .filter-btn.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+
+        /* PRODUCT GRID */
+        .category-section { padding: 2.5rem 0 1rem 0; }
+        .category-header { padding: 0 3rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;}
+        .category-title { font-size: 2.2rem; letter-spacing: -0.5px; font-weight: 900; }
+        .horizontal-scroll { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 0 3rem; }
+        .product-card { display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s ease; }
+        .product-card:hover { transform: translateY(-4px); }
+        .img-wrapper { width: 100%; aspect-ratio: 3/4; overflow: hidden; background: transparent; position: relative; border-radius: 6px; border: none; }
+        
+        .promo-banner { width: 100%; padding: 0 clamp(1.2rem, 5vw, 3rem); margin: 0.5rem 0 2rem 0; position: relative; display: flex; align-items: center; justify-content: center; }
+        .promo-inner { width: 100%; max-width: 900px; background: linear-gradient(to top, #000000 50%, #ffffff 50%); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; }
+        .promo-banner img { width: 100%; height: auto; display: block; }
+        .promo-overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.35); z-index: 1; pointer-events: none; }
+        .promo-text { position: absolute; color: #ffffff; font-family: var(--font-head); font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 900; letter-spacing: 8px; text-transform: uppercase; text-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: center; z-index: 2; pointer-events: none; margin: 0; }
+        .img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease, opacity 0.5s ease; position: absolute; top: 0; left: 0; }
+        .blend-img { mix-blend-mode: multiply; }
+        .contain-img img { object-fit: contain !important; }
+        .img-default { opacity: 1; z-index: 2; }
+        .img-hover { opacity: 0; z-index: 1; }
+        .product-card:hover .img-default { opacity: 0; }
+        .product-card:hover .img-hover { opacity: 1; }
+        .product-card:hover .img-wrapper img { transform: scale(1.05); }
+        .add-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 0; transform: translateY(100%); transition: transform 0.3s; z-index: 10; }
+        .product-card:hover .add-overlay { transform: translateY(0); }
+        .btn-add { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(4px); color: #fff; width: 100%; padding: 1rem; border: none; font-family: var(--font-head); font-weight: 800; text-transform: uppercase; font-size: 0.82rem; letter-spacing: 1px; }
+        .product-info { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+        .product-name { font-family: var(--font-head); font-size: 1rem; font-weight: 800; letter-spacing: 0.3px; color: var(--text); }
+        .urdu-text { font-family: var(--font-urdu); font-size: 1rem; color: #111; margin-left: 0.3rem; }
+        .product-sub { font-size: 0.78rem; color: var(--text-dim); font-weight: 600; }
+        .product-price { font-size: 0.95rem; color: var(--text); font-weight: 800; font-family: var(--font-head); margin-top: 0.2rem; }
+
+        /* SKELETON */
+        .skeleton-card { display: flex; flex-direction: column; }
+        .skeleton-img { width: 100%; aspect-ratio: 3/4; background: linear-gradient(90deg, #f0f0f4 25%, #e4e4e8 50%, #f0f0f4 75%); background-size: 200% 100%; animation: skeletonShimmer 1.5s infinite; border-radius: 6px; }
+        .skeleton-line { height: 14px; background: linear-gradient(90deg, #f0f0f4 25%, #e4e4e8 50%, #f0f0f4 75%); background-size: 200% 100%; animation: skeletonShimmer 1.5s infinite; margin-top: 12px; border-radius: 4px; width: 80%; }
+        .skeleton-line.short { width: 40%; margin-top: 8px; }
+        @keyframes skeletonShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* VIEWS */
+        .product-page-view, .checkout-page-view { position: fixed; inset: 0; width: 100vw; height: 100vh; background: var(--bg); z-index: 2000; display: none; flex-direction: column; overflow-y: auto; opacity: 0; transition: opacity 0.3s ease; }
+        .product-page-view.active, .checkout-page-view.active { display: flex; opacity: 1; }
+        .checkout-page-view { z-index: 3000; }
+        .p-page-header, .c-page-header { position: sticky; top: 0; left: 0; width: 100%; padding: 1.2rem 3rem; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10; }
+        .btn-back-shop { background: none; border: none; color: var(--text); font-family: var(--font-head); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+        .btn-back-shop:hover { color: var(--text-dim); }
+        .icon-btn-dark { color: var(--text); background: none; border: none; font-size: 1.4rem; display: flex; align-items: center; justify-content: center; transition: 0.3s ease; position: relative; }
+        .cart-badge-dark { position: absolute; top: -6px; right: -10px; background: var(--accent); color: var(--bg); font-size: 0.65rem; width: 18px; height: 18px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+
+        .p-page-body { max-width: 1250px; width: 100%; margin: 0 auto; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; flex: 1; align-items: start; }
+        .p-page-gallery { display: flex; flex-direction: column; gap: 1rem; }
+        .p-page-main-img { width: 100%; aspect-ratio: 3/4; background: transparent; overflow: hidden; position: relative; border-radius: 8px; border: none; cursor: zoom-in; }
+        .p-page-main-img img { width: 100%; height: 100%; object-fit: cover; }
+        .zoom-hint { position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.92); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .p-page-thumbs { display: flex; gap: 0.8rem; }
+        .p-page-thumb { width: 80px; height: 105px; object-fit: cover; cursor: pointer; border: none; border-radius: 4px; opacity: 0.6; transition: 0.3s; background: transparent; }
+        .p-page-thumb.active, .p-page-thumb:hover { opacity: 1; }
+
+        .p-page-details { display: flex; flex-direction: column; justify-content: center; }
+        
+        .p-designer-badge { font-family: 'Great Vibes', cursive; font-size: 1.7rem; font-weight: 300; color: #666; margin-bottom: 0.5rem; letter-spacing: 1px; }
+        .p-page-title { font-size: 2.2rem; margin-bottom: 0.3rem; line-height: 1.1; font-weight: 900; }
+        .p-page-sub { color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1rem; font-weight: 600; }
+        .p-page-price { font-size: 1.5rem; font-weight: 900; font-family: var(--font-head); margin-bottom: 1.5rem; color: var(--accent); }
+        
+        /* PLACED AFTER ADD TO CART BUTTON NOW */
+        .p-page-desc { font-size: 0.95rem; color: #333; line-height: 1.8; margin-top: 2.5rem; text-align: justify; }
+        
+        .size-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .size-header label { font-size: 0.8rem; color: var(--text); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .btn-size-chart-link { background: none; border: none; color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; text-decoration: underline; letter-spacing: 1px; cursor: pointer; transition: 0.3s; }
+        .btn-size-chart-link:hover { color: var(--text); }
+        .size-selector { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-bottom: 2.5rem; }
+        .size-option { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.8rem 0; text-align: center; font-family: var(--font-head); font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; border-radius: 4px; }
+        .size-option:hover, .size-option.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+        
+        /* LUXURY MINIMALIST SLEEVES OPTION */
+        .sleeve-select-section { margin-bottom: 1.8rem; }
+        .sleeve-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+        .sleeve-header label { font-size: 0.75rem; color: var(--text); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+        .sleeve-toggle-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .sleeve-btn { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            color: var(--text); 
+            padding: 0.75rem 0.5rem; 
+            text-align: center; 
+            font-family: var(--font-head); 
+            font-weight: 800; 
+            font-size: 0.78rem; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            text-transform: uppercase; 
+            letter-spacing: 0.8px; 
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .sleeve-btn:hover { border-color: #000; }
+        .sleeve-btn.active { background: #000000; color: #ffffff; border-color: #000000; }
+        .sleeve-btn small { font-size: 0.7rem; font-weight: 600; opacity: 0.8; }
+        .sleeve-btn.active small { color: #ddd; }
+
+        /* PROMO CODE SECTION */
+        .promo-input-group { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; }
+        .btn-promo-apply { background: #000; color: #fff; border: none; padding: 0 1.2rem; font-family: var(--font-head); font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; cursor: pointer; }
+        .promo-msg { font-size: 0.75rem; font-weight: 700; display: block; }
+        
+        .btn-cart-main { background: var(--accent); color: var(--bg); width: 100%; padding: 1.2rem; border: none; font-family: var(--font-head); font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 1.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.8rem; transition: 0.3s; border-radius: 4px; }
+        .btn-cart-main:hover { background: #222; }
+
+        /* CHECKOUT */
+        .c-page-body { max-width: 680px; width: 100%; margin: 0 auto; padding: 3rem 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
+        .form-section-title { font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1.2rem; font-weight: 800; }
+        .checkout-item { display: flex; gap: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .checkout-item img { width: 70px; height: 90px; object-fit: cover; border-radius: 4px; }
+        .checkout-item-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; }
+        .form-group label { font-family: var(--font-head); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 800;}
+        .form-control, .form-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 0.9rem; font-family: var(--font-body); font-size: 0.9rem; width: 100%; outline: none; border-radius: 4px; }
+        .form-control:focus, .form-select:focus { border-color: var(--accent); background: #fff; }
+        .payment-box { background: var(--surface); border: 1px solid var(--border); padding: 1.8rem; margin-bottom: 1.2rem; border-radius: 6px; }
+        .payment-amount { font-size: 1.8rem; font-family: var(--font-head); font-weight: 900; color: #000; margin-bottom: 1.2rem; }
+        .account-row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; margin-bottom: 0.8rem; border-bottom: 1px solid var(--border); }
+        .account-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .acc-details h5 { font-size: 0.8rem; margin-bottom: 0.2rem; font-family: var(--font-head); color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;}
+        .acc-details p { font-size: 1rem; font-weight: 800; letter-spacing: 1px; color: #000;}
+        .btn-copy { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 0.4rem 0.8rem; font-family: var(--font-head); font-size: 0.7rem; text-transform: uppercase; font-weight: 800; cursor: pointer; border-radius: 4px; }
+        .btn-copy:hover { background: var(--accent); color: var(--bg); }
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; }
+        .btn-upload { background: var(--surface); border: 1.5px dashed var(--border); color: var(--text); padding: 1.2rem; width: 100%; text-align: center; font-family: var(--font-head); font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border-radius: 4px; }
+
+        /* MINIMALIST DESIGNERS SECTION WITH GSAP STITCHING LAYOUT */
+        .designers-section { padding: 5rem 3rem; background: #fafafa; border-top: 2px dashed #111; border-bottom: 2px dashed #111; overflow: hidden; }
+        .sketch-title { text-align: center; font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -1px; }
+        .sketch-sub { text-align: center; color: var(--text-dim); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; font-weight: 800; }
+        
+        .stitch-container { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3rem; padding: 4rem 0; margin: 0 auto; max-width: 800px; }
+        .stitch-line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background-image: linear-gradient(#aaa 50%, transparent 50%); background-size: 2px 20px; transform-origin: top; transform: scaleY(0); z-index: 1; }
+        
+        /* Removed borders, backgrounds, and shadows completely */
+        .designer-card { width: 45%; background: transparent; padding: 1rem 0; text-align: center; position: relative; z-index: 2; }
+        .designer-card:nth-child(even) { align-self: flex-start; margin-left: 2%; }
+        .designer-card:nth-child(odd) { align-self: flex-end; margin-right: 2%; }
+        .designer-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.2rem; color: #000; }
+        .designer-role { font-size: 0.8rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; }
+        
+        /* ABOUT SECTION */
+        .about-section { padding: 6rem 3rem; background: #ffffff; text-align: center; }
+        .about-container { max-width: 850px; margin: 0 auto; }
+        .about-title { font-size: 2.2rem; font-weight: 900; margin-bottom: 1.5rem; }
+        .about-text { font-size: 1rem; color: #444; line-height: 1.8; margin-bottom: 3.5rem; }
+        .about-founders { display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; border-top: 1px solid var(--border); padding-top: 2.5rem; }
+        .founder-box h5 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 0.4rem; }
+        .founder-box p { font-size: 1.2rem; font-weight: 900; font-family: var(--font-head); color: #000; }
+
+        /* FOOTER */
+        footer { padding: 4rem 3rem 2rem; background: #fafafa; color: var(--text); border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; max-width: 1200px; margin: 0 auto; }
+        .footer-col h4 { margin-bottom: 1.2rem; color: var(--text); font-size: 0.9rem; font-weight: 800; }
+        .footer-col ul li { margin-bottom: 0.8rem; font-size: 0.85rem; color: var(--text-dim); }
+        .footer-col ul li a:hover { color: var(--accent); }
+        .huge-footer-text { font-size: clamp(3rem, 12vw, 11rem); line-height: 0.8; text-align: center; color: #ececee; font-weight: 900; letter-spacing: -2px;}
+        .developer-credits { margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.8rem; text-align: center; color: var(--text-dim); font-size: 0.75rem; font-family: var(--font-head); font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+        .developer-credits a { display: inline-flex; align-items: center; gap: 3px; color: inherit; text-decoration: underline; transition: 0.3s; }
+        .developer-credits a:hover { color: var(--accent); }
+
+        /* DRAWERS, MODALS & RECEIPT */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1999; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); }
+        .overlay.active { opacity: 1; visibility: visible; }
+        .cart-drawer { position: fixed; top: 0; right: 0; width: 420px; max-width: 100vw; height: 100vh; background: var(--bg); z-index: 2500; display: flex; flex-direction: column; transition: transform 0.4s ease; border-left: 1px solid var(--border); transform: translateX(100%); }
+        .cart-drawer.open { transform: translateX(0); }
+        .drawer-header { padding: 1.8rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; color: var(--text); font-size: 1.4rem; }
+        .cart-items { flex: 1; overflow-y: auto; padding: 1.5rem; }
+        .cart-item { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .cart-item img { width: 75px; height: 100px; object-fit: cover; border-radius: 4px; }
+        .item-details { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .qty-controls { display: flex; align-items: center; gap: 0.6rem; background: var(--surface); border: 1px solid var(--border); width: fit-content; padding: 0.2rem 0.5rem; border-radius: 4px; }
+        .qty-btn { background: transparent; border: none; color: var(--text); font-size: 0.9rem; width: 18px; height: 18px; display: flex; justify-content: center; align-items: center; }
+        .cart-footer { padding: 1.8rem; border-top: 1px solid var(--border); background: #fafafa; }
+        .cart-total { display: flex; justify-content: space-between; margin-bottom: 1.2rem; font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; }
+        
+        .modal { position: fixed; inset: 0; z-index: 4500; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; padding: 1rem; }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--bg); border: 1px solid var(--border); width: 100%; max-width: 580px; padding: 2.5rem; position: relative; max-height: 90vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        
+        .ios-checkmark-wrapper { width: 70px; height: 70px; margin: 0 auto 1.2rem; position: relative; }
+        .ios-checkmark-circle { stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 3; stroke: #34c759; fill: none; animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards; }
+        .ios-checkmark-check { stroke-dasharray: 48; stroke-dashoffset: 48; stroke-width: 3.5; stroke: #34c759; fill: none; animation: strokeCheck 0.4s cubic-bezier(0.65, 0, 0.45, 1) 0.4s forwards; }
+        @keyframes strokeCircle { 100% { stroke-dashoffset: 0; } } @keyframes strokeCheck { 100% { stroke-dashoffset: 0; } }
+        
+        .receipt-card { background: #fff; border: 1px dashed #111; padding: 1.5rem; border-radius: 6px; text-align: left; margin: 1.5rem 0; font-family: 'Courier New', Courier, monospace; color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .receipt-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 0.8rem; margin-bottom: 1rem; }
+        .receipt-row { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.4rem; }
+        .receipt-total-row { border-top: 1px dashed #000; padding-top: 0.6rem; margin-top: 0.6rem; font-weight: bold; font-size: 0.95rem; }
+
+        .lightbox-modal { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 5000; display: none; align-items: center; justify-content: center; flex-direction: column; opacity: 0; transition: opacity 0.3s; }
+        .lightbox-modal.active { display: flex; opacity: 1; }
+        .lightbox-img-wrapper { max-width: 90vw; max-height: 80vh; overflow: auto; cursor: zoom-in; }
+        .lightbox-img { max-width: 100%; max-height: 80vh; object-fit: contain; transition: transform 0.3s; }
+        .lightbox-controls { position: absolute; top: 1.5rem; right: 2rem; display: flex; gap: 1rem; z-index: 10; }
+        .lightbox-btn { background: #000; color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.2rem; display: flex; justify-content: center; align-items: center; }
+
+        @media (max-width: 768px) {
+            header { padding: 1rem 1.2rem; }
+            
+            /* Hide Text Links On Mobile To Reduce Clutter Entirely */
+            .header-nav-link { display: none; }
+            
+            .header-left-menu, .header-right-menu { gap: 0.8rem; }
+            .logo { font-size: 1.2rem; letter-spacing: 2.5px; } 
+            .header-image-section { padding: 3rem 1.2rem 1rem; }
+            .header-overlapping-logo { max-width: 190px; }
+            .filter-section { padding: 0.8rem 1rem; gap: 0.5rem; }
+            .filter-btn { padding: 0.4rem 0.9rem; font-size: 0.65rem; }
+            .category-section { padding: 2rem 0 0.5rem 0; }
+            .category-header { padding: 0 1.2rem; margin-bottom: 1.2rem; }
+            .category-title { font-size: 1.5rem; }
+            .horizontal-scroll { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem; padding: 0 1.2rem; }
+            
+            /* Mobile Stitch Adjustments */
+            .stitch-line { left: 10%; }
+            .designer-card:nth-child(even), .designer-card:nth-child(odd) { align-self: flex-end; margin: 0; margin-left: auto; width: 85%; text-align: left; }
+            
+            .p-page-header, .c-page-header { padding: 0.9rem 1.2rem; }
+            .p-page-body { grid-template-columns: 1fr; padding: 1.2rem; gap: 1.5rem; }
+            .p-page-main-img { max-height: 50vh; }
+            .p-page-title { font-size: 1.5rem; }
+            .p-designer-badge { font-size: 1.8rem; }
+            .about-section { padding: 4rem 1.2rem; }
+            .about-founders { flex-direction: column; align-items: center; gap: 2rem; }
+            footer { padding: 2.5rem 1.2rem 1.5rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .huge-footer-text { font-size: 4rem; }
+            
+            /* Prevents Safari/Mobile browsers from zooming in on input focus */
+            input[type="text"], input[type="tel"], input[type="number"], input[type="email"], select, textarea {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Minimal Checkbox-like Badge Selector */
+        .badge-type-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+        .badge-option { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: 0.2s ease; background: var(--surface); }
+        .badge-option:hover { border-color: #000; }
+        .badge-option.active { border-color: #000; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .badge-check { width: 16px; height: 16px; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: 0.2s ease; }
+        .badge-option.active .badge-check { background: #000; border-color: #000; }
+        .badge-option.active .badge-check::after { content: '\2713'; color: #fff; font-size: 11px; font-weight: bold; }
+        .badge-option span { font-size: 0.75rem; font-weight: 700; flex: 1; color: var(--text); line-height: 1.3; }
+        .badge-price { font-size: 0.75rem; font-weight: 900; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <div class="header-left-menu">
+            <button class="icon-btn" onclick="toggleSearch()"><i id="search-icon-btn" class="ph-thin ph-magnifying-glass"></i></button>
+            <a href="#section-shirts" class="header-nav-link" onclick="filterCategory('shirts')">Shirts</a>
+            <a href="#section-bags" class="header-nav-link" onclick="filterCategory('bags')">Tote Bags</a>
+        </div>
+        <a href="#" class="logo">AIMCMERCH</a>
+        <div class="header-right-menu">
+            <a href="#designers" class="header-nav-link">Designers</a>
+            <a href="#about" class="header-nav-link">About</a>
+            <button class="icon-btn" onclick="toggleCartDrawer()">
+                <i class="ph-thin ph-shopping-bag"></i><span class="cart-badge" id="cart-badge">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="search-overlay" id="search-overlay">
+        <div style="max-width: 1000px; margin: 0 auto; width: 100%;">
+            <input type="text" id="fullscreen-search" class="subtle-search" placeholder="What are you looking for?" onkeyup="handleFullscreenSearch()">
+            <div class="pop-searches" id="pop-searches-box">
+                <h4 style="color: #999; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 1rem; font-family: var(--font-head); letter-spacing: 1px;">Popular Searches</h4>
+                <div style="display:flex; flex-wrap: wrap;">
+                    <span class="pop-tag" onclick="triggerSearch('AIMC Polo')">AIMC Polo</span>
+                    <span class="pop-tag" onclick="triggerSearch('Drop Shoulder')">Drop Shoulder</span>
+                    <span class="pop-tag" onclick="triggerSearch('Tote Bags')">Tote Bags</span>
+                    <span class="pop-tag" onclick="triggerSearch('Iqbalian')">Iqbalian</span>
+                </div>
+            </div>
+            <div id="search-results-grid" class="horizontal-scroll" style="margin-top: 3rem; padding: 0; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;"></div>
+        </div>
+    </div>
+
+    <section class="header-image-section">
+        <div class="header-promo-inner">
+            <!-- Overlapping logo (z-index 1) -->
+            <img src="https://aimcmerch.store/logo.png" class="header-overlapping-logo" alt="AIMCMERCH Logo">
+            <!-- Main Header PNG (z-index 2) -->
+            <img src="https://aimcmerch.store/0CB098EC-5C21-4861-9DC3-3229A0C29749.png" alt="AIMCMERCH Collection" class="header-main-png" draggable="false">
+        </div>
+    </section>
+
+    <!-- Content Wrapper for Scroll Animations -->
+    <div class="scroll-reveal-container">
+        
+        <section class="filter-section">
+            <button class="filter-btn active" onclick="filterCategory('all', this)">All Products</button>
+            <button class="filter-btn" onclick="filterCategory('shirts', this)">Shirts</button>
+            <button class="filter-btn" onclick="filterCategory('bags', this)">Tote Bags</button>
+            <button class="filter-btn" onclick="filterCategory('caps', this)">Caps</button>
+            <button class="filter-btn" onclick="filterCategory('keychains', this)">Keychains</button>
+            <button class="filter-btn" onclick="filterCategory('badges', this)">Badges</button>
+            <button class="filter-btn" onclick="filterCategory('pens', this)">Pens</button>
+        </section>
+
+        <main id="main-content"></main>
+
+        <section class="designers-section" id="designers">
+            <h2 class="heading sketch-title">DESIGNED BY</h2>
+            <p class="sketch-sub">The Visionary Iqbalian Student Creators</p>
+            
+            <div class="stitch-container">
+                <div class="stitch-line"></div>
+                <div class="designer-card"><div class="designer-name">Tanzeela</div><div class="designer-role">The Wings & IQBALIAN Tote Bag</div></div>
+                <div class="designer-card"><div class="designer-name">Mahrukh Nadeem</div><div class="designer-role">The Sporty</div></div>
+                <div class="designer-card"><div class="designer-name">Muhammad Hasnain</div><div class="designer-role">AIMC Polo & Signature Shirt</div></div>
+                <div class="designer-card"><div class="designer-name">Shiza Amir</div><div class="designer-role">The Starry Sky</div></div>
+                <div class="designer-card"><div class="designer-name">Zukhruf Zia</div><div class="designer-role">AIMC Postmark & Shaheen Tote Bag</div></div>
+                <div class="designer-card"><div class="designer-name">Ain Ul Quds</div><div class="designer-role">Creative Contributor</div></div>
+            </div>
+        </section>
+
+        <section class="about-section" id="about">
+            <div class="about-container">
+                <h2 class="heading about-title">ABOUT AIMCMERCH</h2>
+                <p class="about-text">AIMCMERCH was launched in 2025, debuting with our winter merchandise under the supervision and vision of CEO Shahab Zafar. Created to strengthen the deep attachment to the soul of our college legacy, AIMC Merch unites talented student designers, models, and visionaries to embody the pride and brotherhood of Allama Iqbal Medical College. We strive to provide premium quality attire that truly resonates with the academic prestige and poetic lineage of our institution.</p>
+                <div class="about-founders">
+                    <div class="founder-box"><h5>Founder</h5><p>Shahab Zafar</p></div>
+                    <div class="founder-box"><h5>CEO & Co-Founder</h5><p>Muzamil Fiaz</p></div>
+                    <div class="founder-box"><h5>Managing Director</h5><p>Shiza Amir</p></div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-grid">
+                <div class="footer-col"><h4 class="heading">AIMCMERCH</h4><p style="color: var(--text-dim); line-height: 1.6; font-size: 0.85rem;">Official merchandise platform of Allama Iqbal Medical College.</p></div>
+                <div class="footer-col"><h4 class="heading">Info</h4><ul><li><a href="#" onclick="openModal('shipping-modal')">Shipping & Pickups</a></li><li><a href="#" onclick="openModal('contact-modal')">Contact Support</a></li></ul></div>
+                <div class="footer-col"><h4 class="heading">Socials</h4><ul><li><a href="https://www.instagram.com/aimcmerch/" target="_blank"><i class="fa-brands fa-instagram" style="margin-right:6px;"></i> Instagram</a></li></ul></div>
+            </div>
+            <div class="huge-footer-text heading">AIMC</div>
+            <div class="developer-credits">
+                DEVELOPED BY 
+                <a href="https://www.modmedicalis.online/mahrukh" target="_blank">MAHRUKH NADEEM <i class="ph-bold ph-arrow-up-right"></i></a> & 
+                <a href="https://www.modmedicalis.online/hasnain" target="_blank">MUHAMMAD HASNAIN <i class="ph-bold ph-arrow-up-right"></i></a>
+            </div>
+        </footer>
+
+    </div> <!-- End Scroll Reveal Container -->
+
+    <div class="product-page-view" id="product-page-view">
+        <div class="p-page-header">
+            <button class="btn-back-shop" onclick="closeProductPage()"><i class="ph-thin ph-arrow-left"></i> Back</button>
+            <a href="#" class="logo" style="position: relative; left: auto; transform: none; color: #000; font-weight: 800; letter-spacing: 2px;">AIMCMERCH</a>
+            <button class="icon-btn-dark" onclick="toggleCartDrawer()"><i class="ph-thin ph-shopping-bag"></i><span class="cart-badge-dark" id="p-page-cart-badge">0</span></button>
+        </div>
+        <div class="p-page-body">
+            <div class="p-page-gallery">
+                <div class="p-page-main-img" onclick="openLightbox()" oncontextmenu="return false;">
+                    <img id="p-page-main-img" src="" draggable="false">
+                    <div class="zoom-hint"><i class="ph-bold ph-magnifying-glass-plus"></i> Zoom</div>
+                </div>
+                <div class="p-page-thumbs" id="p-page-thumbs"></div>
+            </div>
+            
+            <div class="p-page-details">
+                <div class="p-designer-badge" id="p-page-designer">Designed by</div>
+                <h1 class="heading p-page-title" id="p-page-title">Title</h1>
+                <div class="p-page-sub" id="p-page-sub">Category</div>
+                <div class="p-page-price" id="p-page-price">RS 0/-</div>
+                
+                <div class="size-header" id="p-page-size-header"><label>Select Size</label><button class="btn-size-chart-link" onclick="openSizeChartModal()">Size Chart</button></div>
+                <div class="size-selector" id="p-page-size-selector">
+                    <button class="size-option" onclick="selectSize('S')">S</button>
+                    <button class="size-option active" onclick="selectSize('M')">M</button>
+                    <button class="size-option" onclick="selectSize('L')">L</button>
+                    <button class="size-option" onclick="selectSize('XL')">XL</button>
+                </div>
+
+                <!-- MINIMALIST SLEEVE TYPE SELECTOR -->
+                <div class="sleeve-select-section" id="p-page-sleeve-box">
+                    <div class="sleeve-header">
+                        <label>Sleeve Type</label>
+                    </div>
+                    <div class="sleeve-toggle-group">
+                        <button type="button" class="sleeve-btn active" id="btn-sleeve-half" onclick="selectPageSleeve(false)">Half Sleeves</button>
+                        <button type="button" class="sleeve-btn" id="btn-sleeve-full" onclick="selectPageSleeve(true)">Full Sleeves <small>(+150)</small></button>
+                    </div>
+                </div>
+
+                <!-- CUSTOMIZATION INPUTS -->
+                <div class="sleeve-select-section" id="p-page-custom-box" style="display: none; margin-bottom: 1.5rem;">
+                    <div class="sleeve-header">
+                        <label>Personalization & Options</label>
+                    </div>
+                    <div id="p-page-badge-type-group" style="display: none; flex-direction: column; margin-bottom: 1.5rem;">
+                        <div class="sleeve-header" style="margin-bottom: 0.6rem;">
+                            <label>Select Badge Type</label>
+                        </div>
+                        <div id="p-page-badge-options" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button type="button" class="sleeve-btn active" onclick="selectBadgeType('page', 'Plastic name tag with safety pin', 370, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 370</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Plastic name tag (logo) with safety pin', 450, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag (logo) w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 450</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Plastic name tag with Magnet', 750, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 750</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Steel name tag with Magnet', 900, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel name tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 900</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('page', 'Steel Name tag (logo) with Magnet', 1050, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel Name tag (logo) w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 1050</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="p-page-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                    <div class="form-group" id="p-page-custom-desig-group" style="display: none; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="p-page-custom-desig" placeholder="Enter Designation (e.g. Medical Officer)..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                </div>
+                
+                <button class="btn-cart-main" onclick="addCurrentToCart()"><i class="ph-thin ph-shopping-bag"></i> Add to Cart</button>
+
+                <!-- MOVED PRODUCT DESCRIPTION TO BE AFTER ADD TO CART -->
+                <div class="p-page-desc" id="p-page-desc">Description</div>
+            </div>
+
+            <div style="grid-column: 1 / -1; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 3.5rem;">
+                <h2 class="heading" style="font-size: 1.8rem; margin-bottom: 2rem; text-align: center;">You May Also Like</h2>
+                <div class="horizontal-scroll" id="p-page-related" style="padding: 0;"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="lightbox-modal" id="lightbox-modal">
+        <div class="lightbox-controls"><button class="lightbox-btn" onclick="toggleZoomState()"><i class="ph-bold ph-magnifying-glass-plus" id="zoom-icon"></i></button><button class="lightbox-btn" onclick="closeLightbox()"><i class="ph-bold ph-x"></i></button></div>
+        <div class="lightbox-img-wrapper" id="lightbox-wrapper" onclick="toggleZoomState()"><img id="lightbox-img" class="lightbox-img" src=""></div>
+    </div>
+
+    <div class="checkout-page-view" id="checkout-page-view">
+        <div class="c-page-header"><button class="btn-back-shop" onclick="closeCheckoutPage()"><i class="ph-thin ph-arrow-left"></i> Back to Cart</button><a href="#" class="logo" style="position: relative; left: auto; transform: none; color:#000; font-weight: 800; letter-spacing: 2px;">AIMCMERCH</a><div style="width: 24px;"></div></div>
+        <div class="c-page-body">
+            <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 1.2rem;"><h2 class="heading form-section-title" style="margin:0; border:none; padding:0;">Order Summary</h2><button type="button" class="btn-size-chart-link" onclick="closeCheckoutPage()"><i class="ph-thin ph-pencil"></i> Edit</button></div>
+                <div id="checkout-order-summary" style="margin-bottom: 1.5rem;"></div>
+                <h2 class="heading form-section-title">Shipping & Details</h2>
+                <div class="form-group"><label>Full Name</label><input type="text" id="c-name" class="form-control" required placeholder="Enter full name"></div>
+                <div class="form-group"><label>Class / Designation</label><select id="c-class" class="form-select" required><option value="" disabled selected>Select class</option><option value="1st year MBBS">1st year MBBS</option><option value="2nd year MBBS">2nd year MBBS</option><option value="3rd year MBBS">3rd year MBBS</option><option value="4th year MBBS">4th year MBBS</option><option value="Final year MBBS">Final year MBBS</option><option value="DPT">DPT</option><option value="MLT">MLT</option><option value="Nursing">Nursing</option><option value="House Officer">House Officer</option><option value="PG">PG</option></select></div>
+                <div class="form-group"><label>Mobile Number</label><input type="tel" id="c-phone" class="form-control" required placeholder="03XXXXXXXXX"></div>
+                <div class="form-group"><label>Pickup Location</label><select id="c-location" class="form-select" required><option value="" disabled selected>Select pickup</option><option value="Female pickup from Girls Hostel">Female pickup from Girls Hostel</option><option value="Male pickup from Boys Hostel">Male pickup from Boys Hostel</option></select></div>
+                <h2 class="heading form-section-title" style="margin-top: 1rem;">Promo & Payment</h2>
+                
+                <!-- PROMO CODE INPUT -->
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Have a Promo Code?</label>
+                    <div class="promo-input-group">
+                        <input type="text" id="checkout-promo-input" class="form-control" placeholder="Enter coupon code" style="text-transform: uppercase; font-weight: 800;">
+                        <button type="button" class="btn-promo-apply" onclick="applyPromoCode()">Apply</button>
+                    </div>
+                    <span id="promo-status-msg" class="promo-msg"></span>
+                </div>
+
+                <div class="payment-box">
+                    <div id="checkout-pricing-breakdown" style="font-size:0.85rem; margin-bottom: 0.8rem; display:none; border-bottom: 1px dashed var(--border); padding-bottom: 0.8rem;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span>Subtotal:</span><span id="checkout-subtotal-val">RS 0/-</span></div>
+                        <div style="display:flex; justify-content:space-between; color:#16a34a; font-weight:700;"><span>Promo Discount:</span><span id="checkout-discount-val">- RS 0/-</span></div>
+                    </div>
+                    <label style="font-family: var(--font-head); font-size: 0.72rem; text-transform: uppercase; color: var(--text-dim); display: block; margin-bottom: 0.4rem; font-weight: 700;">Payable Amount</label>
+                    <div class="payment-amount" id="checkout-total-amount">RS 0/-</div>
+                    <div class="account-row"><div class="acc-details"><h5>HBL - Muzamil Fiaz</h5><p>12447901757503</p></div><button type="button" class="btn-copy" onclick="copyToClipboard('12447901757503', this)">Copy</button></div>
+                    <div class="account-row" style="margin-top: 0.8rem;"><div class="acc-details"><h5>JazzCash/SadaPay - Muzamil Fiaz</h5><p>03120510151</p></div><button type="button" class="btn-copy" onclick="copyToClipboard('03120510151', this)">Copy</button></div>
+                </div>
+                <div class="form-group"><label>Upload Payment Receipt</label><div class="file-upload-wrapper"><div class="btn-upload" id="upload-label">Click to select image</div><input type="file" id="receipt-upload" accept="image/*" required></div></div>
+                <div class="form-group"><label>Transaction ID / TRX ID</label><input type="text" id="checkout-trx-id" class="form-control" required placeholder="Enter TRX ID"></div>
+                <button type="submit" id="submit-order-btn" class="btn-cart-main" style="margin-top: 1.5rem;">Confirm Order</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="overlay" id="global-overlay" onclick="closeDrawers()"></div>
+    
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="drawer-header"><h2 class="heading">Your Bag</h2><button class="close-btn" onclick="closeDrawers()"><i class="ph-thin ph-x"></i></button></div>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="cart-footer"><div class="cart-total"><span>TOTAL</span><span id="cart-total-price">RS 0/-</span></div><button class="btn-cart-main" onclick="openCheckoutPage()">Checkout</button></div>
+    </div>
+
+    <div class="modal" id="size-chart-modal"><div class="modal-content"><button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button><h2 class="heading" style="margin-bottom:1rem;">Size Chart</h2><table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.85rem;"><thead><tr style="border-bottom:2px solid var(--border);"><th style="padding:0.6rem;">Size</th><th>Chest</th><th>Length</th><th>Shoulder</th></tr></thead><tbody><tr style="border-bottom:1px solid var(--border);"><td style="padding:0.6rem;"><strong>S</strong></td><td>38"</td><td>27"</td><td>18"</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:0.6rem;"><strong>M</strong></td><td>40"</td><td>28"</td><td>19"</td></tr><tr style="border-bottom:1px solid var(--border);"><td style="padding:0.6rem;"><strong>L</strong></td><td>42"</td><td>29"</td><td>20"</td></tr><tr><td style="padding:0.6rem;"><strong>XL</strong></td><td>44"</td><td>30"</td><td>21"</td></tr></tbody></table></div></div>
+    
+    <div class="modal" id="shipping-modal"><div class="modal-content"><button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button><h2 class="heading" style="margin-bottom:1rem;">Shipping</h2><p style="color:var(--text-dim); font-size:0.9rem;">Pickup points:<br>• Male: Boys Hostel.<br>• Female: Girls Hostel.<br><br>Exact date announced in WhatsApp group.</p></div></div>
+    
+    <div class="modal" id="contact-modal"><div class="modal-content"><button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button><h2 class="heading" style="margin-bottom:1rem;">Contact</h2><p style="color:var(--text-dim); font-size:0.9rem;"><strong>Phone/WhatsApp:</strong> 03120510151<br><strong>Insta:</strong> @aimcmerch</p></div></div>
+
+    <div class="modal" id="quick-add-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2rem;">
+            <button class="close-btn" style="position:absolute; right:1rem; top:1rem;" onclick="closeModals()"><i class="ph-thin ph-x"></i></button>
+            <h2 class="heading" id="qa-title" style="margin-bottom:0.5rem; font-size:1.2rem;">Product Name</h2>
+            <p id="qa-price" style="font-weight:900; font-family:var(--font-head); margin-bottom:1.5rem; color:var(--accent);"></p>
+            <div id="qa-size-section">
+                <label style="font-size:0.8rem; font-weight:800; text-transform:uppercase; margin-bottom:0.8rem; display:block;">Select Size</label>
+                <div class="size-selector" id="qa-size-selector" style="margin-bottom: 1rem;">
+                    <button class="size-option" onclick="selectQAsize('S')">S</button>
+                    <button class="size-option active" onclick="selectQAsize('M')">M</button>
+                    <button class="size-option" onclick="selectQAsize('L')">L</button>
+                    <button class="size-option" onclick="selectQAsize('XL')">XL</button>
+                </div>
+                
+                <!-- QUICK ADD MINIMALIST SLEEVE SELECTOR -->
+                <div class="sleeve-select-section" id="qa-sleeve-box" style="margin-bottom: 1.5rem; text-align: left;">
+                    <div class="sleeve-header">
+                        <label>Sleeve Type</label>
+                    </div>
+                    <div class="sleeve-toggle-group">
+                        <button type="button" class="sleeve-btn active" id="qa-btn-sleeve-half" onclick="selectQASleeve(false)">Half Sleeves</button>
+                        <button type="button" class="sleeve-btn" id="qa-btn-sleeve-full" onclick="selectQASleeve(true)">Full Sleeves <small>(+150)</small></button>
+                    </div>
+                </div>
+                
+                <!-- QUICK ADD CUSTOMIZATION INPUTS -->
+                <div class="sleeve-select-section" id="qa-custom-box" style="display: none; margin-bottom: 1.5rem; text-align: left;">
+                    <div class="sleeve-header">
+                        <label>Personalization & Options</label>
+                    </div>
+                    <div id="qa-badge-type-group" style="display: none; flex-direction: column; margin-bottom: 1.5rem;">
+                        <div class="sleeve-header" style="margin-bottom: 0.6rem;">
+                            <label>Select Badge Type</label>
+                        </div>
+                        <div id="qa-badge-options" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button type="button" class="sleeve-btn active" onclick="selectBadgeType('qa', 'Plastic name tag with safety pin', 370, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 370</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Plastic name tag (logo) with safety pin', 450, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag (logo) w/ safety pin</span>
+                                <span style="font-size:0.75rem;">RS 450</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Plastic name tag with Magnet', 750, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Plastic tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 750</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Steel name tag with Magnet', 900, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel name tag w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 900</span>
+                            </button>
+                            <button type="button" class="sleeve-btn" onclick="selectBadgeType('qa', 'Steel Name tag (logo) with Magnet', 1050, this)" style="justify-content: space-between; text-align: left; padding: 0.8rem 1rem;">
+                                <span>Steel Name tag (logo) w/ Magnet</span>
+                                <span style="font-size:0.75rem;">RS 1050</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="qa-custom-name" placeholder="Enter Name to print..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                    <div class="form-group" id="qa-custom-desig-group" style="display: none; flex-direction: column; gap: 0.4rem;">
+                        <input type="text" id="qa-custom-desig" placeholder="Enter Designation (e.g. Medical Officer)..." style="padding: 0.8rem; border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-body); font-size: 0.85rem; width: 100%; outline: none;">
+                    </div>
+                </div>
+            </div>
+            <button class="btn-cart-main" onclick="confirmQuickAdd()"><i class="ph-thin ph-shopping-bag"></i> Confirm Add</button>
+        </div>
+    </div>
+
+    <div class="modal" id="success-modal">
+        <div class="modal-content" style="text-align: center;">
+            <div class="ios-checkmark-wrapper"><svg viewBox="0 0 52 52" style="width: 100%; height: 100%;"><circle class="ios-checkmark-circle" cx="26" cy="26" r="25"/><path class="ios-checkmark-check" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg></div>
+            <h2 class="heading" style="margin-bottom: 0.3rem;">Order Confirmed!</h2>
+            <p style="color: var(--text-dim); font-size: 0.82rem; line-height: 1.5;">Order <strong id="success-order-num" style="color: #000;">#AIMC-0000</strong> confirmed. You will be added to the official WhatsApp group where we will announce the date & day of pickup.</p>
+            <div class="receipt-card" id="printable-receipt">
+                <div class="receipt-header"><h3 style="font-size: 1rem;">AIMCMERCH RECEIPT</h3><p style="font-size: 0.72rem; color: #555;">Allama Iqbal Medical College</p></div>
+                <div class="receipt-row"><span>Order ID:</span><span id="rec-id">-</span></div>
+                <div class="receipt-row"><span>Customer:</span><span id="rec-name">-</span></div>
+                <div class="receipt-row"><span>Class:</span><span id="rec-class">-</span></div>
+                <div class="receipt-row"><span>TRX ID:</span><span id="rec-trx">-</span></div>
+                <div class="receipt-row"><span>Pickup:</span><span id="rec-pickup">-</span></div>
+                <div id="rec-items-list" style="margin-top: 0.6rem; border-top: 1px dashed #ccc; padding-top: 0.6rem;"></div>
+                <div class="receipt-row receipt-total-row"><span>TOTAL:</span><span id="rec-total">RS 0/-</span></div>
+            </div>
+            <button class="btn-cart-main" style="background: #111; margin-bottom: 0.8rem;" onclick="downloadReceipt()"><i class="ph-bold ph-download-simple"></i> Download Receipt</button>
+            <button class="btn-size-chart-link" onclick="closeModals()">Close & Continue</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+        const app = initializeApp({
+            apiKey: "AIzaSyATyFD4-0aQYGKdLrhRAn_YOYECT360nEU", authDomain: "aimcmerch-540ec.firebaseapp.com",
+            projectId: "aimcmerch-540ec", storageBucket: "aimcmerch-540ec.firebasestorage.app",
+            messagingSenderId: "490541069045", appId: "1:490541069045:web:faf0d9c32c2662ee220bbc", measurementId: "G-MQV0QC5LH4"
+        });
+        const db = getFirestore(app);
+
+        const categories = [ { id: 'shirts', name: 'Shirts' }, { id: 'bags', name: 'Tote Bags' }, { id: 'caps', name: 'Caps' }, { id: 'keychains', name: 'Keychains' }, { id: 'badges', name: 'Badges' }, { id: 'pens', name: 'Pens' } ];
+        
+        let products = [];
+
+        window.renderLayout = function(filteredProducts = products) {
+            const mainContent = document.getElementById('main-content');
+            mainContent.innerHTML = ''; 
+            categories.forEach(cat => {
+                const section = document.createElement('section');
+                section.className = 'category-section'; section.id = `section-${cat.id}`;
+                
+                if (cat.id === 'caps') {
+                    section.innerHTML = `<div class="category-header"><h2 class="heading category-title">${cat.name}</h2></div><div style="padding: 1rem 3rem; color: var(--text-dim); font-size: 0.9rem; font-weight: 800; letter-spacing: 2px;">COMING SOON...</div>`;
+                    mainContent.appendChild(section); return;
+                }
+
+                const catProducts = filteredProducts.filter(p => p.category === cat.id);
+                if (catProducts.length === 0) return;
+
+                let cardsHTML = catProducts.map(p => `
+                    <div class="product-card" onclick="openProductPage('${p.id}')">
+                        <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
+                            <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                            <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
+                            <div class="add-overlay"><button class="btn-add">View Item</button></div>
+                        </div>
+                        <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
+                    </div>
+                `).join('');
+                
+                // Inject the custom image banner with side spacing
+                if (cat.id === 'bags') {
+                    const banner = document.createElement('div');
+                    banner.className = 'promo-banner';
+                    banner.innerHTML = `
+                        <div class="promo-inner">
+                            <img src="https://aimcmerch.store/Tote%20Bag.PNG" alt="Tote Bags Collection Banner" draggable="false">
+                        </div>
+                    `;
+                    mainContent.appendChild(banner);
+                }
+
+                section.innerHTML = `<div class="category-header"><h2 class="heading category-title">${cat.name}</h2></div><div class="horizontal-scroll">${cardsHTML}</div>`;
+                mainContent.appendChild(section);
+            });
+            
+            setTimeout(() => { 
+                ScrollTrigger.refresh(); 
+            }, 100);
+        };
+
+        window.renderRelatedProducts = function(excludeId) {
+            let related = products.filter(p => p.id !== excludeId).sort(() => 0.5 - Math.random()).slice(0, 4);
+            document.getElementById('p-page-related').innerHTML = related.map(p => `
+                <div class="product-card" onclick="openProductPage('${p.id}')">
+                    <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
+                        <button class="quick-add-btn" onclick="event.stopPropagation(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                        <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
+                        <div class="add-overlay"><button class="btn-add">View Item</button></div>
+                    </div>
+                    <div class="product-info"><h3 class="product-name">${p.title} ${p.urdu ? `<span class="urdu-text">(${p.urdu})</span>` : ''}</h3><p class="product-sub">${p.sub}</p><div class="product-price">RS ${p.price}/-</div></div>
+                </div>
+            `).join('');
+        };
+
+        document.getElementById('main-content').innerHTML = `<section class="category-section"><div class="horizontal-scroll">${Array(4).fill(0).map(()=>`<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>`).join('')}</div></section>`;
+        
+        let heroImages = ["https://i.imgur.com/ksQ0oOw.jpeg"];
+        let currentHeroIdx = 0;
+
+        let activePromos = []; // Array to hold multiple promo codes
+        let appliedPromo = null;
+
+        async function loadStoreData() {
+            // 1. FETCH PRODUCTS
+            try {
+                const snapshot = await getDocs(collection(db, "products"));
+                let fetched = [];
+                snapshot.forEach(doc => {
+                    fetched.push({ id: doc.id, ...doc.data() });
+                });
+                if (fetched.length > 0) {
+                    products = fetched;
+                }
+            } catch (err) { 
+                console.error("Error fetching products:", err); 
+            }
+
+            // 2. FETCH THEME & PROMO SETTINGS
+            try {
+                const themeDoc = await getDoc(doc(db, "settings", "store_theme"));
+                if (themeDoc.exists()) {
+                    const t = themeDoc.data();
+                    if(t.logo) { 
+                        document.querySelectorAll('.hero-main-logo').forEach(i=>i.src=t.logo); 
+                        const fav = document.getElementById('favicon');
+                        if(fav) fav.href = t.logo; 
+                    }
+                    if(t.hero_bg && t.hero_bg.length > 0) {
+                        heroImages = t.hero_bg;
+                        const heroBgEl = document.querySelector('.hero-bg');
+                        if (heroBgEl) {
+                            heroBgEl.style.backgroundImage = `url(${heroImages[0]})`;
+                            if(heroImages.length > 1) {
+                                setInterval(() => {
+                                    currentHeroIdx = (currentHeroIdx + 1) % heroImages.length;
+                                    heroBgEl.style.backgroundImage = `url(${heroImages[currentHeroIdx]})`;
+                                    heroBgEl.style.transition = 'background-image 1s ease-in-out';
+                                }, 5000);
+                            }
+                        }
+                    }
+                    if(t.accent_color) document.documentElement.style.setProperty('--accent', t.accent_color);
+                    if(t.font_size) document.documentElement.style.fontSize = t.font_size + 'px';
+
+                    // Promo Code config
+                    if (t.promos && Array.isArray(t.promos)) {
+                        activePromos = t.promos.filter(p => p.active).map(p => ({
+                            code: p.code.toUpperCase(),
+                            discount: parseInt(p.discount) || 0,
+                            active: true
+                        }));
+                    } else if (t.promoCode && t.promoActive) {
+                        // Fallback for legacy single promo code
+                        activePromos = [{
+                            code: t.promoCode.toUpperCase(),
+                            discount: parseInt(t.promoDiscount) || 0,
+                            active: true
+                        }];
+                    }
+                }
+            } catch (err) { 
+                console.warn("Theme settings load:", err); 
+            }
+            
+            // 3. RENDER LAYOUT
+            renderLayout();
+        }
+        loadStoreData();
+
+        window.toggleSearch = () => { 
+            const overlay = document.getElementById('search-overlay');
+            const body = document.body;
+            const icon = document.getElementById('search-icon-btn');
+            
+            if(overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+                body.classList.remove('search-active');
+                icon.className = "ph-thin ph-magnifying-glass";
+                document.getElementById('fullscreen-search').value = '';
+                document.getElementById('search-results-grid').innerHTML = '';
+                document.getElementById('pop-searches-box').style.display = 'block';
+            } else {
+                overlay.classList.add('active');
+                body.classList.add('search-active');
+                icon.className = "ph-thin ph-x";
+                setTimeout(() => document.getElementById('fullscreen-search').focus(), 300);
+            }
+        };
+
+        window.triggerSearch = (term) => {
+            const inp = document.getElementById('fullscreen-search');
+            inp.value = term;
+            handleFullscreenSearch();
+        };
+
+        window.handleFullscreenSearch = () => { 
+            const t = document.getElementById('fullscreen-search').value.toLowerCase(); 
+            const grid = document.getElementById('search-results-grid');
+            const popBox = document.getElementById('pop-searches-box');
+            
+            if (t.length === 0) { 
+                grid.innerHTML = ''; 
+                popBox.style.display = 'block'; 
+                return; 
+            }
+            
+            popBox.style.display = 'none';
+            const filtered = products.filter(p => p.title.toLowerCase().includes(t) || (p.sub && p.sub.toLowerCase().includes(t)) || (p.designer && p.designer.toLowerCase().includes(t)));
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<p style="color: #999;">No products found.</p>';
+            } else {
+                grid.innerHTML = filtered.map(p => `
+                    <div class="product-card" onclick="window.toggleSearch(); openProductPage('${p.id}')">
+                        <div class="img-wrapper ${p.category === 'pens' ? 'contain-img' : ''}">
+                            <button class="quick-add-btn" onclick="event.stopPropagation(); window.toggleSearch(); openQuickAddModal('${p.id}')"><i class="ph-thin ph-plus"></i></button>
+                            <img src="${p.imgDefault}" class="img-default ${p.category === 'shirts' ? 'blend-img' : ''}"><img src="${p.imgHover}" class="img-hover ${p.category === 'shirts' ? 'blend-img' : ''}">
+                        </div>
+                        <div class="product-info"><h3 class="product-name" style="font-size:0.9rem;">${p.title}</h3><div class="product-price" style="font-size:0.85rem;">RS ${p.price}/-</div></div>
+                    </div>
+                `).join('');
+            }
+        };
+
+        window.addEventListener("load", () => {
+            gsap.registerPlugin(ScrollTrigger);
+
+            gsap.to(".stitch-line", {
+                scaleY: 1, ease: "none",
+                scrollTrigger: { trigger: ".stitch-container", start: "top 70%", end: "bottom 80%", scrub: true }
+            });
+            
+            gsap.utils.toArray('.designer-card').forEach((card, i) => {
+                gsap.fromTo(card, 
+                    { x: i % 2 === 0 ? -30 : 30, opacity: 0 },
+                    { x: 0, opacity: 1, scrollTrigger: { trigger: card, start: "top 85%", end: "top 60%", scrub: 1 } }
+                );
+            });
+
+            const revealSections = document.querySelectorAll('.scroll-reveal-container section, .scroll-reveal-container footer');
+            revealSections.forEach(sec => {
+                if(sec.id !== 'designers' && !sec.classList.contains('filter-section')) { 
+                    gsap.from(sec, {
+                        opacity: 0, y: 40, duration: 1, ease: "power2.out",
+                        scrollTrigger: { trigger: sec, start: "top 85%", toggleActions: "play none none reverse" }
+                    });
+                }
+            });
+        });
+
+        window.filterCategory = (catId, btnEl) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if(btnEl) btnEl.classList.add('active');
+            else { const tab = document.querySelector(`.filter-btn[onclick*="${catId}"]`); if(tab) tab.classList.add('active'); }
+            
+            const searchInput = document.getElementById('fullscreen-search');
+            if (searchInput) searchInput.value = ''; 
+            
+            renderLayout(catId === 'all' ? products : products.filter(p => p.category === catId));
+        };
+
+        document.getElementById('receipt-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0]; const lbl = document.getElementById('upload-label'); const trx = document.getElementById('checkout-trx-id');
+            if(!file) { lbl.innerText = "Click to select image"; return; } lbl.innerText = file.name;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const img = new Image(); img.onload = async function() {
+                    const canvas = document.createElement('canvas'); canvas.width = 600; canvas.height = (img.height/img.width)*600;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    if (typeof Tesseract !== 'undefined') {
+                        try {
+                            const res = await Tesseract.recognize(canvas.toDataURL('image/jpeg', 0.8), 'eng');
+                            const m = res.data.text.match(/(?:ID|TRX|TID|REF)\s*#?\s*[:\.-]?\s*([A-Z0-9]{8,16})/i);
+                            if (m) trx.value = m[1];
+                            else {
+                                const toks = res.data.text.match(/\b[A-Za-z0-9]{9,16}\b/g);
+                                if (toks) for (let t of toks) if (!/^(03|923)\d+/.test(t) && /\d{9,15}/.test(t)) { trx.value = t; break; }
+                            }
+                        } catch(err) {}
+                    }
+                }; img.src = ev.target.result;
+            }; reader.readAsDataURL(file);
+        });
+
+        // --- CART & PRICING WITH SLEEVES & PROMO ---
+        let currentId = null; 
+        let selSize = 'M'; 
+        let selSleeves = false;
+        let cart = [];
+
+        window.selectPageSleeve = (isFull) => {
+            selSleeves = isFull;
+            document.getElementById('btn-sleeve-half').classList.toggle('active', !isFull);
+            document.getElementById('btn-sleeve-full').classList.toggle('active', isFull);
+        };
+
+        let selectedBadgeType = 'Plastic name tag with safety pin';
+        let selectedBadgePrice = 370;
+        let qaSelectedBadgeType = 'Plastic name tag with safety pin';
+        let qaSelectedBadgePrice = 370;
+
+        window.selectBadgeType = (context, type, price, el) => {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.sleeve-btn').forEach(opt => opt.classList.remove('active'));
+            el.classList.add('active');
+            
+            if (context === 'page') {
+                selectedBadgeType = type;
+                selectedBadgePrice = price;
+                document.getElementById('p-page-price').innerText = `RS ${price}/-`;
+            } else if (context === 'qa') {
+                qaSelectedBadgeType = type;
+                qaSelectedBadgePrice = price;
+                document.getElementById('qa-price').innerText = `RS ${price}/-`;
+            }
+        };
+
+        window.openProductPage = (id) => {
+            const p = products.find(x => x.id == id); if (!p) return; currentId = id; 
+            const sh = document.getElementById('p-page-size-header'), ss = document.getElementById('p-page-size-selector');
+            const sleeveBox = document.getElementById('p-page-sleeve-box');
+            
+            selectPageSleeve(false); 
+
+            const customBox = document.getElementById('p-page-custom-box');
+            const customDesigGroup = document.getElementById('p-page-custom-desig-group');
+            const badgeTypeGroup = document.getElementById('p-page-badge-type-group');
+            document.getElementById('p-page-custom-name').value = '';
+            document.getElementById('p-page-custom-desig').value = '';
+            
+            if (document.getElementById('p-page-badge-options')) {
+                document.querySelectorAll('#p-page-badge-options .sleeve-btn').forEach((opt, idx) => {
+                    if(idx === 0) opt.classList.add('active');
+                    else opt.classList.remove('active');
+                });
+                selectedBadgeType = 'Plastic name tag with safety pin';
+                selectedBadgePrice = 370;
+            }
+
+            if (p.category === 'bags') { 
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'One Size'; 
+            } else if (p.category === 'shirts') {
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'block'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'M'; selectSize('M');
+            } else if (p.category === 'keychains' || p.category === 'pens') {
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'One Size';
+            } else if (p.category === 'badges') {
+                sh.style.display = 'none'; ss.style.display = 'none'; sleeveBox.style.display = 'none'; customBox.style.display = 'block'; customDesigGroup.style.display = 'flex'; badgeTypeGroup.style.display = 'flex'; selSize = 'One Size';
+            } else {
+                sh.style.display = 'flex'; ss.style.display = 'grid'; sleeveBox.style.display = 'none'; customBox.style.display = 'none'; badgeTypeGroup.style.display = 'none'; selSize = 'M'; selectSize('M');
+            }
+            
+            const designerBadge = document.getElementById('p-page-designer');
+            if (p.category === 'keychains' || p.category === 'badges' || p.category === 'pens' || !p.designer) {
+                designerBadge.style.display = 'none';
+            } else {
+                designerBadge.style.display = 'block';
+                designerBadge.innerText = `Designed by ${p.designer}`;
+            }
+            
+            document.getElementById('p-page-title').innerText = p.title + (p.urdu ? ` (${p.urdu})` : '');
+            document.getElementById('p-page-sub').innerText = p.sub; 
+            
+            if (p.category === 'badges') document.getElementById('p-page-price').innerText = `RS ${selectedBadgePrice}/-`;
+            else document.getElementById('p-page-price').innerText = `RS ${p.price}/-`; 
+            
+            document.getElementById('p-page-desc').innerText = p.desc;
+            
+            const mainImg = document.getElementById('p-page-main-img');
+            const lbImg = document.getElementById('lightbox-img');
+            
+            if(p.category === 'shirts') { mainImg.classList.add('blend-img'); lbImg.classList.add('blend-img'); } 
+            else { mainImg.classList.remove('blend-img'); lbImg.classList.remove('blend-img'); }
+            
+            if(p.category === 'pens') { mainImg.style.objectFit = 'contain'; } 
+            else { mainImg.style.objectFit = 'cover'; }
+            
+            mainImg.src = p.imgDefault; lbImg.src = p.imgDefault;
+            
+            const blendClass = p.category === 'shirts' ? 'blend-img' : '';
+            if(p.imgDefault !== p.imgHover) { 
+                document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active ${blendClass}" onclick="switchPageImg(this, '${p.imgDefault}')"><img src="${p.imgHover}" class="p-page-thumb ${blendClass}" onclick="switchPageImg(this, '${p.imgHover}')">`; 
+            } else { 
+                document.getElementById('p-page-thumbs').innerHTML = `<img src="${p.imgDefault}" class="p-page-thumb active ${blendClass}" onclick="switchPageImg(this, '${p.imgDefault}')">`; 
+            }
+
+            renderRelatedProducts(id);
+            document.getElementById('product-page-view').classList.add('active'); window.scrollTo({ top: 0 });
+        };
+
+        window.closeProductPage = () => document.getElementById('product-page-view').classList.remove('active');
+        window.switchPageImg = (thumb, src) => { document.querySelectorAll('.p-page-thumb').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); document.getElementById('p-page-main-img').src = src; document.getElementById('lightbox-img').src = src; };
+        
+        let isZoomed = false;
+        window.openLightbox = () => document.getElementById('lightbox-modal').classList.add('active');
+        window.closeLightbox = () => { document.getElementById('lightbox-modal').classList.remove('active'); isZoomed = false; document.getElementById('lightbox-img').style.transform = "scale(1)"; };
+        window.toggleZoomState = () => {
+            isZoomed = !isZoomed; const img = document.getElementById('lightbox-img'); const icon = document.getElementById('zoom-icon');
+            if(isZoomed) { img.style.transform = "scale(2)"; img.style.cursor = "zoom-out"; icon.className = "ph-bold ph-magnifying-glass-minus"; } 
+            else { img.style.transform = "scale(1)"; img.style.cursor = "zoom-in"; icon.className = "ph-bold ph-magnifying-glass-plus"; }
+        };
+
+        window.selectSize = (sz) => { selSize = sz; document.querySelectorAll('#p-page-size-selector .size-option').forEach(b => b.classList.toggle('active', b.innerText === sz)); };
+        window.openSizeChartModal = () => document.getElementById('size-chart-modal').classList.add('active');
+
+        window.addCurrentToCart = () => { 
+            if (currentId) { 
+                const p = products.find(x => x.id == currentId); 
+                
+                let customName = '';
+                let customDesig = '';
+                let badgeType = null;
+                let unitPrice = p.price;
+
+                if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
+                    customName = document.getElementById('p-page-custom-name').value.trim();
+                    if (!customName) return alert("Please enter the name for personalization.");
+                    if (p.category === 'badges') {
+                        customDesig = document.getElementById('p-page-custom-desig').value.trim();
+                        if (!customDesig) return alert("Please enter the designation for the badge.");
+                        
+                        badgeType = selectedBadgeType;
+                        unitPrice = selectedBadgePrice;
+                    }
+                }
+
+                const isShirt = p.category === 'shirts';
+                const hasSleeves = isShirt ? selSleeves : false;
+                if (isShirt) unitPrice = p.price + (hasSleeves ? 150 : 0);
+
+                const ex = cart.find(i => i.id == currentId && i.size === selSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig && i.badgeType === badgeType); 
+                if (ex) {
+                    ex.quantity += 1; 
+                } else {
+                    cart.push({ ...p, size: selSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, badgeType: badgeType, unitPrice: unitPrice, quantity: 1 }); 
+                }
+                
+                // UX Improvement: Clear inputs after adding to cart so user can easily add a different personalized badge
+                if(document.getElementById('p-page-custom-name')) document.getElementById('p-page-custom-name').value = '';
+                if(document.getElementById('p-page-custom-desig')) document.getElementById('p-page-custom-desig').value = '';
+
+                updateCartUI(); 
+                toggleCartDrawer(true); 
+            } 
+        };
+        
+        window.updateQuantity = (id, sz, sleeves, customNameStr, customDesigStr, badgeTypeStr, del) => { 
+            const cName = customNameStr === 'null' ? '' : customNameStr;
+            const cDesig = customDesigStr === 'null' ? '' : customDesigStr;
+            const bType = badgeTypeStr === 'null' ? null : badgeTypeStr;
+            const i = cart.find(x => x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig && (x.badgeType || null) === bType); 
+            if (i) { 
+                i.quantity += del; 
+                if (i.quantity <= 0) {
+                    cart = cart.filter(x => !(x.id == id && x.size === sz && x.sleeves === (sleeves === 'true' || sleeves === true) && (x.customName || '') === cName && (x.customDesig || '') === cDesig && (x.badgeType || null) === bType)); 
+                }
+                updateCartUI(); 
+                if(document.getElementById('checkout-page-view').classList.contains('active')) { 
+                    if (cart.length === 0) closeCheckoutPage(); 
+                    else renderCheckoutSummary(); 
+                } 
+            } 
+        };
+
+        const getSubtotal = () => cart.reduce((acc, i) => acc + ((i.unitPrice || i.price) * i.quantity), 0);
+        
+        const getFinalTotal = () => {
+            const sub = getSubtotal();
+            if(appliedPromo && appliedPromo.discount > 0) {
+                const discVal = Math.round(sub * (appliedPromo.discount / 100));
+                return Math.max(0, sub - discVal);
+            }
+            return sub;
+        };
+
+        const getDiscountAmount = () => {
+            const sub = getSubtotal();
+            if(appliedPromo && appliedPromo.discount > 0) {
+                return Math.round(sub * (appliedPromo.discount / 100));
+            }
+            return 0;
+        };
+        
+        function updateCartUI() {
+            const cnt = cart.reduce((acc, i) => acc + i.quantity, 0); 
+            document.getElementById('cart-badge').innerText = cnt; 
+            document.getElementById('p-page-cart-badge').innerText = cnt; 
+            document.getElementById('cart-total-price').innerText = `RS ${getSubtotal()}/-`;
+            
+            if (cart.length === 0) {
+                document.getElementById('cart-items').innerHTML = '<p style="color:var(--text-dim); text-align:center; margin-top:2rem;">Bag empty.</p>';
+                return;
+            }
+
+            document.getElementById('cart-items').innerHTML = cart.map(i => {
+                const itemUnit = i.unitPrice || i.price;
+                const sleeveText = i.sleeves ? `<div style="color:#000; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-top:2px;">• Full Sleeves (+RS 150)</div>` : '';
+                const badgeText = i.badgeType ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Type: ${i.badgeType}</div>` : '';
+                const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
+                
+                const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
+                const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
+                const cBadgeArg = i.badgeType ? i.badgeType.replace(/'/g, "\\'") : 'null';
+                return `
+                <div class="cart-item">
+                    <img src="${i.imgDefault}">
+                    <div class="item-details">
+                        <div>
+                            <div class="heading" style="font-size:0.85rem;">${i.title}</div>
+                            <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
+                            ${sleeveText}
+                            ${badgeText}
+                            ${customText}
+                            <div style="font-weight:800; margin-top:0.2rem;">RS ${itemUnit * i.quantity}/-</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', -1)">-</button>
+                            <span style="font-size:0.8rem;">${i.quantity}</span>
+                            <button class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        // --- CHECKOUT & PROMO CODE SYSTEM ---
+        window.applyPromoCode = () => {
+            const inp = document.getElementById('checkout-promo-input');
+            const msg = document.getElementById('promo-status-msg');
+            const val = inp.value.trim().toUpperCase();
+
+            if(!val) {
+                msg.style.color = "#dc2626";
+                msg.innerText = "Please enter a promo code.";
+                return;
+            }
+
+            // Look through the array of active promo codes for a match
+            const matchedPromo = activePromos.find(p => p.code === val);
+
+            if(matchedPromo) {
+                appliedPromo = matchedPromo;
+                msg.style.color = "#16a34a";
+                msg.innerText = `Promo "${val}" applied: ${matchedPromo.discount}% OFF!`;
+                renderCheckoutSummary();
+            } else {
+                appliedPromo = null;
+                msg.style.color = "#dc2626";
+                msg.innerText = "Invalid or expired promo code.";
+                renderCheckoutSummary();
+            }
+        };
+
+        window.renderCheckoutSummary = () => { 
+            const sub = getSubtotal();
+            const disc = getDiscountAmount();
+            const tot = getFinalTotal();
+
+            const breakdown = document.getElementById('checkout-pricing-breakdown');
+            if(appliedPromo && disc > 0) {
+                breakdown.style.display = 'block';
+                document.getElementById('checkout-subtotal-val').innerText = `RS ${sub}/-`;
+                document.getElementById('checkout-discount-val').innerText = `- RS ${disc}/- (${appliedPromo.discount}%)`;
+            } else {
+                breakdown.style.display = 'none';
+            }
+
+            document.getElementById('checkout-total-amount').innerText = `RS ${tot}/-`; 
+            
+            document.getElementById('checkout-order-summary').innerHTML = cart.map(i => {
+                const itemUnit = i.unitPrice || i.price;
+                const sleeveText = i.sleeves ? `<div style="color:#d97706; font-size:0.7rem; font-weight:800;">• Full Sleeves (+RS 150)</div>` : '';
+                const badgeText = i.badgeType ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Type: ${i.badgeType}</div>` : '';
+                const customText = (i.customName) ? `<div style="color:var(--text-dim); font-size:0.7rem; margin-top:2px;">Name: ${i.customName}${i.customDesig ? `<br>Desig: ${i.customDesig}` : ''}</div>` : '';
+                const cNameArg = i.customName ? i.customName.replace(/'/g, "\\'") : 'null';
+                const cDesigArg = i.customDesig ? i.customDesig.replace(/'/g, "\\'") : 'null';
+                const cBadgeArg = i.badgeType ? i.badgeType.replace(/'/g, "\\'") : 'null';
+                return `
+                <div class="checkout-item">
+                    <img src="${i.imgDefault}">
+                    <div class="checkout-item-details">
+                        <div>
+                            <div class="heading" style="font-size:0.85rem;">${i.title}</div>
+                            <div style="color:var(--text-dim); font-size:0.7rem;">Size: ${i.size}</div>
+                            ${sleeveText}
+                            ${badgeText}
+                            ${customText}
+                            <div style="font-weight:800; margin-top:2px;">RS ${itemUnit * i.quantity}/-</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', -1)">-</button>
+                            <span style="font-size:0.8rem;">${i.quantity}</span>
+                            <button type="button" class="qty-btn" onclick="updateQuantity('${i.id}', '${i.size}', ${i.sleeves}, '${cNameArg}', '${cDesigArg}', '${cBadgeArg}', 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join(''); 
+        };
+
+        window.openCheckoutPage = () => { 
+            if(cart.length === 0) return alert("Add items to your bag first."); 
+            renderCheckoutSummary(); 
+            closeDrawers(); 
+            document.getElementById('checkout-page-view').classList.add('active'); 
+            window.scrollTo({top:0}); 
+        };
+
+        window.closeCheckoutPage = () => { 
+            document.getElementById('checkout-page-view').classList.remove('active'); 
+            toggleCartDrawer(true); 
+        };
+
+        window.handleCheckoutSubmit = async function(e) {
+            e.preventDefault(); 
+            const btn = document.getElementById('submit-order-btn'); 
+            btn.innerText = "Submitting..."; 
+            btn.disabled = true;
+            
+            const orderIdNum = "#AIMC-" + Math.floor(1000 + Math.random() * 9000);
+            const nm = document.getElementById('c-name').value;
+            const cl = document.getElementById('c-class').value;
+            const tx = document.getElementById('checkout-trx-id').value;
+            const loc = document.getElementById('c-location').value;
+            const ph = document.getElementById('c-phone').value;
+            const tot = getFinalTotal();
+            const sub = getSubtotal();
+            const disc = getDiscountAmount();
+
+            const orderPayload = { 
+                orderId: orderIdNum, 
+                customerName: nm, 
+                class: cl, 
+                phone: ph, 
+                location: loc, 
+                trxId: tx, 
+                subtotal: sub,
+                discountAmount: disc,
+                promoCode: appliedPromo ? appliedPromo.code : null,
+                total: tot, 
+                items: cart, 
+                timestamp: new Date().toISOString() 
+            };
+            
+            try {
+                await addDoc(collection(db, "orders"), orderPayload);
+                
+                document.getElementById('success-order-num').innerText = orderIdNum; 
+                document.getElementById('rec-id').innerText = orderIdNum; 
+                document.getElementById('rec-name').innerText = nm; 
+                document.getElementById('rec-class').innerText = cl; 
+                document.getElementById('rec-trx').innerText = tx; 
+                document.getElementById('rec-pickup').innerText = loc.includes("Girls") ? "Girls Hostel" : "Boys Hostel"; 
+                
+                let recItemsHtml = cart.map(i => {
+                    const itemUnit = i.unitPrice || i.price;
+                    const slv = i.sleeves ? ' [+Full Sleeves]' : '';
+                    const bType = i.badgeType ? `<br>Type: ${i.badgeType}` : '';
+                    const cText = i.customName ? ` (Name: ${i.customName}${i.customDesig ? `, Desig: ${i.customDesig}` : ''})` : '';
+                    return `<div class="receipt-row" style="flex-direction:column; margin-bottom:0.6rem;">
+                        <div style="display:flex; justify-content:space-between;"><span>${i.title}${slv} - ${i.size} x${i.quantity}</span><span>RS ${itemUnit * i.quantity}/-</span></div>
+                        <div style="font-size:0.7rem; color:#555; margin-top:2px;">${bType}${cText}</div>
+                    </div>`;
+                }).join('');
+
+                if(appliedPromo && disc > 0) {
+                    recItemsHtml += `<div class="receipt-row" style="color:#16a34a; font-weight:bold;"><span>Promo (${appliedPromo.code}):</span><span>- RS ${disc}/-</span></div>`;
+                }
+
+                document.getElementById('rec-items-list').innerHTML = recItemsHtml;
+                document.getElementById('rec-total').innerText = `RS ${tot}/-`;
+                
+                // Clear state
+                cart = []; 
+                appliedPromo = null;
+                updateCartUI(); 
+                document.getElementById('checkout-page-view').classList.remove('active'); 
+                document.getElementById('checkout-form').reset(); 
+                document.getElementById('upload-label').innerText = "Click to select image"; 
+                document.getElementById('promo-status-msg').innerText = '';
+                openModal('success-modal');
+            } catch(error) { 
+                alert("Error submitting order: " + error.message); 
+            }
+            btn.innerText = "Confirm Order"; 
+            btn.disabled = false;
+        };
+
+        window.downloadReceipt = () => {
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(document.getElementById('printable-receipt'), { scale: 2 }).then(canvas => {
+                    const l = document.createElement('a'); l.download = `AIMC-Receipt-${Date.now()}.png`; l.href = canvas.toDataURL('image/png'); l.click();
+                });
+            }
+        };
+
+        window.copyToClipboard = (t, b) => { navigator.clipboard.writeText(t).then(()=>{ const o=b.innerText; b.innerText="Copied!"; setTimeout(()=>{b.innerText=o;},2000); }); };
+        window.toggleCartDrawer = (f) => { if(f===true){document.getElementById('cart-drawer').classList.add('open'); document.getElementById('global-overlay').classList.add('active');} else { document.getElementById('cart-drawer').classList.toggle('open'); document.getElementById('global-overlay').classList.toggle('active', document.getElementById('cart-drawer').classList.contains('open')); } };
+        window.closeDrawers = () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('global-overlay').classList.remove('active'); };
+        window.openModal = (id) => { closeDrawers(); document.getElementById(id).classList.add('active'); };
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+
+        // --- QUICK ADD MODAL LOGIC WITH SLEEVES ---
+        let qaProductId = null;
+        let qaSelectedSize = 'M';
+        let qaSleeves = false;
+
+        window.selectQASleeve = (isFull) => {
+            qaSleeves = isFull;
+            document.getElementById('qa-btn-sleeve-half').classList.toggle('active', !isFull);
+            document.getElementById('qa-btn-sleeve-full').classList.toggle('active', isFull);
+        };
+        
+        window.openQuickAddModal = (id) => {
+            const p = products.find(x => x.id === id);
+            if (!p) return;
+            qaProductId = id;
+            
+            document.getElementById('qa-title').innerText = p.title;
+            
+            const sizeSec = document.getElementById('qa-size-section');
+            const sleeveBox = document.getElementById('qa-sleeve-box');
+            
+            selectQASleeve(false); 
+
+            const qaCustomBox = document.getElementById('qa-custom-box');
+            const qaCustomDesigGroup = document.getElementById('qa-custom-desig-group');
+            const qaBadgeTypeGroup = document.getElementById('qa-badge-type-group');
+            document.getElementById('qa-custom-name').value = '';
+            document.getElementById('qa-custom-desig').value = '';
+            
+            if (document.getElementById('qa-badge-options')) {
+                document.querySelectorAll('#qa-badge-options .sleeve-btn').forEach((opt, idx) => {
+                    if(idx === 0) opt.classList.add('active');
+                    else opt.classList.remove('active');
+                });
+                qaSelectedBadgeType = 'Plastic name tag with safety pin';
+                qaSelectedBadgePrice = 370;
+            }
+
+            if(p.category === 'bags') {
+                sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
+                qaSelectedSize = 'One Size';
+            } else if(p.category === 'shirts') {
+                sizeSec.style.display = 'block';
+                sleeveBox.style.display = 'block';
+                qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
+                qaSelectedSize = 'M';
+                selectQAsize('M');
+            } else if(p.category === 'keychains' || p.category === 'pens') {
+                sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'block';
+                qaCustomDesigGroup.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
+                qaSelectedSize = 'One Size';
+            } else if(p.category === 'badges') {
+                sizeSec.style.display = 'none';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'block';
+                qaCustomDesigGroup.style.display = 'flex';
+                qaBadgeTypeGroup.style.display = 'flex';
+                qaSelectedSize = 'One Size';
+            } else {
+                sizeSec.style.display = 'block';
+                sleeveBox.style.display = 'none';
+                qaCustomBox.style.display = 'none';
+                qaBadgeTypeGroup.style.display = 'none';
+                qaSelectedSize = 'M';
+                selectQAsize('M');
+            }
+            
+            if(p.category === 'badges') document.getElementById('qa-price').innerText = `RS ${qaSelectedBadgePrice}/-`;
+            else document.getElementById('qa-price').innerText = `RS ${p.price}/-`;
+            
+            openModal('quick-add-modal');
+        };
+
+        window.selectQAsize = (sz) => {
+            qaSelectedSize = sz;
+            document.querySelectorAll('#qa-size-selector .size-option').forEach(b => {
+                b.classList.toggle('active', b.innerText === sz);
+            });
+        };
+
+        window.confirmQuickAdd = () => {
+            const p = products.find(x => x.id === qaProductId);
+            if(p) {
+                let customName = '';
+                let customDesig = '';
+                let badgeType = null;
+                let unitPrice = p.price;
+
+                if (p.category === 'keychains' || p.category === 'pens' || p.category === 'badges') {
+                    customName = document.getElementById('qa-custom-name').value.trim();
+                    if (!customName) return alert("Please enter the name for personalization.");
+                    if (p.category === 'badges') {
+                        customDesig = document.getElementById('qa-custom-desig').value.trim();
+                        if (!customDesig) return alert("Please enter the designation for the badge.");
+                        
+                        badgeType = qaSelectedBadgeType;
+                        unitPrice = qaSelectedBadgePrice;
+                    }
+                }
+
+                const isShirt = p.category === 'shirts';
+                const hasSleeves = isShirt ? qaSleeves : false;
+                if(isShirt) unitPrice = p.price + (hasSleeves ? 150 : 0);
+
+                const ex = cart.find(i => i.id === p.id && i.size === qaSelectedSize && i.sleeves === hasSleeves && i.customName === customName && i.customDesig === customDesig && i.badgeType === badgeType);
+                if(ex) {
+                    ex.quantity += 1;
+                } else {
+                    cart.push({ ...p, size: qaSelectedSize, sleeves: hasSleeves, customName: customName, customDesig: customDesig, badgeType: badgeType, unitPrice: unitPrice, quantity: 1 });
+                }
+
+                // UX Improvement: Clear inputs after adding to cart
+                if(document.getElementById('qa-custom-name')) document.getElementById('qa-custom-name').value = '';
+                if(document.getElementById('qa-custom-desig')) document.getElementById('qa-custom-desig').value = '';
+
+                updateCartUI();
+                closeModals();
+                toggleCartDrawer(true);
+            }
+        };
+    </script>
+</body>
+</html>
